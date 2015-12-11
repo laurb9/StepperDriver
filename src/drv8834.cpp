@@ -9,13 +9,29 @@
  */
 #include "drv8834.h"
 
+/*
+ * Connection using the defaults DIR-8, STEP-9, M0-10, M1-11, ENBL-12
+ */
 DRV8834::DRV8834(void)
 {
     DRV8834::init();
 }
 
-DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1, uint8_t enbl)
-:DIR(dir), STEP(step), M0(m0), M1(m1), ENBL(enbl)
+/*
+ * Basic connection: only DIR, STEP and ~ENBL are connected.
+ * Microstepping controls should be hardwired.
+ */
+DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t enbl)
+:DIR(dir), STEP(step), ENBL(enbl)
+{
+    DRV8834::init();
+}
+
+/*
+ * Fully wired. All the necessary control pins for DRV8834 are connected.
+ */
+DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t enbl, uint8_t m0, uint8_t m1)
+:DIR(dir), STEP(step), ENBL(enbl), M0(m0), M1(m1)
 {
     DRV8834::init();
 }
@@ -35,8 +51,22 @@ void DRV8834::init(void){
 }
 
 /*
+ * Set target motor RPM (1-200 is a reasonable range)
+ */
+void DRV8834::setRPM(unsigned rpm){
+    pulse_duration_us = pulse_us(rpm);
+}
+
+/*
+ * Control direction pin.
+ */
+void DRV8834::setDirection(int direction){
+    digitalWrite(DIR, (direction>=0) ? LOW : HIGH);
+}
+
+/*
  * Set stepping mode (1:divisor)
- * Allowed ranges are 1:1 to 1:32
+ * Allowed ranges for DRV8834 are 1:1 to 1:32
  */
 void DRV8834::stepMode(int divisor){
 
@@ -62,6 +92,10 @@ void DRV8834::stepMode(int divisor){
     step = 32/divisor;
 }
 
+/*
+ * Move the motor a given number of steps.
+ * positive to move forward, negative to reverse
+ */
 int DRV8834::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
@@ -74,26 +108,12 @@ int DRV8834::move(int steps){
     }
 }
 
-void DRV8834::setPosition(int pos){
-    position = pos;
-}
-
-int DRV8834::getPosition(void){
-    return position;
-}
-
-void DRV8834::setDirection(int direction){
-    digitalWrite(DIR, (direction>=0) ? LOW : HIGH);
-}
-
 void DRV8834::enable(void){
+    // ~ENBL is active low
     digitalWrite(ENBL, LOW);
 }
 
 void DRV8834::disable(void){
+    // ~ENBL is active low
     digitalWrite(ENBL, HIGH);
-}
-
-void DRV8834::setRPM(unsigned rpm){
-    pulse_duration_us = pulse_us(rpm);
 }
