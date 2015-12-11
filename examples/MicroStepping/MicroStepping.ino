@@ -9,7 +9,7 @@
  * A copy of this license has been included with this distribution in the file LICENSE.
  */
 #include <Arduino.h>
-#include "drv8834.h"
+#include "DRV8834.h"
 
 static DRV8834 drv8834;
 

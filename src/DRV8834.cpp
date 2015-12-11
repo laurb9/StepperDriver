@@ -7,7 +7,7 @@
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
  */
-#include "drv8834.h"
+#include "DRV8834.h"
 
 /*
  * Connection using the defaults DIR-8, STEP-9, M0-10, M1-11, ENBL-12
