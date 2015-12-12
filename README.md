@@ -1,15 +1,18 @@
 StepperDriver
 =============
 
-Arduino library for controlling stepper motors via a driver board.
-Currently supported: <a href="https://www.pololu.com/product/2134">DRV8834</a> Low-Voltage Stepper Motor Driver
-Future plans for: <a href="https://www.pololu.com/product/1182">A4988</a> and
-<a href="https://www.pololu.com/product/2131">DRV8825</a>.
+A4988, DRV8825 and generic two-pin stepper motor driver library.
+Currently supported: 
+   - <a href="https://www.pololu.com/product/2134">DRV8834</a> Low-Voltage Stepper Motor Driver
+     up to 1:32
+   - <a href="https://www.pololu.com/product/1182">A4988</a> Stepper Motor Driver up to 1:16
+   - <a href="https://www.pololu.com/product/2131">DRV8825</a> up to 1:32
+   - any 2-pin stepper via DIR and STEP pins.
 
 Motors
 ======
 
-4-wire bipolar stepper motor or 6-wire unipolar in 4-wire configuration (leaving centers out).
+4-wire bipolar stepper motor or some 6-wire unipolar in 4-wire configuration (leaving centers out).
 
 Connections
 ===========
@@ -38,10 +41,11 @@ Wiring
     - B1 - YEL
     - B2 - BLU 
 
-- 47uF capacitor between GND - VMOT 
-- 470K resistor from GND - M0 (without this, modes that put M0 in high-impedance do not work)
+- 100uF capacitor between GND - VMOT 
+- (DRV8834 only) 100K-470K resistor from GND - M0
+  (without this, modes that put M0 in high-impedance do not seem to work)
 
-- Set the max current on the driver board to the motor limit.
+- Set the max current on the driver board to the motor limit (see below).
 - Have a motor power supply that can deliver that current.
 
 Set Max Current
@@ -49,8 +53,13 @@ Set Max Current
 
 The max current is set via the potentiometer on board.
 Turn it while measuring voltage at the passthrough next to it.
-Needed voltage = 0.5 * max current(A). For example, for 1A you will set it to 0.5V.
-This is based on this formula V = I*5*R where I=max current, R=0.1ohm (as installed on Pololu board).
+The formula is V = I*5*R where I=max current, R=current sense resistor installed onboard
+
+- DRV8834 Pololu board, R=0.1 and V = 0.5 * max current(A). 
+  For example, for 1A you will set it to 0.5V.
+
+- DRV8825 low-current board, R=0.33 and V = 1.65 * max current(A).
+  For example, for 0.5A the reference voltage should be 0.82V
 
 Code
 ====
@@ -65,6 +74,5 @@ Hardware
 - Arduino-compatible board
 - A <a href="https://www.pololu.com/category/120/stepper-motor-drivers">stepper motor driver</a>, for example DRV8834, DRV8825, DRV8824, A4988.
 - A <a href="http://www.circuitspecialists.com/stepper-motor">Stepper Motor</a>.
-- 1 x 100-470K resistor
-- 1 x 47uF capacitor
-
+- 1 x 100uF capacitor
+- 1 x 100-470K resistor (for DRV8834 only)
