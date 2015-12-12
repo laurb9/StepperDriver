@@ -11,6 +11,7 @@
 #include <Arduino.h>
 #include "DRV8834.h"
 #include "A4988.h"
+#include "DRV8825.h"
 
 // All the wires needed for full functionality
 #define DIR 8
@@ -30,6 +31,13 @@ DRV8834 stepper(DIR, STEP, ENBL, M0, M1);
 // #define MS2 11
 // #define MS3 12
 // A4988 stepper(DIR, STEP, ENBL, MS1, MS2, MS3);
+
+// microstep control for DRV8825
+// same pinout as A4988, different pin names, supports 32 microsteps
+// #define MODE0 10
+// #define MODE1 11
+// #define MODE2 12
+// DRV8825 stepper(DIR, STEP, ENBL, MODE0, MODE1, MODE2);
 
 void setup() {
     /*

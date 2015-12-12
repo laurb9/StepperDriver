@@ -11,9 +11,9 @@
 
 /*
  * Microstepping resolution truth table (Page 6 of A4988 pdf)
- * 0bMS1,MS2,MS3 for 1,2,4,8,16 microsteps
+ * 0bMS3,MS2,MS1 for 1,2,4,8,16 microsteps (note bits are reversed here)
  */
-const uint8_t A4988::msTable[] = {0b000, 0b000, 0b010, 0b110, 0b111};
+const uint8_t A4988::msTable[] = {0b000, 0b001, 0b010, 0b011, 0b111};
 
 /*
  * Connection using the defaults in A4988.h
@@ -53,9 +53,9 @@ void A4988::setMicrostep(int divisor){
     while (i < sizeof(msTable)){
         if (divisor & 1){
             uint8_t mask = msTable[i];
-            digitalWrite(MS1, mask & 4);
+            digitalWrite(MS3, mask & 4);
             digitalWrite(MS2, mask & 2);
-            digitalWrite(MS3, mask & 1);
+            digitalWrite(MS1, mask & 1);
             break;
         }
         i++;

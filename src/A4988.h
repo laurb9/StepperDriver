@@ -1,5 +1,5 @@
 /*
- * A4988 - LV Stepper Motor Driver Driver (A4988-compatible - mostly)
+ * A4988 - Stepper Motor Driver Driver
  * Indexer mode only.
  *
  * Copyright (C)2015 Laurentiu Badea
