@@ -14,7 +14,7 @@
  */
 BasicStepperDriver::BasicStepperDriver(void)
 {
-    BasicStepperDriver::init();
+    init();
 }
 
 /*
@@ -24,7 +24,7 @@ BasicStepperDriver::BasicStepperDriver(void)
 BasicStepperDriver::BasicStepperDriver(uint8_t dir, uint8_t step, uint8_t enbl)
 :DIR(dir), STEP(step), ENBL(enbl)
 {
-    BasicStepperDriver::init();
+    init();
 }
 
 void BasicStepperDriver::init(void){
@@ -34,9 +34,9 @@ void BasicStepperDriver::init(void){
     pinMode(STEP, OUTPUT);
     digitalWrite(STEP, LOW);
 
-    BasicStepperDriver::setMicrostep(1);
+    setMicrostep(1);
 
-    BasicStepperDriver::enable();
+    enable();
 
     //delay(1);      // wakeup time 1ms sleep inactive to step
 }
@@ -45,7 +45,7 @@ void BasicStepperDriver::init(void){
  * Set target motor RPM (1-200 is a reasonable range)
  */
 void BasicStepperDriver::setRPM(unsigned rpm){
-    pulse_duration_us = pulse_us(rpm);
+    pulse_duration_us = pulse_us(rpm, STEPS, MICROSTEP_RANGE);
 }
 
 /*
@@ -70,7 +70,7 @@ void BasicStepperDriver::setMicrostep(int divisor){
 int BasicStepperDriver::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
-    BasicStepperDriver::setDirection(direction);
+    setDirection(direction);
     while (steps--){
         digitalWrite(STEP, HIGH);
         delayMicroseconds(pulse_duration_us*microsteps);
