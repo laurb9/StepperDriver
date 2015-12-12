@@ -21,18 +21,18 @@ public:
     static const unsigned MICROSTEP_RANGE = 32;
     /*
      * Connection using the defaults above
-     * DIR-8, STEP-9, M0-10, M1-11, ENBL-12
+     * DIR-8, STEP-9, M0-10, M1-11
      */
     DRV8834(void);
     /*
-     * Basic connection: only DIR, STEP and ~ENBL are connected.
+     * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    DRV8834(uint8_t dir, uint8_t step, uint8_t enbl);
+    DRV8834(uint8_t dir, uint8_t step);
     /*
      * Fully wired. All the necessary control pins for DRV8834 are connected.
      */
-    DRV8834(uint8_t dir, uint8_t step, uint8_t enbl, uint8_t m0, uint8_t m1);
+    DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1);
     void setMicrostep(int direction);
 };
 #endif DRV8834_H

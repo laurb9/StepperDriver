@@ -23,7 +23,7 @@ public:
     // microstep range (1, 16, 32 etc)
     static const unsigned MICROSTEP_RANGE = 32;
 
-    DRV8825(uint8_t dir, uint8_t step, uint8_t enbl,
+    DRV8825(uint8_t dir, uint8_t step,
             uint8_t mode0, uint8_t mode1, uint8_t mode2);
 };
 #endif DRV8825_H

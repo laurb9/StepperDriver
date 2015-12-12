@@ -20,7 +20,7 @@ const uint8_t DRV8825::msTable[] = {0b000, 0b001, 0b010, 0b011, 0b100, 0b111};
  * All the necessary control pins for DRV8825 are connected.
  * A4988-DRV8825 Compatibility map: MS1-MODE0, MS2-MODE1, MS3-MODE2
  */
-DRV8825::DRV8825(uint8_t dir, uint8_t step, uint8_t enbl,
+DRV8825::DRV8825(uint8_t dir, uint8_t step,
                  uint8_t mode0, uint8_t mode1, uint8_t mode2)
-:A4988(dir, step, enbl, mode0, mode1, mode2)
+:A4988(dir, step, mode0, mode1, mode2)
 {}

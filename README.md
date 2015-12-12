@@ -26,7 +26,6 @@ Wiring
     - STEP - A9
     - M0 - A10
     - M1 - A11
-    - ~ENBL - A7
     - SLEEP - 3.3V
     - GND - Arduino GND
     - GND - Motor power GND

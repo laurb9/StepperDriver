@@ -16,28 +16,27 @@
 // All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
-#define ENBL 7
 
-// 3-wire basic config, microstepping is hardwired on the driver
-// BasicStepperDriver stepper(DIR, STEP, ENBL);
+// 2-wire basic config, microstepping is hardwired on the driver
+// BasicStepperDriver stepper(DIR, STEP);
 
 // microstep control for DRV8834
 #define M0 10
 #define M1 11
-DRV8834 stepper(DIR, STEP, ENBL, M0, M1);
+DRV8834 stepper(DIR, STEP, M0, M1);
 
 // microstep control for A4988
 // #define MS1 10
 // #define MS2 11
 // #define MS3 12
-// A4988 stepper(DIR, STEP, ENBL, MS1, MS2, MS3);
+// A4988 stepper(DIR, STEP, MS1, MS2, MS3);
 
 // microstep control for DRV8825
 // same pinout as A4988, different pin names, supports 32 microsteps
 // #define MODE0 10
 // #define MODE1 11
 // #define MODE2 12
-// DRV8825 stepper(DIR, STEP, ENBL, MODE0, MODE1, MODE2);
+// DRV8825 stepper(DIR, STEP, MODE0, MODE1, MODE2);
 
 void setup() {
     /*
@@ -50,8 +49,6 @@ void setup() {
 
 void loop() {
     delay(1000);
-    // energize coils - the motor will hold position
-    stepper.enable();
 
     /*
      * Moving motor at full speed is simple:
@@ -75,9 +72,6 @@ void loop() {
 
     // one full rotation now takes 200 * 8 microsteps
     stepper.move(200*8);
-
-    // pause and allow the motor to be moved by hand
-    stepper.disable();
 
     delay(5000);
 }

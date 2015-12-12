@@ -18,11 +18,11 @@ BasicStepperDriver::BasicStepperDriver(void)
 }
 
 /*
- * Basic connection: only DIR, STEP and ~ENBL are connected.
+ * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-BasicStepperDriver::BasicStepperDriver(uint8_t dir, uint8_t step, uint8_t enbl)
-:DIR(dir), STEP(step), ENBL(enbl)
+BasicStepperDriver::BasicStepperDriver(uint8_t dir, uint8_t step)
+:DIR(dir), STEP(step)
 {
     init();
 }
@@ -35,10 +35,6 @@ void BasicStepperDriver::init(void){
     digitalWrite(STEP, LOW);
 
     setMicrostep(1);
-
-    enable();
-
-    //delay(1);      // wakeup time 1ms sleep inactive to step
 }
 
 /*
@@ -77,16 +73,4 @@ int BasicStepperDriver::move(int steps){
         digitalWrite(STEP, LOW);
         delayMicroseconds(pulse_duration_us*microsteps);
     }
-}
-
-void BasicStepperDriver::enable(void){
-    // ~ENBL is active low
-    pinMode(ENBL, OUTPUT);
-    digitalWrite(ENBL, LOW);
-}
-
-void BasicStepperDriver::disable(void){
-    // ~ENBL is active low
-    pinMode(ENBL, OUTPUT);
-    digitalWrite(ENBL, HIGH);
 }

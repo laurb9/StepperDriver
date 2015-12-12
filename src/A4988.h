@@ -23,18 +23,18 @@ public:
     static const unsigned MICROSTEP_RANGE = 16;
     /*
      * Connection using the defaults above
-     * DIR-8, STEP-9, MS1-10, MS2-11, MS3-12, ~ENBL-7
+     * DIR-8, STEP-9, MS1-10, MS2-11, MS3-12
      */
     A4988(void);
     /*
-     * Basic connection: only DIR, STEP and ~ENBL are connected.
+     * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    A4988(uint8_t dir, uint8_t step, uint8_t enbl);
+    A4988(uint8_t dir, uint8_t step);
     /*
      * Fully wired. All the necessary control pins for A4988 are connected.
      */
-    A4988(uint8_t dir, uint8_t step, uint8_t enbl, uint8_t ms0, uint8_t ms1, uint8_t ms2);
+    A4988(uint8_t dir, uint8_t step, uint8_t ms0, uint8_t ms1, uint8_t ms2);
     void setMicrostep(int direction);
 };
 #endif A4988_H

@@ -30,7 +30,6 @@ class BasicStepperDriver {
 protected:
     uint8_t DIR = 8;      // DIR pin
     uint8_t STEP = 9;     // STEP pin
-    uint8_t ENBL = 7;     // ~ENBL pin
     // current microstep level, must be < MICROSTEP_RANGE
     // for 1:16 microsteps is 2
     unsigned microsteps = 1;
@@ -45,13 +44,13 @@ public:
     static const unsigned MICROSTEP_RANGE = 32;
     /*
      * Connection using the defaults above
-     * DIR-8, STEP-9, ENBL-7
+     * DIR-8, STEP-9
      */
     BasicStepperDriver(void);
     /*
-     * Basic connection: DIR, STEP and ~ENBL are configured explicitly.
+     * Basic connection: DIR, STEP are configured explicitly.
      */
-    BasicStepperDriver(uint8_t dir, uint8_t step, uint8_t enbl);
+    BasicStepperDriver(uint8_t dir, uint8_t step);
     /*
      * Set current microstep level, 1=full speed, 32=fine microsteppign
      */
@@ -61,14 +60,6 @@ public:
      * positive to move forward, negative to reverse
      */
     int move(int steps);
-    /*
-     * Energize coils to hold the position in place.
-     */
-    void enable(void);
-    /*
-     * Turn off power to allow the motor to be moved by hand.
-     */
-    void disable(void);
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
