@@ -10,19 +10,33 @@
  */
 #include <Arduino.h>
 #include "DRV8834.h"
+#include "A4988.h"
+#include "DRV8825.h"
 
 // All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
+
+// 2-wire basic config, microstepping is hardwired on the driver
+// BasicStepperDriver stepper(DIR, STEP);
+
+// microstep control for DRV8834
 #define M0 10
 #define M1 11
-#define ENBL 7
+DRV8834 stepper(DIR, STEP, M0, M1);
 
-// 3-wire basic config, microstepping is hardwired on the driver
-// DRV8834 stepper(DIR, STEP, ENBL);
+// microstep control for A4988
+// #define MS1 10
+// #define MS2 11
+// #define MS3 12
+// A4988 stepper(DIR, STEP, MS1, MS2, MS3);
 
-// complete wiring
-DRV8834 stepper(DIR, STEP, ENBL, M0, M1);
+// microstep control for DRV8825
+// same pinout as A4988, different pin names, supports 32 microsteps
+// #define MODE0 10
+// #define MODE1 11
+// #define MODE2 12
+// DRV8825 stepper(DIR, STEP, MODE0, MODE1, MODE2);
 
 void setup() {
     /*
@@ -35,8 +49,6 @@ void setup() {
 
 void loop() {
     delay(1000);
-    // energize coils - the motor will hold position
-    stepper.enable();
 
     /*
      * Moving motor at full speed is simple:
@@ -50,19 +62,16 @@ void loop() {
     stepper.move(-200);
 
     /*
-     * Microstepping mode: 1,2,4,8,16 or 32
+     * Microstepping mode: 1,2,4,8,16 or 32(DRV8834 only)
      * Mode 1 is full speed.
      * Mode 32 is 32 microsteps per step.
      * The motor should rotate just as fast (set RPM),
      * but movement precision is increased.
      */
-    stepper.setMicrostep(32);
+    stepper.setMicrostep(8);
 
-    // one full rotation now takes 200 * 32 microsteps
-    stepper.move(200*32);
-
-    // pause and allow the motor to be moved by hand
-    stepper.disable();
+    // one full rotation now takes 200 * 8 microsteps
+    stepper.move(200*8);
 
     delay(5000);
 }

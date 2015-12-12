@@ -1,5 +1,5 @@
 /*
- * DRV8834 - LV Stepper Motor Driver Driver (A4988-compatible - mostly)
+ * A4988 - Stepper Motor Driver Driver
  * Indexer mode only.
  *
  * Copyright (C)2015 Laurentiu Badea
@@ -7,32 +7,34 @@
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
  */
-#ifndef DRV8834_H
-#define DRV8834_H
+#ifndef A4988_H
+#define A4988_H
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
 
-class DRV8834 : public BasicStepperDriver {
+class A4988 : public BasicStepperDriver {
 protected:
-    uint8_t M0 = 10;
-    uint8_t M1 = 11;
+    static const uint8_t msTable[];
+    uint8_t MS1 = 10;
+    uint8_t MS2 = 11;
+    uint8_t MS3 = 12;
 public:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MICROSTEP_RANGE = 32;
+    static const unsigned MICROSTEP_RANGE = 16;
     /*
      * Connection using the defaults above
-     * DIR-8, STEP-9, M0-10, M1-11
+     * DIR-8, STEP-9, MS1-10, MS2-11, MS3-12
      */
-    DRV8834(void);
+    A4988(void);
     /*
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    DRV8834(uint8_t dir, uint8_t step);
+    A4988(uint8_t dir, uint8_t step);
     /*
-     * Fully wired. All the necessary control pins for DRV8834 are connected.
+     * Fully wired. All the necessary control pins for A4988 are connected.
      */
-    DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1);
+    A4988(uint8_t dir, uint8_t step, uint8_t ms0, uint8_t ms1, uint8_t ms2);
     void setMicrostep(int direction);
 };
-#endif DRV8834_H
+#endif A4988_H

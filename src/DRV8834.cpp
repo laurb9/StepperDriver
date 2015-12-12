@@ -10,25 +10,25 @@
 #include "DRV8834.h"
 
 /*
- * Connection using the defaults DIR-8, STEP-9, M0-10, M1-11, ENBL-12
+ * Connection using the defaults DIR-8, STEP-9, M0-10, M1-11
  */
 DRV8834::DRV8834(void)
 :BasicStepperDriver()
 {}
 
 /*
- * Basic connection: only DIR, STEP and ~ENBL are connected.
+ * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t enbl)
-:BasicStepperDriver(dir, step, enbl)
+DRV8834::DRV8834(uint8_t dir, uint8_t step)
+:BasicStepperDriver(dir, step)
 {}
 
 /*
  * Fully wired. All the necessary control pins for DRV8834 are connected.
  */
-DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t enbl, uint8_t m0, uint8_t m1)
-:BasicStepperDriver(dir, step, enbl), M0(m0), M1(m1)
+DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1)
+:BasicStepperDriver(dir, step), M0(m0), M1(m1)
 {}
 
 /*
