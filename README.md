@@ -77,8 +77,8 @@ stepper motor like the seconds hand of a watch:
 #include "A4988.h"
 
 // All the wires needed for full functionality
-# DIR, STEP, MS1, MS2, MS3
-A4988 stepper(DIR, STEP, MS1, MS2, MS3);
+# pins used are DIR, STEP, MS1, MS2, MS3 in that order
+A4988 stepper(8, 9, 10, 11, 12);
 
 void setup() {
     // Set target motor RPM to 1RPM
@@ -91,7 +91,7 @@ void loop() {
     // Tell motor to rotate 360 degrees. That's it.
     stepper.rotate(-360);
 }
-
+```
 
 Hardware
 ========
