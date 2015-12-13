@@ -65,6 +65,10 @@ public:
      */
     int rotate(int deg);
     /*
+     * Takes a float or double for increased movement precision.
+     */
+    int rotate(double deg);
+    /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
     void setRPM(unsigned rpm);
