@@ -35,6 +35,7 @@ void BasicStepperDriver::init(void){
     digitalWrite(STEP, LOW);
 
     setMicrostep(1);
+    setRPM(RPM_DEFAULT);
 }
 
 /*
@@ -72,7 +73,7 @@ int BasicStepperDriver::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
     setDirection(direction);
-    unsigned long pulse_duration = pulse_duration_us*MICROSTEP_RANGE/microsteps;
+    unsigned long pulse_duration = pulse_duration_us*MICROSTEP_RANGE/microsteps/2;
     while (steps--){
         digitalWrite(STEP, HIGH);
         DELAY_MICROS(pulse_duration);
