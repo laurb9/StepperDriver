@@ -69,9 +69,9 @@ int BasicStepperDriver::move(int steps){
     setDirection(direction);
     while (steps--){
         digitalWrite(STEP, HIGH);
-        delayMicroseconds(pulse_duration_us*microsteps);
+        DELAY_MICROS(pulse_duration_us*microsteps);
         digitalWrite(STEP, LOW);
-        delayMicroseconds(pulse_duration_us*microsteps);
+        DELAY_MICROS(pulse_duration_us*microsteps);
     }
 }
 

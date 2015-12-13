@@ -22,6 +22,11 @@
  */
 #define pulse_us(rpm, steps, microsteps) ((1000000L/steps)*60/2/microsteps/rpm)
 
+inline void microWaitUntil(unsigned long targetMicros){
+    while (micros() < targetMicros);
+}
+#define DELAY_MICROS(us) microWaitUntil(micros() + us)
+
 /*
  * Basic Stepper Driver class.
  * Microstepping level should be externally controlled or hardwired.
