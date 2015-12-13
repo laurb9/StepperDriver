@@ -18,7 +18,13 @@ protected:
     int mode0_pin = PIN_UNCONNECTED;
     int mode1_pin = PIN_UNCONNECTED;
     int mode2_pin = PIN_UNCONNECTED;
-
+    // tWH(STEP) pulse duration, STEP high, min value (1.9us)
+    static const int step_high_min = 2;
+    // tWL(STEP) pulse duration, STEP low, min value (1.9us)
+    static const int step_low_min = 2;
+    // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
+    static const int wakeup_time = 1700;
+    // also 650ns between ENBL/DIR/MODEx changes and STEP HIGH
 public:
     // microstep range (1, 16, 32 etc)
     static const unsigned max_microstep = 32;

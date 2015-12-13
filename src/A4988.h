@@ -19,6 +19,13 @@ protected:
     int ms2_pin = PIN_UNCONNECTED;
     int ms3_pin = PIN_UNCONNECTED;
     void init(void);
+    // tA STEP minimum, HIGH pulse width (1us)
+    static const int step_high_min = 1;
+    // tB STEP minimum, LOW pulse width (1us)
+    static const int step_low_min = 1;
+    // wakeup time, nSLEEP inactive to STEP (1000us)
+    static const int wakeup_time = 1000;
+    // also 200ns between ENBL/DIR/MSx changes and STEP HIGH
 public:
     // microstep range (1, 16, 32 etc)
     static const unsigned max_microstep = 16;
