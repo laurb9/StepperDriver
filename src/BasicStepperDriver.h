@@ -16,6 +16,10 @@
 #define STEPS 200
 #define RPM_DEFAULT 180
 
+// used internally by the library to mark unconnected pins
+#define PIN_UNCONNECTED -1
+#define IS_CONNECTED(pin) (pin == PIN_UNCONNECTED)
+
 /*
  * helper macro
  * calculate the microstep duration in micros for a given rpm value.
@@ -34,8 +38,8 @@ inline void microWaitUntil(unsigned long target_micros){
  */
 class BasicStepperDriver {
 protected:
-    int dir_pin = 8;
-    int step_pin = 9;
+    int dir_pin;
+    int step_pin;
     // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
@@ -49,12 +53,7 @@ public:
     // microstep range (1, 16, 32 etc)
     static const unsigned max_microstep = 32;
     /*
-     * Connection using the defaults above
-     * DIR-8, STEP-9
-     */
-    BasicStepperDriver(void);
-    /*
-     * Basic connection: DIR, STEP are configured explicitly.
+     * Basic connection: DIR, STEP are connected.
      */
     BasicStepperDriver(int dir_pin, int step_pin);
     /*

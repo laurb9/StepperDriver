@@ -10,14 +10,6 @@
 #include "BasicStepperDriver.h"
 
 /*
- * Connection using the defaults
- */
-BasicStepperDriver::BasicStepperDriver(void)
-{
-    init();
-}
-
-/*
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */

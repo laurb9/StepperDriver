@@ -10,13 +10,6 @@
 #include "DRV8834.h"
 
 /*
- * Connection using the defaults DIR-8, STEP-9, M0-10, M1-11
- */
-DRV8834::DRV8834(void)
-:BasicStepperDriver()
-{}
-
-/*
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
@@ -34,9 +27,28 @@ DRV8834::DRV8834(int dir_pin, int step_pin, int m0_pin, int m1_pin)
 /*
  * Set microstepping mode (1:divisor)
  * Allowed ranges for DRV8834 are 1:1 to 1:32
+ * If the control pins are not connected, we recalculate the timing only
+ *
  */
-void DRV8834::setMicrostep(int divisor){
+unsigned DRV8834::setMicrostep(unsigned divisor){
     BasicStepperDriver::setMicrostep(divisor);
+
+    if (!IS_CONNECTED(m0_pin) || !IS_CONNECTED(m1_pin)){
+        return microsteps;
+    }
+
+    /*
+     * Step mode truth table
+     * M1 M0    step mode
+     *  0  0     1
+     *  0  1     2
+     *  0  Z     4
+     *  1  0     8
+     *  1  1    16
+     *  1  Z    32
+     *
+     *  Z = high impedance mode (M0 is tri-state)
+     */
 
     pinMode(m1_pin, OUTPUT);
     digitalWrite(m1_pin, (divisor < 8) ? LOW : HIGH);
@@ -57,4 +69,5 @@ void DRV8834::setMicrostep(int divisor){
         pinMode(m0_pin, INPUT); // Z - high impedance
         break;
     }
+    return microsteps;
 }
