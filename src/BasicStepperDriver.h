@@ -17,10 +17,16 @@
 #define RPM_DEFAULT 180
 
 /*
- * helper macro, calculate the microstep duration in micros for a given rpm value.
- * 60[s/min] * 1000000[us/s] / 32[microsteps] / steps / 2[low-high] / rpm[rpm]
+ * helper macro
+ * calculate the microstep duration in micros for a given rpm value.
+ * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm[rpm]
  */
-#define pulse_us(rpm, steps, microsteps) ((1000000L/steps)*60/2/microsteps/rpm)
+#define pulse_us(rpm, steps, microsteps) ((1000000L/steps)*60/microsteps/rpm)
+
+inline void microWaitUntil(unsigned long targetMicros){
+    while (micros() < targetMicros);
+}
+#define DELAY_MICROS(us) microWaitUntil(micros() + us)
 
 /*
  * Basic Stepper Driver class.
@@ -31,10 +37,10 @@ protected:
     uint8_t DIR = 8;      // DIR pin
     uint8_t STEP = 9;     // STEP pin
     // current microstep level, must be < MICROSTEP_RANGE
-    // for 1:16 microsteps is 2
+    // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration, depends on rpm and microstep level
-    unsigned pulse_duration_us = pulse_us(RPM_DEFAULT, STEPS, 32);
+    unsigned long pulse_duration_us;
 
     void setDirection(int direction);
     void init(void);
@@ -52,14 +58,23 @@ public:
      */
     BasicStepperDriver(uint8_t dir, uint8_t step);
     /*
-     * Set current microstep level, 1=full speed, 32=fine microsteppign
+     * Set current microstep level, 1=full speed, 32=fine microstepping
+     * Returns new level or previous level if value out of range
      */
-    void setMicrostep(int divisor);
+    unsigned setMicrostep(unsigned divisor);
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
      */
     int move(int steps);
+    /*
+     * Move the motor a given number of degrees (1-360)
+     */
+    int rotate(int deg);
+    /*
+     * Takes a float or double for increased movement precision.
+     */
+    int rotate(double deg);
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */

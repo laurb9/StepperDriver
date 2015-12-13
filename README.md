@@ -69,6 +69,30 @@ supporting the DIR/STEP indexing mode.
 
 The Microstepping example works with a DRV8834 board.
 
+For example, to show what is possible, here is the ClockStepper example that moves a 
+stepper motor like the seconds hand of a watch:
+
+```C++
+#include <Arduino.h>
+#include "A4988.h"
+
+// All the wires needed for full functionality
+# DIR, STEP, MS1, MS2, MS3
+A4988 stepper(DIR, STEP, MS1, MS2, MS3);
+
+void setup() {
+    // Set target motor RPM to 1RPM
+    stepper.setRPM(1);
+    // Set full speed mode (microstepping also works for smoother hand movement
+    stepper.setMicrostep(1);
+}
+
+void loop() {
+    // Tell motor to rotate 360 degrees. That's it.
+    stepper.rotate(-360);
+}
+
+
 Hardware
 ========
 - Arduino-compatible board

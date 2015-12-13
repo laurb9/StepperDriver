@@ -1,7 +1,7 @@
 /*
- * Microstepping demo
+ * Clock Microstepping demo
  *
- * This requires that M0, M1 be connected in addition to STEP,DIR
+ * Moves the stepper motor like the seconds hand of a watch.
  *
  * Copyright (C)2015 Laurentiu Badea
  *
@@ -44,41 +44,13 @@ void setup() {
      * These motors can do up to about 200rpm.
      * Too high will result in a high pitched whine and the motor does not move.
      */
-    stepper.setRPM(120);
+    stepper.setRPM(1);
+    stepper.setMicrostep(1); // make sure we are in full speed mode
 }
 
 void loop() {
-    delay(1000);
-
     /*
-     * Moving motor at full speed is simple:
+     * The easy way is just tell the motor to rotate 360 degrees at 1rpm
      */
-    stepper.setMicrostep(1); // make sure we are in full speed mode
-
-    // these two are equivalent: 180 degrees is 100 steps in full speed mode
-    stepper.move(100);
-    stepper.rotate(180);
-
-    // one full reverse rotation
-    stepper.move(-100);
-    stepper.rotate(-180);
-
-    /*
-     * Microstepping mode: 1,2,4,8,16 or 32(DRV8834 only)
-     * Mode 1 is full speed.
-     * Mode 32 is 32 microsteps per step.
-     * The motor should rotate just as fast (set RPM),
-     * but movement precision is increased.
-     */
-    stepper.setMicrostep(8);
-
-    // 180 degrees now takes 100 * 8 microsteps
-    stepper.move(100*8);
-    stepper.rotate(180);
-
-    // as you can see, using degrees is easier
-    stepper.move(-100*8);
-    stepper.rotate(-180);
-
-    delay(5000);
+    stepper.rotate(-360);
 }

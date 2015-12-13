@@ -35,6 +35,7 @@ void BasicStepperDriver::init(void){
     digitalWrite(STEP, LOW);
 
     setMicrostep(1);
+    setRPM(RPM_DEFAULT);
 }
 
 /*
@@ -55,8 +56,13 @@ void BasicStepperDriver::setDirection(int direction){
  * Set stepping mode (1:divisor)
  * Allowed ranges for BasicStepperDriver are 1:1 to 1:32
  */
-void BasicStepperDriver::setMicrostep(int divisor){
-    microsteps = MICROSTEP_RANGE/divisor;
+unsigned BasicStepperDriver::setMicrostep(unsigned divisor){
+    for (unsigned ms=1; ms <= MICROSTEP_RANGE; ms<<=1){
+        if (divisor == ms){
+            microsteps = divisor;
+        }
+    }
+    return microsteps;
 }
 
 /*
@@ -67,10 +73,28 @@ int BasicStepperDriver::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
     setDirection(direction);
+    unsigned long pulse_duration = pulse_duration_us*MICROSTEP_RANGE/microsteps/2;
     while (steps--){
         digitalWrite(STEP, HIGH);
-        delayMicroseconds(pulse_duration_us*microsteps);
+        DELAY_MICROS(pulse_duration);
         digitalWrite(STEP, LOW);
-        delayMicroseconds(pulse_duration_us*microsteps);
+        DELAY_MICROS(pulse_duration);
     }
+}
+
+/*
+ * Move the motor a given number of degrees (1-360)
+ */
+int BasicStepperDriver::rotate(int deg){
+    int steps = (long)deg * STEPS * microsteps / 360;
+    return move(steps);
+}
+/*
+ * Move the motor with sub-1-degree precision.
+ * Note that using this function even once will add 1K to your program size
+ * due to inclusion of float support.
+ */
+int BasicStepperDriver::rotate(double deg){
+    int steps = deg * STEPS * microsteps / 360;
+    return move(steps);
 }
