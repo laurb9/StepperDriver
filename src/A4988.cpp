@@ -11,9 +11,9 @@
 
 /*
  * Microstepping resolution truth table (Page 6 of A4988 pdf)
- * 0bMS3,MS2,MS1 for 1,2,4,8,16 microsteps (note bits are reversed here)
+ * 0bMS3,MS2,MS1 for 1,2,4,8,16 microsteps
  */
-const uint8_t A4988::msTable[] = {0b000, 0b001, 0b010, 0b011, 0b111};
+const uint8_t A4988::ms_table[] = {0b000, 0b001, 0b010, 0b011, 0b111};
 
 /*
  * Connection using the defaults in A4988.h
@@ -26,16 +26,17 @@ A4988::A4988(void)
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-A4988::A4988(uint8_t dir, uint8_t step)
-:BasicStepperDriver(dir, step)
+A4988::A4988(int dir_pin, int step_pin)
+:BasicStepperDriver(dir_pin, step_pin)
 {}
 
 /*
  * Fully wired.
  * All the necessary control pins for A4988 are connected.
  */
-A4988::A4988(uint8_t dir, uint8_t step, uint8_t ms1, uint8_t ms2, uint8_t ms3)
-:BasicStepperDriver(dir, step), MS1(ms1), MS2(ms2), MS3(ms3)
+A4988::A4988(int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin)
+:BasicStepperDriver(dir_pin, step_pin),
+    ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
 {}
 
 /*
@@ -45,17 +46,17 @@ A4988::A4988(uint8_t dir, uint8_t step, uint8_t ms1, uint8_t ms2, uint8_t ms3)
 void A4988::setMicrostep(int divisor){
     BasicStepperDriver::setMicrostep(divisor);
 
-    pinMode(MS1, OUTPUT);
-    pinMode(MS2, OUTPUT);
-    pinMode(MS3, OUTPUT);
+    pinMode(ms1_pin, OUTPUT);
+    pinMode(ms2_pin, OUTPUT);
+    pinMode(ms3_pin, OUTPUT);
 
     int i = 0;
-    while (i < sizeof(msTable)){
+    while (i < sizeof(ms_table)){
         if (divisor & 1){
-            uint8_t mask = msTable[i];
-            digitalWrite(MS3, mask & 4);
-            digitalWrite(MS2, mask & 2);
-            digitalWrite(MS1, mask & 1);
+            uint8_t mask = ms_table[i];
+            digitalWrite(ms3_pin, mask & 4);
+            digitalWrite(ms2_pin, mask & 2);
+            digitalWrite(ms1_pin, mask & 1);
             break;
         }
         i++;

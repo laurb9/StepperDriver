@@ -21,18 +21,18 @@ BasicStepperDriver::BasicStepperDriver(void)
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-BasicStepperDriver::BasicStepperDriver(uint8_t dir, uint8_t step)
-:DIR(dir), STEP(step)
+BasicStepperDriver::BasicStepperDriver(int dir_pin, int step_pin)
+:dir_pin(dir_pin), step_pin(step_pin)
 {
     init();
 }
 
 void BasicStepperDriver::init(void){
-    pinMode(DIR, OUTPUT);
-    digitalWrite(DIR, LOW);
+    pinMode(dir_pin, OUTPUT);
+    digitalWrite(dir_pin, LOW);
 
-    pinMode(STEP, OUTPUT);
-    digitalWrite(STEP, LOW);
+    pinMode(step_pin, OUTPUT);
+    digitalWrite(step_pin, LOW);
 
     setMicrostep(1);
     setRPM(RPM_DEFAULT);
@@ -42,14 +42,14 @@ void BasicStepperDriver::init(void){
  * Set target motor RPM (1-200 is a reasonable range)
  */
 void BasicStepperDriver::setRPM(unsigned rpm){
-    pulse_duration_us = pulse_us(rpm, STEPS, MICROSTEP_RANGE);
+    pulse_duration_us = pulse_us(rpm, STEPS, max_microstep);
 }
 
 /*
  * DIR: forward LOW, reverse HIGH
  */
 void BasicStepperDriver::setDirection(int direction){
-    digitalWrite(DIR, (direction>=0) ? LOW : HIGH);
+    digitalWrite(dir_pin, (direction>=0) ? LOW : HIGH);
 }
 
 /*
@@ -57,7 +57,7 @@ void BasicStepperDriver::setDirection(int direction){
  * Allowed ranges for BasicStepperDriver are 1:1 to 1:32
  */
 unsigned BasicStepperDriver::setMicrostep(unsigned divisor){
-    for (unsigned ms=1; ms <= MICROSTEP_RANGE; ms<<=1){
+    for (unsigned ms=1; ms <= max_microstep; ms<<=1){
         if (divisor == ms){
             microsteps = divisor;
         }
@@ -73,11 +73,11 @@ int BasicStepperDriver::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
     setDirection(direction);
-    unsigned long pulse_duration = pulse_duration_us*MICROSTEP_RANGE/microsteps/2;
+    unsigned long pulse_duration = pulse_duration_us*max_microstep/microsteps/2;
     while (steps--){
-        digitalWrite(STEP, HIGH);
+        digitalWrite(step_pin, HIGH);
         DELAY_MICROS(pulse_duration);
-        digitalWrite(STEP, LOW);
+        digitalWrite(step_pin, LOW);
         DELAY_MICROS(pulse_duration);
     }
 }
@@ -90,7 +90,7 @@ int BasicStepperDriver::rotate(int deg){
     return move(steps);
 }
 /*
- * Move the motor with sub-1-degree precision.
+ * Move the motor with sub-degree precision.
  * Note that using this function even once will add 1K to your program size
  * due to inclusion of float support.
  */

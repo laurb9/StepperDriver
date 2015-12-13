@@ -14,25 +14,24 @@
 
 class DRV8834 : public BasicStepperDriver {
 protected:
-    uint8_t M0 = 10;
-    uint8_t M1 = 11;
+    uint8_t m0_pin = 10;
+    uint8_t m1_pin = 11;
 public:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MICROSTEP_RANGE = 32;
+    static const unsigned max_microstep = 32;
     /*
-     * Connection using the defaults above
-     * DIR-8, STEP-9, M0-10, M1-11
+     * Connection using the defaults
      */
     DRV8834(void);
     /*
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    DRV8834(uint8_t dir, uint8_t step);
+    DRV8834(int dir_pin, int step_pin);
     /*
      * Fully wired. All the necessary control pins for DRV8834 are connected.
      */
-    DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1);
+    DRV8834(int dir_pin, int step_pin, int m0_pin, int m1_pin);
     void setMicrostep(int direction);
 };
 #endif DRV8834_H

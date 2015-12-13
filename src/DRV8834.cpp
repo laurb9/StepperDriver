@@ -20,15 +20,15 @@ DRV8834::DRV8834(void)
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-DRV8834::DRV8834(uint8_t dir, uint8_t step)
-:BasicStepperDriver(dir, step)
+DRV8834::DRV8834(int dir_pin, int step_pin)
+:BasicStepperDriver(dir_pin, step_pin)
 {}
 
 /*
  * Fully wired. All the necessary control pins for DRV8834 are connected.
  */
-DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1)
-:BasicStepperDriver(dir, step), M0(m0), M1(m1)
+DRV8834::DRV8834(int dir_pin, int step_pin, int m0_pin, int m1_pin)
+:BasicStepperDriver(dir_pin, step_pin), m0_pin(m0_pin), m1_pin(m1_pin)
 {}
 
 /*
@@ -38,23 +38,23 @@ DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1)
 void DRV8834::setMicrostep(int divisor){
     BasicStepperDriver::setMicrostep(divisor);
 
-    pinMode(M1, OUTPUT);
-    digitalWrite(M1, (divisor < 8) ? LOW : HIGH);
+    pinMode(m1_pin, OUTPUT);
+    digitalWrite(m1_pin, (divisor < 8) ? LOW : HIGH);
 
     switch(divisor){
     case 1:
     case 8:
-        pinMode(M0, OUTPUT);
-        digitalWrite(M0, LOW);
+        pinMode(m0_pin, OUTPUT);
+        digitalWrite(m0_pin, LOW);
         break;
     case 2:
     case 16:
-        pinMode(M0, OUTPUT);
-        digitalWrite(M0, HIGH);
+        pinMode(m0_pin, OUTPUT);
+        digitalWrite(m0_pin, HIGH);
         break;
     case 4:
     case 32:
-        pinMode(M0, INPUT); // Z - high impedance
+        pinMode(m0_pin, INPUT); // Z - high impedance
         break;
     }
 }

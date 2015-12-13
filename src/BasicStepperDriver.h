@@ -23,8 +23,8 @@
  */
 #define pulse_us(rpm, steps, microsteps) ((1000000L/steps)*60/microsteps/rpm)
 
-inline void microWaitUntil(unsigned long targetMicros){
-    while (micros() < targetMicros);
+inline void microWaitUntil(unsigned long target_micros){
+    while (micros() < target_micros);
 }
 #define DELAY_MICROS(us) microWaitUntil(micros() + us)
 
@@ -34,9 +34,9 @@ inline void microWaitUntil(unsigned long targetMicros){
  */
 class BasicStepperDriver {
 protected:
-    uint8_t DIR = 8;      // DIR pin
-    uint8_t STEP = 9;     // STEP pin
-    // current microstep level, must be < MICROSTEP_RANGE
+    uint8_t dir_pin = 8;
+    uint8_t step_pin = 9;
+    // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration, depends on rpm and microstep level
@@ -47,7 +47,7 @@ protected:
 
 public:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MICROSTEP_RANGE = 32;
+    static const unsigned max_microstep = 32;
     /*
      * Connection using the defaults above
      * DIR-8, STEP-9
@@ -56,7 +56,7 @@ public:
     /*
      * Basic connection: DIR, STEP are configured explicitly.
      */
-    BasicStepperDriver(uint8_t dir, uint8_t step);
+    BasicStepperDriver(int dir_pin, int step_pin);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
@@ -68,11 +68,11 @@ public:
      */
     int move(int steps);
     /*
-     * Move the motor a given number of degrees (1-360)
+     * Rotate the motor a given number of degrees (1-360)
      */
     int rotate(int deg);
     /*
-     * Takes a float or double for increased movement precision.
+     * Rotate using a float or double for increased movement precision.
      */
     int rotate(double deg);
     /*
