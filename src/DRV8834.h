@@ -14,8 +14,8 @@
 
 class DRV8834 : public BasicStepperDriver {
 protected:
-    uint8_t m0_pin = 10;
-    uint8_t m1_pin = 11;
+    int m0_pin = 10;
+    int m1_pin = 11;
 public:
     // microstep range (1, 16, 32 etc)
     static const unsigned max_microstep = 32;

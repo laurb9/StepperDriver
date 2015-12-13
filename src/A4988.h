@@ -15,9 +15,9 @@
 class A4988 : public BasicStepperDriver {
 protected:
     static const uint8_t ms_table[];
-    uint8_t ms1_pin = 10;
-    uint8_t ms2_pin = 11;
-    uint8_t ms3_pin = 12;
+    int ms1_pin = 10;
+    int ms2_pin = 11;
+    int ms3_pin = 12;
 public:
     // microstep range (1, 16, 32 etc)
     static const unsigned max_microstep = 16;

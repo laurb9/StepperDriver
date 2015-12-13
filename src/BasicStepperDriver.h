@@ -34,8 +34,8 @@ inline void microWaitUntil(unsigned long target_micros){
  */
 class BasicStepperDriver {
 protected:
-    uint8_t dir_pin = 8;
-    uint8_t step_pin = 9;
+    int dir_pin = 8;
+    int step_pin = 9;
     // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;

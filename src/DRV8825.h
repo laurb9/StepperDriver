@@ -15,9 +15,9 @@
 class DRV8825 : public A4988 {
 protected:
     static const uint8_t ms_table[];
-    uint8_t mode0_pin = 10;
-    uint8_t mode1_pin = 11;
-    uint8_t mode2_pin = 12;
+    int mode0_pin = 10;
+    int mode1_pin = 11;
+    int mode2_pin = 12;
 
 public:
     // microstep range (1, 16, 32 etc)
