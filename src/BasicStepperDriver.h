@@ -36,7 +36,7 @@ protected:
     uint8_t DIR = 8;      // DIR pin
     uint8_t STEP = 9;     // STEP pin
     // current microstep level, must be < MICROSTEP_RANGE
-    // for 1:16 microsteps is 2
+    // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration, depends on rpm and microstep level
     unsigned pulse_duration_us = pulse_us(RPM_DEFAULT, STEPS, 32);
@@ -57,9 +57,10 @@ public:
      */
     BasicStepperDriver(uint8_t dir, uint8_t step);
     /*
-     * Set current microstep level, 1=full speed, 32=fine microsteppign
+     * Set current microstep level, 1=full speed, 32=fine microstepping
+     * Returns new level or previous level if value out of range
      */
-    void setMicrostep(int divisor);
+    unsigned setMicrostep(unsigned divisor);
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
