@@ -74,3 +74,11 @@ int BasicStepperDriver::move(int steps){
         delayMicroseconds(pulse_duration_us*microsteps);
     }
 }
+
+/*
+ * Move the motor a given number of degrees (1-360)
+ */
+int BasicStepperDriver::rotate(int deg){
+    int steps = long(deg) * STEPS * MICROSTEP_RANGE / microsteps / 360;
+    return move(steps);
+}

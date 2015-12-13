@@ -61,6 +61,10 @@ public:
      */
     int move(int steps);
     /*
+     * Move the motor a given number of degrees (1-360)
+     */
+    int rotate(int deg);
+    /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
     void setRPM(unsigned rpm);

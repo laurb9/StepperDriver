@@ -39,14 +39,14 @@ void loop() {
     stepper.setMicrostep(MICROSTEPS);
 
     /*
-     * Moving motor one full revolution
+     * Moving motor one full revolution using the degree notation
      */
-    stepper.move(200 * MICROSTEPS);
+    stepper.rotate(360);
 
     /*
-     * Moving motor one full reverse revolution
+     * Moving motor to original position using steps
      */
-    stepper.move(-200 * MICROSTEPS);
+    stepper.move(-200*MICROSTEPS);
 
     delay(5000);
 }
