@@ -12,19 +12,18 @@
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
 
-// most steppers are 200 steps per revolution (1.8 degree/step)
-#define STEPS 200
-#define RPM_DEFAULT 180
+// used internally by the library to mark unconnected pins
+#define PIN_UNCONNECTED -1
+#define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
 /*
- * helper macro
- * calculate the microstep duration in micros for a given rpm value.
- * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm[rpm]
+ * calculate the step pulse in microseconds for a given rpm value.
+ * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
  */
-#define pulse_us(rpm, steps, microsteps) ((1000000L/steps)*60/microsteps/rpm)
+#define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
-inline void microWaitUntil(unsigned long targetMicros){
-    while (micros() < targetMicros);
+inline void microWaitUntil(unsigned long target_micros){
+    while (micros() < target_micros);
 }
 #define DELAY_MICROS(us) microWaitUntil(micros() + us)
 
@@ -34,45 +33,50 @@ inline void microWaitUntil(unsigned long targetMicros){
  */
 class BasicStepperDriver {
 protected:
-    uint8_t DIR = 8;      // DIR pin
-    uint8_t STEP = 9;     // STEP pin
-    // current microstep level, must be < MICROSTEP_RANGE
+    int motor_steps;
+    int rpm;
+    int dir_pin;
+    int step_pin;
+    // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration, depends on rpm and microstep level
-    unsigned long pulse_duration_us;
+    unsigned long step_pulse;
 
     void setDirection(int direction);
     void init(void);
+    void calcStepPulse(void);
+
+    // tWH(STEP) pulse duration, STEP high, min value (us)
+    static const int step_high_min = 1;
+    // tWL(STEP) pulse duration, STEP low, min value (us)
+    static const int step_low_min = 1;
+    // tWAKE wakeup time, nSLEEP inactive to STEP (us)
+    static const int wakeup_time = 0;
 
 public:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MICROSTEP_RANGE = 32;
+    static const unsigned max_microstep = 128;
     /*
-     * Connection using the defaults above
-     * DIR-8, STEP-9
+     * Basic connection: DIR, STEP are connected.
      */
-    BasicStepperDriver(void);
-    /*
-     * Basic connection: DIR, STEP are configured explicitly.
-     */
-    BasicStepperDriver(uint8_t dir, uint8_t step);
+    BasicStepperDriver(int steps, int dir_pin, int step_pin);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
      */
-    unsigned setMicrostep(unsigned divisor);
+    unsigned setMicrostep(unsigned microsteps);
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
      */
     int move(int steps);
     /*
-     * Move the motor a given number of degrees (1-360)
+     * Rotate the motor a given number of degrees (1-360)
      */
     int rotate(int deg);
     /*
-     * Takes a float or double for increased movement precision.
+     * Rotate using a float or double for increased movement precision.
      */
     int rotate(double deg);
     /*

@@ -10,51 +10,64 @@
 #include "DRV8834.h"
 
 /*
- * Connection using the defaults DIR-8, STEP-9, M0-10, M1-11
- */
-DRV8834::DRV8834(void)
-:BasicStepperDriver()
-{}
-
-/*
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-DRV8834::DRV8834(uint8_t dir, uint8_t step)
-:BasicStepperDriver(dir, step)
+DRV8834::DRV8834(int steps, int dir_pin, int step_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin)
 {}
 
 /*
  * Fully wired. All the necessary control pins for DRV8834 are connected.
  */
-DRV8834::DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1)
-:BasicStepperDriver(dir, step), M0(m0), M1(m1)
+DRV8834::DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin), m0_pin(m0_pin), m1_pin(m1_pin)
 {}
 
 /*
  * Set microstepping mode (1:divisor)
  * Allowed ranges for DRV8834 are 1:1 to 1:32
+ * If the control pins are not connected, we recalculate the timing only
+ *
  */
-void DRV8834::setMicrostep(int divisor){
-    BasicStepperDriver::setMicrostep(divisor);
+unsigned DRV8834::setMicrostep(unsigned microsteps){
+    BasicStepperDriver::setMicrostep(microsteps);
 
-    pinMode(M1, OUTPUT);
-    digitalWrite(M1, (divisor < 8) ? LOW : HIGH);
+    if (!IS_CONNECTED(m0_pin) || !IS_CONNECTED(m1_pin)){
+        return this->microsteps;
+    }
 
-    switch(divisor){
+    /*
+     * Step mode truth table
+     * M1 M0    step mode
+     *  0  0     1
+     *  0  1     2
+     *  0  Z     4
+     *  1  0     8
+     *  1  1    16
+     *  1  Z    32
+     *
+     *  Z = high impedance mode (M0 is tri-state)
+     */
+
+    pinMode(m1_pin, OUTPUT);
+    digitalWrite(m1_pin, (this->microsteps < 8) ? LOW : HIGH);
+
+    switch(this->microsteps){
     case 1:
     case 8:
-        pinMode(M0, OUTPUT);
-        digitalWrite(M0, LOW);
+        pinMode(m0_pin, OUTPUT);
+        digitalWrite(m0_pin, LOW);
         break;
     case 2:
     case 16:
-        pinMode(M0, OUTPUT);
-        digitalWrite(M0, HIGH);
+        pinMode(m0_pin, OUTPUT);
+        digitalWrite(m0_pin, HIGH);
         break;
     case 4:
     case 32:
-        pinMode(M0, INPUT); // Z - high impedance
+        pinMode(m0_pin, INPUT); // Z - high impedance
         break;
     }
+    return this->microsteps;
 }

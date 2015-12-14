@@ -14,25 +14,28 @@
 
 class DRV8834 : public BasicStepperDriver {
 protected:
-    uint8_t M0 = 10;
-    uint8_t M1 = 11;
+    int m0_pin = PIN_UNCONNECTED;
+    int m1_pin = PIN_UNCONNECTED;
+    void init(void);
+    // tWH(STEP) pulse duration, STEP high, min value (1.9us)
+    static const int step_high_min = 2;
+    // tWL(STEP) pulse duration, STEP low, min value (1.9us)
+    static const int step_low_min = 2;
+    // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
+    static const int wakeup_time = 1000;
+    // also 200ns between ENBL/DIR/Mx changes and STEP HIGH
 public:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MICROSTEP_RANGE = 32;
-    /*
-     * Connection using the defaults above
-     * DIR-8, STEP-9, M0-10, M1-11
-     */
-    DRV8834(void);
+    static const unsigned max_microstep = 32;
     /*
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    DRV8834(uint8_t dir, uint8_t step);
+    DRV8834(int steps, int dir_pin, int step_pin);
     /*
      * Fully wired. All the necessary control pins for DRV8834 are connected.
      */
-    DRV8834(uint8_t dir, uint8_t step, uint8_t m0, uint8_t m1);
-    void setMicrostep(int direction);
+    DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin);
+    unsigned setMicrostep(unsigned microsteps);
 };
 #endif DRV8834_H
