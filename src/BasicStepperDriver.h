@@ -17,11 +17,10 @@
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
 /*
- * helper macro
- * calculate the microstep duration in micros for a given rpm value.
- * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm[rpm]
+ * calculate the step pulse in microseconds for a given rpm value.
+ * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
  */
-#define pulse_us(rpm, steps, microsteps) ((1000000L/steps)*60/microsteps/rpm)
+#define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
 inline void microWaitUntil(unsigned long target_micros){
     while (micros() < target_micros);
@@ -35,16 +34,18 @@ inline void microWaitUntil(unsigned long target_micros){
 class BasicStepperDriver {
 protected:
     int motor_steps;
+    int rpm;
     int dir_pin;
     int step_pin;
     // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration, depends on rpm and microstep level
-    unsigned long pulse_duration_us;
+    unsigned long step_pulse;
 
     void setDirection(int direction);
     void init(void);
+    void calcStepPulse(void);
 
     // tWH(STEP) pulse duration, STEP high, min value (us)
     static const int step_high_min = 1;
@@ -64,7 +65,7 @@ public:
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
      */
-    unsigned setMicrostep(unsigned divisor);
+    unsigned setMicrostep(unsigned microsteps);
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse

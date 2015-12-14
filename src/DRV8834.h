@@ -36,6 +36,6 @@ public:
      * Fully wired. All the necessary control pins for DRV8834 are connected.
      */
     DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin);
-    unsigned setMicrostep(unsigned divisor);
+    unsigned setMicrostep(unsigned microsteps);
 };
 #endif DRV8834_H

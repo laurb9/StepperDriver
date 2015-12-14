@@ -30,11 +30,11 @@ DRV8834::DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin)
  * If the control pins are not connected, we recalculate the timing only
  *
  */
-unsigned DRV8834::setMicrostep(unsigned divisor){
-    BasicStepperDriver::setMicrostep(divisor);
+unsigned DRV8834::setMicrostep(unsigned microsteps){
+    BasicStepperDriver::setMicrostep(microsteps);
 
     if (!IS_CONNECTED(m0_pin) || !IS_CONNECTED(m1_pin)){
-        return microsteps;
+        return this->microsteps;
     }
 
     /*
@@ -51,9 +51,9 @@ unsigned DRV8834::setMicrostep(unsigned divisor){
      */
 
     pinMode(m1_pin, OUTPUT);
-    digitalWrite(m1_pin, (divisor < 8) ? LOW : HIGH);
+    digitalWrite(m1_pin, (this->microsteps < 8) ? LOW : HIGH);
 
-    switch(divisor){
+    switch(this->microsteps){
     case 1:
     case 8:
         pinMode(m0_pin, OUTPUT);
@@ -69,5 +69,5 @@ unsigned DRV8834::setMicrostep(unsigned divisor){
         pinMode(m0_pin, INPUT); // Z - high impedance
         break;
     }
-    return microsteps;
+    return this->microsteps;
 }

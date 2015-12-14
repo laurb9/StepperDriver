@@ -27,14 +27,34 @@ void BasicStepperDriver::init(void){
     digitalWrite(step_pin, LOW);
 
     setMicrostep(1);
-    setRPM(60); // 60 rpm should be doable by every motor
+    setRPM(60); // 60 rpm is a reasonable default
+}
+
+
+void BasicStepperDriver::calcStepPulse(void){
+    step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
 }
 
 /*
  * Set target motor RPM (1-200 is a reasonable range)
  */
 void BasicStepperDriver::setRPM(unsigned rpm){
-    pulse_duration_us = pulse_us(rpm, motor_steps, max_microstep);
+    this->rpm = rpm;
+    calcStepPulse();
+}
+
+/*
+ * Set stepping mode (1:microsteps)
+ * Allowed ranges for BasicStepperDriver are 1:1 to 1:128
+ */
+unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
+    for (unsigned ms=1; ms <= max_microstep; ms<<=1){
+        if (microsteps == ms){
+            this->microsteps = microsteps;
+        }
+    }
+    calcStepPulse();
+    return this->microsteps;
 }
 
 /*
@@ -45,19 +65,6 @@ void BasicStepperDriver::setDirection(int direction){
 }
 
 /*
- * Set stepping mode (1:divisor)
- * Allowed ranges for BasicStepperDriver are 1:1 to 1:32
- */
-unsigned BasicStepperDriver::setMicrostep(unsigned divisor){
-    for (unsigned ms=1; ms <= max_microstep; ms<<=1){
-        if (divisor == ms){
-            microsteps = divisor;
-        }
-    }
-    return microsteps;
-}
-
-/*
  * Move the motor a given number of steps.
  * positive to move forward, negative to reverse
  */
@@ -65,7 +72,7 @@ int BasicStepperDriver::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
     setDirection(direction);
-    unsigned long pulse_duration = pulse_duration_us*max_microstep/microsteps/2;
+    unsigned long pulse_duration = step_pulse/2;
     while (steps--){
         digitalWrite(step_pin, HIGH);
         DELAY_MICROS(pulse_duration);

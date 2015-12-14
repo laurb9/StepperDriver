@@ -49,16 +49,16 @@ void A4988::init(void){
  * Allowed ranges for A4988 are 1:1 to 1:16
  * If the control pins are not connected, we recalculate the timing only
  */
-unsigned A4988::setMicrostep(unsigned divisor){
-    BasicStepperDriver::setMicrostep(divisor);
+unsigned A4988::setMicrostep(unsigned microsteps){
+    BasicStepperDriver::setMicrostep(microsteps);
 
     if (!IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms1_pin)){
-        return microsteps;
+        return this->microsteps;
     }
 
     int i = 0;
     while (i < sizeof(ms_table)){
-        if (divisor & (1<<i)){
+        if (this->microsteps & (1<<i)){
             uint8_t mask = ms_table[i];
             digitalWrite(ms3_pin, mask & 4);
             digitalWrite(ms2_pin, mask & 2);
@@ -67,5 +67,5 @@ unsigned A4988::setMicrostep(unsigned divisor){
         }
         i++;
     }
-    return microsteps;
+    return this->microsteps;
 }
