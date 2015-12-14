@@ -13,8 +13,8 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-BasicStepperDriver::BasicStepperDriver(int dir_pin, int step_pin)
-:dir_pin(dir_pin), step_pin(step_pin)
+BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin)
+:motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin)
 {
     init();
 }
@@ -27,14 +27,14 @@ void BasicStepperDriver::init(void){
     digitalWrite(step_pin, LOW);
 
     setMicrostep(1);
-    setRPM(RPM_DEFAULT);
+    setRPM(60); // 60 rpm should be doable by every motor
 }
 
 /*
  * Set target motor RPM (1-200 is a reasonable range)
  */
 void BasicStepperDriver::setRPM(unsigned rpm){
-    pulse_duration_us = pulse_us(rpm, STEPS, max_microstep);
+    pulse_duration_us = pulse_us(rpm, motor_steps, max_microstep);
 }
 
 /*
@@ -78,7 +78,7 @@ int BasicStepperDriver::move(int steps){
  * Move the motor a given number of degrees (1-360)
  */
 int BasicStepperDriver::rotate(int deg){
-    int steps = (long)deg * STEPS * microsteps / 360;
+    int steps = (long)deg * motor_steps * microsteps / 360;
     return move(steps);
 }
 /*
@@ -87,6 +87,6 @@ int BasicStepperDriver::rotate(int deg){
  * due to inclusion of float support.
  */
 int BasicStepperDriver::rotate(double deg){
-    int steps = deg * STEPS * microsteps / 360;
+    int steps = deg * motor_steps * microsteps / 360;
     return move(steps);
 }

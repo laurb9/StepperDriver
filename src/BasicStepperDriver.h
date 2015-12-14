@@ -12,10 +12,6 @@
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
 
-// most steppers are 200 steps per revolution (1.8 degree/step)
-#define STEPS 200
-#define RPM_DEFAULT 180
-
 // used internally by the library to mark unconnected pins
 #define PIN_UNCONNECTED -1
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
@@ -38,6 +34,7 @@ inline void microWaitUntil(unsigned long target_micros){
  */
 class BasicStepperDriver {
 protected:
+    int motor_steps;
     int dir_pin;
     int step_pin;
     // current microstep level, must be < max_microstep
@@ -49,13 +46,20 @@ protected:
     void setDirection(int direction);
     void init(void);
 
+    // tWH(STEP) pulse duration, STEP high, min value (us)
+    static const int step_high_min = 1;
+    // tWL(STEP) pulse duration, STEP low, min value (us)
+    static const int step_low_min = 1;
+    // tWAKE wakeup time, nSLEEP inactive to STEP (us)
+    static const int wakeup_time = 0;
+
 public:
     // microstep range (1, 16, 32 etc)
-    static const unsigned max_microstep = 32;
+    static const unsigned max_microstep = 128;
     /*
      * Basic connection: DIR, STEP are connected.
      */
-    BasicStepperDriver(int dir_pin, int step_pin);
+    BasicStepperDriver(int steps, int dir_pin, int step_pin);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range

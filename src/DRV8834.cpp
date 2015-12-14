@@ -13,15 +13,15 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-DRV8834::DRV8834(int dir_pin, int step_pin)
-:BasicStepperDriver(dir_pin, step_pin)
+DRV8834::DRV8834(int steps, int dir_pin, int step_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin)
 {}
 
 /*
  * Fully wired. All the necessary control pins for DRV8834 are connected.
  */
-DRV8834::DRV8834(int dir_pin, int step_pin, int m0_pin, int m1_pin)
-:BasicStepperDriver(dir_pin, step_pin), m0_pin(m0_pin), m1_pin(m1_pin)
+DRV8834::DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin), m0_pin(m0_pin), m1_pin(m1_pin)
 {}
 
 /*

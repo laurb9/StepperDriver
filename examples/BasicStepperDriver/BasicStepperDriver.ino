@@ -11,6 +11,9 @@
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
 
+// Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
+#define MOTOR_STEPS 200
+
 // All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
@@ -20,7 +23,7 @@
 #define MICROSTEPS 1
 
 // 2-wire basic config, microstepping is hardwired on the driver
-BasicStepperDriver stepper(DIR, STEP);
+BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 
 void setup() {
     /*

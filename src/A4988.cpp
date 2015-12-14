@@ -19,16 +19,16 @@ const uint8_t A4988::ms_table[] = {0b000, 0b001, 0b010, 0b011, 0b111};
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-A4988::A4988(int dir_pin, int step_pin)
-:BasicStepperDriver(dir_pin, step_pin)
+A4988::A4988(int steps, int dir_pin, int step_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin)
 {}
 
 /*
  * Fully wired.
  * All the necessary control pins for A4988 are connected.
  */
-A4988::A4988(int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin)
-:BasicStepperDriver(dir_pin, step_pin),
+A4988::A4988(int steps, int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin),
     ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
 {}
 
