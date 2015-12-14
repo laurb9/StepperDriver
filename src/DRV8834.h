@@ -17,6 +17,13 @@ protected:
     int m0_pin = PIN_UNCONNECTED;
     int m1_pin = PIN_UNCONNECTED;
     void init(void);
+    // tWH(STEP) pulse duration, STEP high, min value (1.9us)
+    static const int step_high_min = 2;
+    // tWL(STEP) pulse duration, STEP low, min value (1.9us)
+    static const int step_low_min = 2;
+    // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
+    static const int wakeup_time = 1000;
+    // also 200ns between ENBL/DIR/Mx changes and STEP HIGH
 public:
     // microstep range (1, 16, 32 etc)
     static const unsigned max_microstep = 32;
@@ -24,11 +31,11 @@ public:
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    DRV8834(int dir_pin, int step_pin);
+    DRV8834(int steps, int dir_pin, int step_pin);
     /*
      * Fully wired. All the necessary control pins for DRV8834 are connected.
      */
-    DRV8834(int dir_pin, int step_pin, int m0_pin, int m1_pin);
-    unsigned setMicrostep(unsigned divisor);
+    DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin);
+    unsigned setMicrostep(unsigned microsteps);
 };
 #endif DRV8834_H

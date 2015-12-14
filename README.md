@@ -76,9 +76,9 @@ stepper motor like the seconds hand of a watch:
 #include <Arduino.h>
 #include "A4988.h"
 
-// All the wires needed for full functionality
-# pins used are DIR, STEP, MS1, MS2, MS3 in that order
-A4988 stepper(8, 9, 10, 11, 12);
+// using a 200-step motor (most common)
+// pins used are DIR, STEP, MS1, MS2, MS3 in that order
+A4988 stepper(200, 8, 9, 10, 11, 12);
 
 void setup() {
     // Set target motor RPM to 1RPM

@@ -19,16 +19,16 @@ const uint8_t A4988::ms_table[] = {0b000, 0b001, 0b010, 0b011, 0b111};
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-A4988::A4988(int dir_pin, int step_pin)
-:BasicStepperDriver(dir_pin, step_pin)
+A4988::A4988(int steps, int dir_pin, int step_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin)
 {}
 
 /*
  * Fully wired.
  * All the necessary control pins for A4988 are connected.
  */
-A4988::A4988(int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin)
-:BasicStepperDriver(dir_pin, step_pin),
+A4988::A4988(int steps, int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin),
     ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
 {}
 
@@ -49,16 +49,16 @@ void A4988::init(void){
  * Allowed ranges for A4988 are 1:1 to 1:16
  * If the control pins are not connected, we recalculate the timing only
  */
-unsigned A4988::setMicrostep(unsigned divisor){
-    BasicStepperDriver::setMicrostep(divisor);
+unsigned A4988::setMicrostep(unsigned microsteps){
+    BasicStepperDriver::setMicrostep(microsteps);
 
     if (!IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms1_pin)){
-        return microsteps;
+        return this->microsteps;
     }
 
     int i = 0;
     while (i < sizeof(ms_table)){
-        if (divisor & (1<<i)){
+        if (this->microsteps & (1<<i)){
             uint8_t mask = ms_table[i];
             digitalWrite(ms3_pin, mask & 4);
             digitalWrite(ms2_pin, mask & 2);
@@ -67,5 +67,5 @@ unsigned A4988::setMicrostep(unsigned divisor){
         }
         i++;
     }
-    return microsteps;
+    return this->microsteps;
 }
