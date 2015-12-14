@@ -72,12 +72,17 @@ int BasicStepperDriver::move(int steps){
     int direction = (steps >= 0) ? 1 : -1;
     steps = steps * direction;
     setDirection(direction);
+    /*
+     * We currently try to do a 50% duty cycle so it's easy to see.
+     * Other option is step_high_min, pulse_duration-step_high_min.
+     */
     unsigned long pulse_duration = step_pulse/2;
     while (steps--){
         digitalWrite(step_pin, HIGH);
-        DELAY_MICROS(pulse_duration);
+        unsigned long next_edge = micros() + pulse_duration;
+        microWaitUntil(next_edge);
         digitalWrite(step_pin, LOW);
-        DELAY_MICROS(pulse_duration);
+        microWaitUntil(next_edge + pulse_duration);
     }
 }
 
