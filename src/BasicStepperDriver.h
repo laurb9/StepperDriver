@@ -18,7 +18,7 @@
 
 // used internally by the library to mark unconnected pins
 #define PIN_UNCONNECTED -1
-#define IS_CONNECTED(pin) (pin == PIN_UNCONNECTED)
+#define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
 /*
  * helper macro
