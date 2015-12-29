@@ -44,8 +44,6 @@ DRV8834 stepper(MOTOR_STEPS, DIR, STEP, M0, M1);
 void setup() {
     /*
      * Set target motor RPM.
-     * These motors can do up to about 200rpm.
-     * Too high will result in a high pitched whine and the motor does not move.
      */
     stepper.setRPM(1);
     stepper.setMicrostep(1); // make sure we are in full speed mode
@@ -55,5 +53,5 @@ void loop() {
     /*
      * The easy way is just tell the motor to rotate 360 degrees at 1rpm
      */
-    stepper.rotate(-360);
+    stepper.rotate(360);
 }
