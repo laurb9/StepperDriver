@@ -21,7 +21,7 @@ BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin)
 
 void BasicStepperDriver::init(void){
     pinMode(dir_pin, OUTPUT);
-    digitalWrite(dir_pin, LOW);
+    digitalWrite(dir_pin, HIGH);
 
     pinMode(step_pin, OUTPUT);
     digitalWrite(step_pin, LOW);
@@ -58,10 +58,10 @@ unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
 }
 
 /*
- * DIR: forward LOW, reverse HIGH
+ * DIR: forward HIGH, reverse LOW
  */
 void BasicStepperDriver::setDirection(int direction){
-    digitalWrite(dir_pin, (direction>=0) ? LOW : HIGH);
+    digitalWrite(dir_pin, (direction<0) ? LOW : HIGH);
 }
 
 /*
