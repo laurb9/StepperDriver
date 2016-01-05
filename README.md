@@ -89,7 +89,7 @@ void setup() {
 
 void loop() {
     // Tell motor to rotate 360 degrees. That's it.
-    stepper.rotate(-360);
+    stepper.rotate(360);
 }
 ```
 
