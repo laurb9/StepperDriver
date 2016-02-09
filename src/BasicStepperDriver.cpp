@@ -90,7 +90,7 @@ int BasicStepperDriver::move(int steps){
  * Move the motor a given number of degrees (1-360)
  */
 int BasicStepperDriver::rotate(int deg){
-    int steps = (long)deg * motor_steps * microsteps / 360;
+    int steps = (long)deg * motor_steps * (long)microsteps / 360;
     return move(steps);
 }
 /*

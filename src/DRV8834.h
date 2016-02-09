@@ -38,4 +38,4 @@ public:
     DRV8834(int steps, int dir_pin, int step_pin, int m0_pin, int m1_pin);
     unsigned setMicrostep(unsigned microsteps);
 };
-#endif DRV8834_H
+#endif // DRV8834_H

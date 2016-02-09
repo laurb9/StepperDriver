@@ -32,4 +32,4 @@ public:
     DRV8825(int steps, int dir_pin, int step_pin);
     DRV8825(int steps, int dir_pin, int step_pin, int mode0_pin, int mode1_pin, int mode2_pin);
 };
-#endif DRV8825_H
+#endif // DRV8825_H
