@@ -84,4 +84,4 @@ public:
      */
     void setRPM(unsigned rpm);
 };
-#endif STEPPER_DRIVER_BASE_H
+#endif // STEPPER_DRIVER_BASE_H

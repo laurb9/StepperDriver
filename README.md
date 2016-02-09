@@ -42,9 +42,6 @@ Wiring
     - B2 - BLU 
 
 - 100uF capacitor between GND - VMOT 
-- (DRV8834 only) 100K-470K resistor from GND - M0
-  (without this, modes that put M0 in high-impedance do not seem to work)
-
 - Set the max current on the driver board to the motor limit (see below).
 - Have a motor power supply that can deliver that current.
 
@@ -99,4 +96,8 @@ Hardware
 - A <a href="https://www.pololu.com/category/120/stepper-motor-drivers">stepper motor driver</a>, for example DRV8834, DRV8825, DRV8824, A4988.
 - A <a href="http://www.circuitspecialists.com/stepper-motor">Stepper Motor</a>.
 - 1 x 100uF capacitor
-- 1 x 100-470K resistor (for DRV8834 only)
+
+Notes
+=====
+For DRV8834, if 1:4 and 1:32 microstepping modes do not work, add a 470K resistor
+from M0 to GND.

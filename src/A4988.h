@@ -40,4 +40,4 @@ public:
     A4988(int steps, int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin);
     unsigned setMicrostep(unsigned microsteps);
 };
-#endif A4988_H
+#endif // A4988_H
