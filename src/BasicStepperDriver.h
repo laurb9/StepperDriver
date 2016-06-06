@@ -35,7 +35,7 @@ inline void microWaitUntil(unsigned long target_micros){
 class BasicStepperDriver {
 protected:
     int motor_steps;
-    int rpm;
+    int rpm = 60;
     int dir_pin;
     int step_pin;
     // current microstep level, must be < max_microstep
