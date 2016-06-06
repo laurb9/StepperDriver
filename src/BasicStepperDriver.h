@@ -23,6 +23,7 @@
 #define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
 inline void microWaitUntil(unsigned long target_micros){
+    yield();
     while (micros() < target_micros);
 }
 #define DELAY_MICROS(us) microWaitUntil(micros() + us)
