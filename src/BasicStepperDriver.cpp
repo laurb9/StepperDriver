@@ -51,6 +51,7 @@ unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
     for (unsigned ms=1; ms <= max_microstep; ms<<=1){
         if (microsteps == ms){
             this->microsteps = microsteps;
+            break;
         }
     }
     calcStepPulse();
