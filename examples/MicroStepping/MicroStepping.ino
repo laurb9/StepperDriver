@@ -19,6 +19,7 @@
 // All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
+#define ENBL 10
 
 // 2-wire basic config, microstepping is hardwired on the driver
 // BasicStepperDriver stepper(DIR, STEP);
@@ -27,6 +28,7 @@
 #define M0 10
 #define M1 11
 DRV8834 stepper(MOTOR_STEPS, DIR, STEP, M0, M1);
+// DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENBL, M0, M1);
 
 // microstep control for A4988
 // #define MS1 10
