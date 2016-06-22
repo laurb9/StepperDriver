@@ -37,7 +37,7 @@ protected:
     int rpm;
     int dir_pin;
     int step_pin;
-    int enable_pin;
+    int enable_pin = PIN_UNCONNECTED;
     
     // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
