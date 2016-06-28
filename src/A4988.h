@@ -34,10 +34,13 @@ public:
      * Microstepping controls should be hardwired.
      */
     A4988(int steps, int dir_pin, int step_pin);
+    A4988(int steps, int dir_pin, int step_pin, int enable_pin);
+    
     /*
      * Fully wired. All the necessary control pins for A4988 are connected.
      */
     A4988(int steps, int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin);
+    A4988(int steps, int dir_pin, int step_pin, int enable_pin, int ms1_pin, int ms2_pin, int ms3_pin);
     unsigned setMicrostep(unsigned microsteps);
 };
 #endif // A4988_H

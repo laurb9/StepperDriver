@@ -17,6 +17,8 @@
 // All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
+//Uncomment line to use enable/disable functionality
+//#define ENBL 7
 
 // Since microstepping is set externally, make sure this matches the selected mode
 // 1=full step, 2=half step etc.
@@ -24,6 +26,9 @@
 
 // 2-wire basic config, microstepping is hardwired on the driver
 BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
+
+//Uncomment line to use enable/disable functionality
+//BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP, ENBL);
 
 void setup() {
     /*
@@ -35,6 +40,10 @@ void setup() {
 }
 
 void loop() {
+  
+    // energize coils - the motor will hold position
+    // stepper.enable();
+  
     /*
      * Tell the driver the microstep level we selected.
      * If mismatched, the motor will move at a different RPM than chosen.
@@ -50,6 +59,9 @@ void loop() {
      * Moving motor to original position using steps
      */
     stepper.move(-200*MICROSTEPS);
+
+    // pause and allow the motor to be moved by hand
+    // stepper.disable();
 
     delay(5000);
 }

@@ -37,6 +37,8 @@ protected:
     int rpm;
     int dir_pin;
     int step_pin;
+    int enable_pin = PIN_UNCONNECTED;
+    
     // current microstep level, must be < max_microstep
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
@@ -61,6 +63,7 @@ public:
      * Basic connection: DIR, STEP are connected.
      */
     BasicStepperDriver(int steps, int dir_pin, int step_pin);
+    BasicStepperDriver(int steps, int dir_pin, int step_pin, int enable_pin);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
@@ -83,5 +86,10 @@ public:
      * Set target motor RPM (1-200 is a reasonable range)
      */
     void setRPM(unsigned rpm);
+    /*
+     * Turn off/on motor to allow the motor to be moved by hand/hold the position in place
+     */
+    void enable(void);
+    void disable(void);
 };
 #endif // STEPPER_DRIVER_BASE_H
