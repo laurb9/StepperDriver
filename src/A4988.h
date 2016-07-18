@@ -14,7 +14,7 @@
 
 class A4988 : public BasicStepperDriver {
 protected:
-    static const uint8_t ms_table[];
+    static const uint8_t MS_TABLE[];
     int ms1_pin = PIN_UNCONNECTED;
     int ms2_pin = PIN_UNCONNECTED;
     int ms3_pin = PIN_UNCONNECTED;
@@ -26,9 +26,19 @@ protected:
     // wakeup time, nSLEEP inactive to STEP (1000us)
     static const int wakeup_time = 1000;
     // also 200ns between ENBL/DIR/MSx changes and STEP HIGH
-public:
+
+    // Get the microstep table
+    virtual const uint8_t* getMicrostepTable();
+    virtual size_t getMicrostepTableSize();
+
+    // Get max microsteps supported by the device
+    unsigned getMaxMicrostep() override;
+
+private:
     // microstep range (1, 16, 32 etc)
-    static const unsigned max_microstep = 16;
+    static const unsigned MAX_MICROSTEP = 16;
+
+public:
     /*
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.

@@ -56,7 +56,7 @@ void BasicStepperDriver::setRPM(unsigned rpm){
  * Allowed ranges for BasicStepperDriver are 1:1 to 1:128
  */
 unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
-    for (unsigned ms=1; ms <= max_microstep; ms<<=1){
+    for (unsigned ms=1; ms <= this->getMaxMicrostep(); ms<<=1){
         if (microsteps == ms){
             this->microsteps = microsteps;
         }
@@ -128,4 +128,6 @@ void BasicStepperDriver::disable(void){
     }
 }
 
-
+unsigned BasicStepperDriver::getMaxMicrostep(){
+    return BasicStepperDriver::MAX_MICROSTEP;
+}

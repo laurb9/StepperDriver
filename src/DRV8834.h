@@ -24,9 +24,15 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
     static const int wakeup_time = 1000;
     // also 200ns between ENBL/DIR/Mx changes and STEP HIGH
-public:
+
+    // Get max microsteps supported by the device
+    unsigned getMaxMicrostep() override;
+
+private:
     // microstep range (1, 16, 32 etc)
-    static const unsigned max_microstep = 32;
+    static const unsigned MAX_MICROSTEP = 32;
+
+public:
     /*
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
