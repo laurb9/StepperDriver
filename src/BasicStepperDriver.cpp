@@ -19,6 +19,12 @@ BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin)
     init();
 }
 
+BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin, int enable_pin)
+:motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin), enable_pin(enable_pin)
+{
+    init();
+}
+
 void BasicStepperDriver::init(void){
     pinMode(dir_pin, OUTPUT);
     digitalWrite(dir_pin, HIGH);
@@ -28,6 +34,8 @@ void BasicStepperDriver::init(void){
 
     setMicrostep(1);
     setRPM(60); // 60 rpm is a reasonable default
+
+    enable();
 }
 
 
@@ -48,7 +56,7 @@ void BasicStepperDriver::setRPM(unsigned rpm){
  * Allowed ranges for BasicStepperDriver are 1:1 to 1:128
  */
 unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
-    for (unsigned ms=1; ms <= max_microstep; ms<<=1){
+    for (unsigned ms=1; ms <= this->getMaxMicrostep(); ms<<=1){
         if (microsteps == ms){
             this->microsteps = microsteps;
         }
@@ -101,4 +109,25 @@ int BasicStepperDriver::rotate(int deg){
 int BasicStepperDriver::rotate(double deg){
     int steps = deg * motor_steps * microsteps / 360;
     return move(steps);
+}
+
+/*
+ * Enable/Disable the motor by setting a digital flag
+ */
+void BasicStepperDriver::enable(void){
+    if IS_CONNECTED(enable_pin){
+        pinMode(enable_pin, OUTPUT);
+        digitalWrite(enable_pin, LOW);
+    }
+}
+
+void BasicStepperDriver::disable(void){
+    if IS_CONNECTED(enable_pin){
+        pinMode(enable_pin, OUTPUT);
+        digitalWrite(enable_pin, HIGH);
+    }
+}
+
+unsigned BasicStepperDriver::getMaxMicrostep(){
+    return BasicStepperDriver::MAX_MICROSTEP;
 }

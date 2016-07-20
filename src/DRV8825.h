@@ -14,7 +14,7 @@
 
 class DRV8825 : public A4988 {
 protected:
-    static const uint8_t ms_table[];
+    static const uint8_t MS_TABLE[];
     int mode0_pin = PIN_UNCONNECTED;
     int mode1_pin = PIN_UNCONNECTED;
     int mode2_pin = PIN_UNCONNECTED;
@@ -25,11 +25,22 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
     static const int wakeup_time = 1700;
     // also 650ns between ENBL/DIR/MODEx changes and STEP HIGH
-public:
-    // microstep range (1, 16, 32 etc)
-    static const unsigned max_microstep = 32;
 
+    // Get the microstep table
+    const uint8_t* getMicrostepTable() override;
+    size_t getMicrostepTableSize() override;
+
+    // Get max microsteps supported by the device
+    unsigned getMaxMicrostep() override;
+
+private:
+    // microstep range (1, 16, 32 etc)
+    static const unsigned MAX_MICROSTEP = 32;
+
+public:
     DRV8825(int steps, int dir_pin, int step_pin);
+    DRV8825(int steps, int dir_pin, int step_pin, int enable_pin);
     DRV8825(int steps, int dir_pin, int step_pin, int mode0_pin, int mode1_pin, int mode2_pin);
+    DRV8825(int steps, int dir_pin, int step_pin, int enable_pin, int mode0_pin, int mode1_pin, int mode2_pin);
 };
 #endif // DRV8825_H
