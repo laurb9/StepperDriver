@@ -39,7 +39,7 @@ protected:
     int step_pin;
     int enable_pin = PIN_UNCONNECTED;
     
-    // current microstep level, must be < max_microstep
+    // current microstep level, must be < getMaxMicrostep()
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration, depends on rpm and microstep level
@@ -56,9 +56,14 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
     static const int wakeup_time = 0;
 
-public:
+    // Get max microsteps supported by the device
+    virtual unsigned getMaxMicrostep();
+
+private:
     // microstep range (1, 16, 32 etc)
-    static const unsigned max_microstep = 128;
+    static const unsigned MAX_MICROSTEP = 128;
+
+public:
     /*
      * Basic connection: DIR, STEP are connected.
      */

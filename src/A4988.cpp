@@ -13,7 +13,7 @@
  * Microstepping resolution truth table (Page 6 of A4988 pdf)
  * 0bMS3,MS2,MS1 for 1,2,4,8,16 microsteps
  */
-const uint8_t A4988::ms_table[] = {0b000, 0b001, 0b010, 0b011, 0b111};
+const uint8_t A4988::MS_TABLE[] = {0b000, 0b001, 0b010, 0b011, 0b111};
 
 /*
  * Basic connection: only DIR, STEP are connected.
@@ -65,8 +65,11 @@ unsigned A4988::setMicrostep(unsigned microsteps){
         return this->microsteps;
     }
 
+    const uint8_t* ms_table = this->getMicrostepTable();
+    size_t ms_table_size = this->getMicrostepTableSize();
+
     int i = 0;
-    while (i < sizeof(ms_table)){
+    while (i < ms_table_size){
         if (this->microsteps & (1<<i)){
             uint8_t mask = ms_table[i];
             digitalWrite(ms3_pin, mask & 4);
@@ -77,4 +80,16 @@ unsigned A4988::setMicrostep(unsigned microsteps){
         i++;
     }
     return this->microsteps;
+}
+
+const uint8_t* A4988::getMicrostepTable(){
+    return A4988::MS_TABLE;
+}
+
+size_t A4988::getMicrostepTableSize(){
+    return sizeof(A4988::MS_TABLE);
+}
+
+unsigned A4988::getMaxMicrostep(){
+    return A4988::MAX_MICROSTEP;
 }

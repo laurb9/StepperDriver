@@ -79,3 +79,7 @@ unsigned DRV8834::setMicrostep(unsigned microsteps){
     }
     return this->microsteps;
 }
+
+unsigned DRV8834::getMaxMicrostep(){
+    return DRV8834::MAX_MICROSTEP;
+}
