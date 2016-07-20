@@ -15,9 +15,6 @@
 class DRV8825 : public A4988 {
 protected:
     static const uint8_t MS_TABLE[];
-    int mode0_pin = PIN_UNCONNECTED;
-    int mode1_pin = PIN_UNCONNECTED;
-    int mode2_pin = PIN_UNCONNECTED;
     // tWH(STEP) pulse duration, STEP high, min value (1.9us)
     static const int step_high_min = 2;
     // tWL(STEP) pulse duration, STEP low, min value (1.9us)
