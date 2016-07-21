@@ -23,6 +23,7 @@
 #define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
 inline void microWaitUntil(unsigned long target_micros){
+    yield();
     while (micros() < target_micros);
 }
 #define DELAY_MICROS(us) microWaitUntil(micros() + us)
@@ -34,7 +35,7 @@ inline void microWaitUntil(unsigned long target_micros){
 class BasicStepperDriver {
 protected:
     int motor_steps;
-    int rpm;
+    int rpm = 60;
     int dir_pin;
     int step_pin;
     int enable_pin = PIN_UNCONNECTED;
