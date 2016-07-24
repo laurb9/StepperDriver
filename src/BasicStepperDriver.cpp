@@ -32,6 +32,11 @@ void BasicStepperDriver::init(void){
     pinMode(step_pin, OUTPUT);
     digitalWrite(step_pin, LOW);
 
+    if IS_CONNECTED(enable_pin){
+        pinMode(enable_pin, OUTPUT);
+        digitalWrite(enable_pin, HIGH); // disable
+    }
+
     setMicrostep(1);
     setRPM(60); // 60 rpm is a reasonable default
 
@@ -120,14 +125,12 @@ int BasicStepperDriver::rotate(double deg){
  */
 void BasicStepperDriver::enable(void){
     if IS_CONNECTED(enable_pin){
-        pinMode(enable_pin, OUTPUT);
         digitalWrite(enable_pin, LOW);
     }
 }
 
 void BasicStepperDriver::disable(void){
     if IS_CONNECTED(enable_pin){
-        pinMode(enable_pin, OUTPUT);
         digitalWrite(enable_pin, HIGH);
     }
 }
