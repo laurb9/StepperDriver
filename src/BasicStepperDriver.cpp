@@ -82,7 +82,7 @@ void BasicStepperDriver::setDirection(int direction){
  * Move the motor a given number of steps.
  * positive to move forward, negative to reverse
  */
-int BasicStepperDriver::move(long steps){
+void BasicStepperDriver::move(long steps){
     if (steps >= 0){
         setDirection(1);
     } else {
@@ -106,18 +106,18 @@ int BasicStepperDriver::move(long steps){
 /*
  * Move the motor a given number of degrees (1-360)
  */
-int BasicStepperDriver::rotate(long deg){
+void BasicStepperDriver::rotate(long deg){
     long steps = deg * motor_steps * (long)microsteps / 360;
-    return move(steps);
+    move(steps);
 }
 /*
  * Move the motor with sub-degree precision.
  * Note that using this function even once will add 1K to your program size
  * due to inclusion of float support.
  */
-int BasicStepperDriver::rotate(double deg){
+void BasicStepperDriver::rotate(double deg){
     long steps = deg * motor_steps * microsteps / 360;
-    return move(steps);
+    move(steps);
 }
 
 /*
