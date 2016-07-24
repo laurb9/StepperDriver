@@ -25,14 +25,20 @@ Wiring
 ======
 
 - Arduino to driver board:
-    - DIR - A8
-    - STEP - A9
-    - M0 - A10
-    - M1 - A11
-    - SLEEP - 3.3V
+    - DIR - D8
+    - STEP - D9
+    - SLEEP - HIGH (Vdd)
     - GND - Arduino GND
     - GND - Motor power GND
-    - VMOT - Motor power 2.5-10.8V (for DRV8834)
+    - VMOT - Motor power (check driver-specific voltage range)
+    - A4988/DRV8825 microstep control
+      - MS1/MODE0 - D10
+      - MS2/MODE1 - D11
+      - MS3/MODE2 - D12
+    - DRV8834 microstep control
+      - M0 - D10
+      - M1 - D11
+    - ~ENABLE (optional) recommend D13 to visually check if coils are active
 
 - driver board to motor (this varies from motor to motor, check motor coils schematic).
   I just list the motor wires counter-clockwise
