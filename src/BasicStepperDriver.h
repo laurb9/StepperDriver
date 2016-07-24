@@ -39,11 +39,11 @@ protected:
     int dir_pin;
     int step_pin;
     int enable_pin = PIN_UNCONNECTED;
-    
+
     // current microstep level, must be < getMaxMicrostep()
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
-    // step pulse duration, depends on rpm and microstep level
+    // step pulse duration (microseconds), depends on rpm and microstep level
     unsigned long step_pulse;
 
     void setDirection(int direction);
@@ -79,11 +79,11 @@ public:
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
      */
-    int move(int steps);
+    int move(long steps);
     /*
      * Rotate the motor a given number of degrees (1-360)
      */
-    int rotate(int deg);
+    int rotate(long deg);
     /*
      * Rotate using a float or double for increased movement precision.
      */

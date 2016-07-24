@@ -77,10 +77,13 @@ void BasicStepperDriver::setDirection(int direction){
  * Move the motor a given number of steps.
  * positive to move forward, negative to reverse
  */
-int BasicStepperDriver::move(int steps){
-    int direction = (steps >= 0) ? 1 : -1;
-    steps = steps * direction;
-    setDirection(direction);
+int BasicStepperDriver::move(long steps){
+    if (steps >= 0){
+        setDirection(1);
+    } else {
+        setDirection(-1);
+        steps = -steps;
+    }
     /*
      * We currently try to do a 50% duty cycle so it's easy to see.
      * Other option is step_high_min, pulse_duration-step_high_min.
@@ -98,8 +101,8 @@ int BasicStepperDriver::move(int steps){
 /*
  * Move the motor a given number of degrees (1-360)
  */
-int BasicStepperDriver::rotate(int deg){
-    int steps = (long)deg * motor_steps * (long)microsteps / 360;
+int BasicStepperDriver::rotate(long deg){
+    long steps = deg * motor_steps * (long)microsteps / 360;
     return move(steps);
 }
 /*
@@ -108,7 +111,7 @@ int BasicStepperDriver::rotate(int deg){
  * due to inclusion of float support.
  */
 int BasicStepperDriver::rotate(double deg){
-    int steps = deg * motor_steps * microsteps / 360;
+    long steps = deg * motor_steps * microsteps / 360;
     return move(steps);
 }
 
