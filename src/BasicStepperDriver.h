@@ -79,15 +79,18 @@ public:
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
      */
-    int move(long steps);
+    void move(long steps);
     /*
      * Rotate the motor a given number of degrees (1-360)
      */
-    int rotate(long deg);
+    void rotate(long deg);
+    inline void rotate(int deg){
+        rotate((long)deg);
+    };
     /*
      * Rotate using a float or double for increased movement precision.
      */
-    int rotate(double deg);
+    void rotate(double deg);
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
