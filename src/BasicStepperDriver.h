@@ -15,6 +15,8 @@
 #define PIN_UNCONNECTED -1
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
+enum Direction {DIR_FORWARD, DIR_REVERSE};
+
 /*
  * calculate the step pulse in microseconds for a given rpm value.
  * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
@@ -32,7 +34,7 @@ inline void microWaitUntil(unsigned long target_micros){
  * Microstepping level should be externally controlled or hardwired.
  */
 class BasicStepperDriver {
-public:
+protected:
     int motor_steps;
     int rpm = 60;
     int dir_pin;
@@ -45,7 +47,12 @@ public:
     // step pulse duration (microseconds), depends on rpm and microstep level
     unsigned long step_pulse;
 
-    void setDirection(int direction);
+    /*
+     * DIR: forward HIGH, reverse LOW
+     */
+    void setDirection(Direction direction){
+        digitalWrite(dir_pin, (direction == DIR_FORWARD) ? HIGH : LOW);
+    };
     void init(void);
     void calcStepPulse(void);
 
@@ -99,5 +106,25 @@ public:
      */
     void enable(void);
     void disable(void);
+    /*
+     * Methods to allow external timing control.
+     * These should not be needed for normal use.
+     */
+    /*
+     * toggle step and return time until next change is needed (micros)
+     */
+    unsigned long step(const short value, Direction direction){
+        /*
+         * DIR pin is sampled on rising STEP edge, so we need to set it first
+         */
+        setDirection(direction);
+        digitalWrite(step_pin, value);
+        /*
+         * We currently try to do a 50% duty cycle so it's easy to see.
+         * Other option is step_high_min, pulse_duration-step_high_min.
+         */
+        return step_pulse/2;
+    }
+
 };
 #endif // STEPPER_DRIVER_BASE_H

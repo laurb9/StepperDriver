@@ -38,7 +38,6 @@ void setup() {
     Serial.begin(38400);
     /*
      * Set target motors RPM.
-     * The actual speed may be slower if another axis has more travel
      */
     stepperX.setRPM(30);
     stepperY.setRPM(90);

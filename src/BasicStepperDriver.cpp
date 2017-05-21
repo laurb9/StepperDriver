@@ -72,34 +72,15 @@ unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
 }
 
 /*
- * DIR: forward HIGH, reverse LOW
- */
-void BasicStepperDriver::setDirection(int direction){
-    digitalWrite(dir_pin, (direction<0) ? LOW : HIGH);
-}
-
-/*
  * Move the motor a given number of steps.
  * positive to move forward, negative to reverse
  */
 void BasicStepperDriver::move(long steps){
-    if (steps >= 0){
-        setDirection(1);
-    } else {
-        setDirection(-1);
-        steps = -steps;
-    }
-    /*
-     * We currently try to do a 50% duty cycle so it's easy to see.
-     * Other option is step_high_min, pulse_duration-step_high_min.
-     */
-    unsigned long pulse_duration = step_pulse/2;
+    Direction direction = (steps >= 0) ? DIR_FORWARD : DIR_REVERSE;
+    steps = abs(steps);
     while (steps--){
-        digitalWrite(step_pin, HIGH);
-        unsigned long next_edge = micros() + pulse_duration;
-        microWaitUntil(next_edge);
-        digitalWrite(step_pin, LOW);
-        microWaitUntil(next_edge + pulse_duration);
+        microWaitUntil(micros() + step(HIGH, direction));
+        microWaitUntil(micros() + step(LOW, direction));
     }
 }
 

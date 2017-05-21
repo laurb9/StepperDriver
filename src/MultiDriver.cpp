@@ -17,6 +17,7 @@
 void MultiDriver::move(long steps1, long steps2, long steps3){
     long steps[3] = {steps1, steps2, steps3};
     short states[MAX_MOTORS];
+    Direction dirs[MAX_MOTORS];
     unsigned long event_timers[MAX_MOTORS];
 
     /*
@@ -25,32 +26,22 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
     enable();
     FOREACH_MOTOR(
         if (steps[i]){
-            if (steps[i] > 0){
-                motors[i]->setDirection(1);
-            } else {
-                motors[i]->setDirection(-1);
-                steps[i] = -steps[i];
-            }
+            dirs[i] = (steps[i] > 0) ? DIR_FORWARD : DIR_REVERSE;
+            steps[i] = abs(steps[i]);
             states[i] = HIGH;
-            digitalWrite(motors[i]->step_pin, HIGH);
-            /*
-             * We try to do a 50% duty cycle so it's easy to see.
-             * Other option is step_high_min, pulse_duration-step_high_min.
-             */
-            event_timers[i] = motors[i]->step_pulse / 2;
+            event_timers[i] = motors[i]->step(HIGH, dirs[i]);
         }
     );
 
-    bool done = false;
-    while (!done){
+    while (true){
         // Find the time when the next pulse needs to fire
         // this is the smallest timer value from all active motors
         unsigned long next_event = ~0L;
-        done = true;
+        bool done = true;
         FOREACH_MOTOR(
             if (steps[i]){
                 done = false;
-                if (event_timers[i] < next_event && steps[i]){
+                if (event_timers[i] < next_event){
                     next_event = event_timers[i];
                 }
             }
@@ -66,18 +57,14 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
             if (steps[i]){
                 if (event_timers[i] == next_event){ // motor ready for next action
 
-                    // Toggle STEP
+                    // Toggle STEP and set timer for next pulse
                     states[i] = (states[i] == LOW) ? HIGH : LOW;
-                    digitalWrite(motors[i]->step_pin, states[i]);
+                    event_timers[i] = motors[i]->step(states[i], dirs[i]);
 
                     // If final state is LOW, decrement remaining steps for this motor
                     if (states[i] == LOW){
                         steps[i] -= 1;
                     }
-
-                    // set timer for the next pulse
-                    event_timers[i] = motors[i]->step_pulse / 2;
-
                 } else {
                     // Reduce all other event timers by the current left time
                     event_timers[i] -= next_event;
