@@ -6,8 +6,8 @@
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
  */
-#ifndef MULTI_DRIVER_BASE_H
-#define MULTI_DRIVER_BASE_H
+#ifndef MULTI_DRIVER_H
+#define MULTI_DRIVER_H
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
 
@@ -55,4 +55,4 @@ public:
     void enable(void);
     void disable(void);
 };
-#endif // MULTI_DRIVER_BASE_H
+#endif // MULTI_DRIVER_H

@@ -10,7 +10,7 @@
  */
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
-#include "MultiDriver.h"
+#include "SyncDriver.h"
 
 // Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
 #define MOTOR_STEPS 200
@@ -32,7 +32,7 @@
 BasicStepperDriver stepperX(MOTOR_STEPS, DIR_X, STEP_X, 10);
 BasicStepperDriver stepperY(MOTOR_STEPS, DIR_Y, STEP_Y);
 
-MultiDriver controller(stepperX, stepperY);
+SyncDriver controller(stepperX, stepperY);
 
 void setup() {
     Serial.begin(38400);

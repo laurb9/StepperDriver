@@ -2,7 +2,7 @@
  * Generic Stepper Motor Driver Driver
  * Indexer mode only.
  *
- * Copyright (C)2015 Laurentiu Badea
+ * Copyright (C)2015-2017 Laurentiu Badea
  *
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
@@ -101,6 +101,7 @@ public:
      * Set target motor RPM (1-200 is a reasonable range)
      */
     void setRPM(unsigned rpm);
+    unsigned getRPM(void){ return rpm; };
     /*
      * Turn off/on motor to allow the motor to be moved by hand/hold the position in place
      */
@@ -111,7 +112,7 @@ public:
      * These should not be needed for normal use.
      */
     /*
-     * toggle step and return time until next change is needed (micros)
+     * Toggle step and return time until next change is needed (micros)
      */
     unsigned long step(const short value, Direction direction){
         /*
@@ -124,6 +125,12 @@ public:
          * Other option is step_high_min, pulse_duration-step_high_min.
          */
         return step_pulse/2;
+    }
+    /*
+     * Return the step interval (micros)
+     */
+    unsigned long getTimePerStep(void){
+        return step_pulse;
     }
 
 };
