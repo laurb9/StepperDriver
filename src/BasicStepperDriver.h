@@ -10,7 +10,6 @@
 #ifndef STEPPER_DRIVER_BASE_H
 #define STEPPER_DRIVER_BASE_H
 #include <Arduino.h>
-#include "BasicStepperDriver.h"
 
 // used internally by the library to mark unconnected pins
 #define PIN_UNCONNECTED -1
@@ -33,7 +32,7 @@ inline void microWaitUntil(unsigned long target_micros){
  * Microstepping level should be externally controlled or hardwired.
  */
 class BasicStepperDriver {
-protected:
+public:
     int motor_steps;
     int rpm = 60;
     int dir_pin;
