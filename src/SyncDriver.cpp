@@ -18,23 +18,22 @@ void SyncDriver::move(long steps1, long steps2, long steps3){
     /*
      * find which motor would take the longest to finish,
      */
-    long m = 0;
+    long move_time = 0;
     FOREACH_MOTOR(
-        long move_time = abs(steps[i]) * motors[i]->getTimePerStep();
-        timing[i] = move_time;
-        Serial.print(i); Serial.print(" = "); Serial.println(move_time);
-        if (move_time > m){
-            m = move_time;
+        long m = abs(steps[i]) * motors[i]->getTimePerStep();
+        timing[i] = m;
+        if (m > move_time){
+            move_time = m;
         }
     );
     /*
      * Stretch timing for all others by adjusting rpm proportionally
      */
-    if (m){
+    if (move_time){
         FOREACH_MOTOR(
             if (steps[i]){
                 rpms[i] = motors[i]->getRPM();
-                motors[i]->setRPM(rpms[i] * timing[i] / m);
+                motors[i]->setRPM(rpms[i] * timing[i] / move_time);
             }
         );
     }
@@ -42,7 +41,7 @@ void SyncDriver::move(long steps1, long steps2, long steps3){
     /*
      * Restore original rpm settings
      */
-    if (m){
+    if (move_time){
         FOREACH_MOTOR(
             if (rpms[i]){
                 motors[i]->setRPM(rpms[i]);

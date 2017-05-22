@@ -29,13 +29,12 @@
 
 // 2-wire basic config, microstepping is hardwired on the driver
 // Other drivers can be mixed and matched but must be configured individually
-BasicStepperDriver stepperX(MOTOR_STEPS, DIR_X, STEP_X, 10);
+BasicStepperDriver stepperX(MOTOR_STEPS, DIR_X, STEP_X);
 BasicStepperDriver stepperY(MOTOR_STEPS, DIR_Y, STEP_Y);
 
 SyncDriver controller(stepperX, stepperY);
 
 void setup() {
-    Serial.begin(38400);
     /*
      * Set target motors RPM.
      */
@@ -48,10 +47,11 @@ void setup() {
 void loop() {
 
     controller.move(4000, 12000);
+    delay(1000);
 
     controller.move(-4000, -6000);
+    delay(1000);
 
     controller.move(0, -6000);
-
     delay(30000);
 }

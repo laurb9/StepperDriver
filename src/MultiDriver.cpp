@@ -23,7 +23,6 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
     /*
      * Initialize state and trigger STEP for all active motors
      */
-    enable();
     FOREACH_MOTOR(
         if (steps[i]){
             dirs[i] = (steps[i] > 0) ? DIR_FORWARD : DIR_REVERSE;
@@ -72,7 +71,6 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
             }
         );
     }
-    disable();
 }
 
 void MultiDriver::setMicrostep(unsigned microsteps){
