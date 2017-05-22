@@ -34,6 +34,8 @@ void SyncDriver::move(long steps1, long steps2, long steps3){
             if (steps[i]){
                 rpms[i] = motors[i]->getRPM();
                 motors[i]->setRPM(rpms[i] * timing[i] / move_time);
+            } else {
+                rpms[i] = 0;
             }
         );
     }
