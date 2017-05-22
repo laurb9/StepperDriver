@@ -132,6 +132,14 @@ public:
     unsigned long getTimePerStep(void){
         return step_pulse;
     }
-
+    /*
+     * Calculate steps needed to rotate requested angle, given in degrees
+     */
+    long calcStepsForRotation(long deg){
+        return deg * motor_steps * (long)microsteps / 360;
+    }
+    long calcStepsForRotation(double deg){
+        return deg * motor_steps * microsteps / 360;
+    }
 };
 #endif // STEPPER_DRIVER_BASE_H

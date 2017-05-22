@@ -88,8 +88,7 @@ void BasicStepperDriver::move(long steps){
  * Move the motor a given number of degrees (1-360)
  */
 void BasicStepperDriver::rotate(long deg){
-    long steps = deg * motor_steps * (long)microsteps / 360;
-    move(steps);
+    move(calcStepsForRotation(deg));
 }
 /*
  * Move the motor with sub-degree precision.
@@ -97,8 +96,7 @@ void BasicStepperDriver::rotate(long deg){
  * due to inclusion of float support.
  */
 void BasicStepperDriver::rotate(double deg){
-    long steps = deg * motor_steps * microsteps / 360;
-    move(steps);
+    move(calcStepsForRotation(deg));
 }
 
 /*

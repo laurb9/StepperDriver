@@ -73,6 +73,15 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
     }
 }
 
+#define CALC_STEPS(i, deg) ((motors[i] && deg) ? motors[i]->calcStepsForRotation(deg) : 0)
+void MultiDriver::rotate(long deg1, long deg2, long deg3){
+    move(CALC_STEPS(0, deg1), CALC_STEPS(1, deg2), CALC_STEPS(2, deg3));
+}
+
+void MultiDriver::rotate(double deg1, double deg2, double deg3){
+    move(CALC_STEPS(0, deg1), CALC_STEPS(1, deg2), CALC_STEPS(2, deg3));
+}
+
 void MultiDriver::setMicrostep(unsigned microsteps){
     FOREACH_MOTOR(motors[i]->setMicrostep(microsteps));
 }
