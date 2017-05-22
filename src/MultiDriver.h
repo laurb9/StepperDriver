@@ -17,7 +17,10 @@
  * Multi-motor group driver class.
  */
 class MultiDriver {
-public:
+protected:
+    /*
+     * Configuration
+     */
     unsigned short count;
     Motor* const *motors;
     /*
@@ -26,6 +29,20 @@ public:
     MultiDriver(const unsigned short count, Motor* const *motors)
     :count(count), motors(motors)
     {};
+
+    /*
+     * Movement state
+     */
+    // ready to start a new move
+    bool ready = true;
+    // how many steps are left for each motor (if ready=false)
+    long steps[MAX_MOTORS];
+    // DIR needed for each motor
+    Direction dirs[MAX_MOTORS];
+    // STEP states for each motor
+    short states[MAX_MOTORS];
+    // when next state change is due for each motor
+    unsigned long event_timers[MAX_MOTORS];
 
 public:
     /*

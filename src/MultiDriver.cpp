@@ -15,10 +15,9 @@
  * positive to move forward, negative to reverse, 0 to remain still
  */
 void MultiDriver::move(long steps1, long steps2, long steps3){
-    long steps[3] = {steps1, steps2, steps3};
-    short states[MAX_MOTORS];
-    Direction dirs[MAX_MOTORS];
-    unsigned long event_timers[MAX_MOTORS];
+    steps[0] = steps1;
+    steps[1] = steps2;
+    steps[2] = steps3;
 
     /*
      * Initialize state and trigger STEP for all active motors
@@ -36,16 +35,16 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
         // Find the time when the next pulse needs to fire
         // this is the smallest timer value from all active motors
         unsigned long next_event = ~0L;
-        bool done = true;
+        ready = true;
         FOREACH_MOTOR(
             if (steps[i]){
-                done = false;
+                ready = false;
                 if (event_timers[i] < next_event){
                     next_event = event_timers[i];
                 }
             }
         );
-        if (done){
+        if (ready){
             break;
         }
 
