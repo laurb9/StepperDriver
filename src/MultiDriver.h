@@ -1,0 +1,80 @@
+/*
+ * Multi-motor group driver
+ *
+ * Copyright (C)2017 Laurentiu Badea
+ *
+ * This file may be redistributed under the terms of the MIT license.
+ * A copy of this license has been included with this distribution in the file LICENSE.
+ */
+#ifndef MULTI_DRIVER_H
+#define MULTI_DRIVER_H
+#include <Arduino.h>
+#include "BasicStepperDriver.h"
+
+#define MAX_MOTORS 3    // a reasonable but arbitrary limit
+#define Motor BasicStepperDriver
+/*
+ * Multi-motor group driver class.
+ */
+class MultiDriver {
+protected:
+    /*
+     * Configuration
+     */
+    unsigned short count;
+    Motor* const *motors;
+    /*
+     * Generic initializer, will be called by the others
+     */
+    MultiDriver(const unsigned short count, Motor* const *motors)
+    :count(count), motors(motors)
+    {};
+
+    /*
+     * Movement state
+     */
+    // ready to start a new move
+    bool ready = true;
+    // how many steps are left for each motor (if ready=false)
+    long steps[MAX_MOTORS];
+    // DIR needed for each motor
+    Direction dirs[MAX_MOTORS];
+    // STEP states for each motor
+    short states[MAX_MOTORS];
+    // when next state change is due for each motor
+    unsigned long event_timers[MAX_MOTORS];
+
+public:
+    /*
+     * Two-motor setup
+     */
+    MultiDriver(Motor& motor1, Motor& motor2)
+    :MultiDriver(2, new Motor* const[2]{&motor1, &motor2})
+    {};
+    /*
+     * Three-motor setup (X, Y, Z for example)
+     */
+    MultiDriver(Motor& motor1, Motor& motor2, Motor& motor3)
+    :MultiDriver(3, new Motor* const[3]{&motor1, &motor2, &motor3})
+    {};
+    /*
+     * Move the motors a given number of steps.
+     * positive to move forward, negative to reverse
+     */
+    virtual void move(long steps1, long steps2, long steps3=0);
+    void rotate(int deg1, int deg2, int deg3=0){
+        rotate((long)deg1, (long)deg2, (long)deg3);
+    };
+    void rotate(long deg1, long deg2, long deg3=0);
+    void rotate(double deg1, double deg2, double deg3=0);
+    /*
+     * Set the same microstepping level on all motors
+     */
+    void setMicrostep(unsigned microsteps);
+    /*
+     * Turn all motors on or off
+     */
+    void enable(void);
+    void disable(void);
+};
+#endif // MULTI_DRIVER_H
