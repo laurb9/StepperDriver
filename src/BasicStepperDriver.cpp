@@ -107,6 +107,20 @@ void BasicStepperDriver::startMove(long steps){
     steps_remaining = abs(steps);
 }
 /*
+ * Move the motor a given number of degrees (1-360)
+ */
+void BasicStepperDriver::startRotate(long deg){
+    startMove(calcStepsForRotation(deg));
+}
+/*
+ * Move the motor with sub-degree precision.
+ * Note that using this function even once will add 1K to your program size
+ * due to inclusion of float support.
+ */
+void BasicStepperDriver::startRotate(double deg){
+    startMove(calcStepsForRotation(deg));
+}
+/*
  * Toggle step and return time until next change is needed (micros)
  */
 unsigned long BasicStepperDriver::nextAction(void){

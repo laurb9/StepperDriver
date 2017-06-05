@@ -121,6 +121,9 @@ public:
      * Initiate a move (calculate and save the parameters)
      */
     void startMove(long steps);
+    inline void startRotate(int deg){ startRotate((long)deg); };
+    void startRotate(long deg);
+    void startRotate(double deg);
     /*
      * Toggle step and return time until next change is needed (micros)
      */

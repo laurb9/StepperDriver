@@ -61,6 +61,21 @@ public:
     };
     void rotate(long deg1, long deg2, long deg3=0);
     void rotate(double deg1, double deg2, double deg3=0);
+
+    /*
+     * Motor movement with external control of timing
+     */
+    virtual void startMove(long steps1, long steps2, long steps3=0);
+    void startRotate(int deg1, int deg2, int deg3=0){
+        startRotate((long)deg1, (long)deg2, (long)deg3);
+    };
+    void startRotate(long deg1, long deg2, long deg3=0);
+    void startRotate(double deg1, double deg2, double deg3=0);
+    /*
+     * Toggle step and return time until next change is needed (micros)
+     */
+    unsigned long nextAction(void);
+
     /*
      * Set the same microstepping level on all motors
      */
