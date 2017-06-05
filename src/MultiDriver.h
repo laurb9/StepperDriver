@@ -35,12 +35,6 @@ protected:
      */
     // ready to start a new move
     bool ready = true;
-    // how many steps are left for each motor (if ready=false)
-    long steps[MAX_MOTORS];
-    // DIR needed for each motor
-    Direction dirs[MAX_MOTORS];
-    // STEP states for each motor
-    short states[MAX_MOTORS];
     // when next state change is due for each motor
     unsigned long event_timers[MAX_MOTORS];
 

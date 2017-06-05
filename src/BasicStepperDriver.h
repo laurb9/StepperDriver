@@ -41,18 +41,24 @@ protected:
     int step_pin;
     int enable_pin = PIN_UNCONNECTED;
 
+    /*
+     * Movement state
+     */
+    // how many steps are left to complete the current move (absolute value)
+    long steps_remaining;
+    // DIR pin state
+    short dir_state;
+    // STEP pin state (HIGH / LOW)
+    short step_state = LOW;
+    // microseconds until next state change
+    unsigned long next_pulse_time;
+
     // current microstep level, must be < getMaxMicrostep()
     // for 1:16 microsteps is 16
     unsigned microsteps = 1;
     // step pulse duration (microseconds), depends on rpm and microstep level
     unsigned long step_pulse;
 
-    /*
-     * DIR: forward HIGH, reverse LOW
-     */
-    void setDirection(Direction direction){
-        digitalWrite(dir_pin, (direction == DIR_FORWARD) ? HIGH : LOW);
-    };
     void init(void);
     void calcStepPulse(void);
 
@@ -112,23 +118,14 @@ public:
      * These should not be needed for normal use.
      */
     /*
+     * Initiate a move (calculate and save the parameters)
+     */
+    void startMove(long steps);
+    /*
      * Toggle step and return time until next change is needed (micros)
      */
-    unsigned long step(const short value, Direction direction){
-        /*
-         * DIR pin is sampled on rising STEP edge, so we need to set it first
-         */
-        setDirection(direction);
-        digitalWrite(step_pin, value);
-        /*
-         * We currently try to do a 50% duty cycle so it's easy to see.
-         * Other option is step_high_min, pulse_duration-step_high_min.
-         */
-        return step_pulse/2;
-    }
-    /*
-     * Return the step interval (micros)
-     */
+    unsigned long nextAction(void);
+
     unsigned long getTimePerStep(void){
         return step_pulse;
     }

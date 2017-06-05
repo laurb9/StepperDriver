@@ -16,6 +16,7 @@
  * This driver sets up timing so all motors reach their target at the same time.
  */
 class SyncDriver : public MultiDriver {
+protected:
     /*
      * Generic initializer, will be called by the others
      */
@@ -40,6 +41,6 @@ public:
      * Move the motors a given number of steps.
      * positive to move forward, negative to reverse
      */
-    void move(long steps1, long steps2, long steps3=0);
+    void move(long steps1, long steps2, long steps3=0) override;
 };
 #endif // SYNC_DRIVER_H
