@@ -16,7 +16,7 @@
 void MultiDriver::startMove(long steps1, long steps2, long steps3){
     long steps[3] = {steps1, steps2, steps3};
     /*
-     * Initialize state and trigger STEP for all active motors
+     * Initialize state for all active motors
      */
     FOREACH_MOTOR(
         if (steps[i]){

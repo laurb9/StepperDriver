@@ -17,6 +17,7 @@
  */
 class SyncDriver : public MultiDriver {
 protected:
+    unsigned short rpms[MAX_MOTORS];
     /*
      * Generic initializer, will be called by the others
      */
@@ -37,10 +38,8 @@ public:
     SyncDriver(Motor& motor1, Motor& motor2, Motor& motor3)
     :SyncDriver(3, new Motor* const[3]{&motor1, &motor2, &motor3})
     {};
-    /*
-     * Move the motors a given number of steps.
-     * positive to move forward, negative to reverse
-     */
-    void move(long steps1, long steps2, long steps3=0) override;
+
+    void startMove(long steps1, long steps2, long steps3=0) override;
+    unsigned long nextAction(void) override;
 };
 #endif // SYNC_DRIVER_H

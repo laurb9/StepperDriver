@@ -55,7 +55,7 @@ public:
      * Move the motors a given number of steps.
      * positive to move forward, negative to reverse
      */
-    virtual void move(long steps1, long steps2, long steps3=0);
+    void move(long steps1, long steps2, long steps3=0);
     void rotate(int deg1, int deg2, int deg3=0){
         rotate((long)deg1, (long)deg2, (long)deg3);
     };
@@ -74,7 +74,7 @@ public:
     /*
      * Toggle step and return time until next change is needed (micros)
      */
-    unsigned long nextAction(void);
+    virtual unsigned long nextAction(void);
 
     /*
      * Set the same microstepping level on all motors
