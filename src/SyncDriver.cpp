@@ -20,7 +20,7 @@ void SyncDriver::move(long steps1, long steps2, long steps3){
      */
     long move_time = 0;
     FOREACH_MOTOR(
-        long m = abs(steps[i]) * motors[i]->getTimePerStep();
+        long m = motors[i]->getTimeForMove(abs(steps[i]));
         timing[i] = m;
         if (m > move_time){
             move_time = m;

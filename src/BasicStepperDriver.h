@@ -129,8 +129,8 @@ public:
      */
     unsigned long nextAction(void);
 
-    unsigned long getTimePerStep(void){
-        return step_pulse;
+    unsigned long getTimeForMove(long steps){
+        return step_pulse * abs(steps);
     }
     /*
      * Calculate steps needed to rotate requested angle, given in degrees
