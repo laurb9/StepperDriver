@@ -38,20 +38,16 @@ void setup() {
     /*
      * Set target motors RPM.
      */
-    stepperX.setRPM(30);
-    stepperY.setRPM(90);
-
-    controller.setMicrostep(MICROSTEPS);
+    stepperX.begin(30, MICROSTEPS);
+    stepperY.begin(90, MICROSTEPS);
 }
 
 void loop() {
 
-    controller.move(4000, 12000);
+    controller.rotate(90*5, 60*15);
     delay(1000);
-
-    controller.move(-4000, -6000);
+    controller.rotate(-90*5, -30*15);
     delay(1000);
-
-    controller.move(0, -6000);
+    controller.rotate(0, -30*15);
     delay(30000);
 }

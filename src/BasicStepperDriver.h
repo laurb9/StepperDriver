@@ -59,7 +59,6 @@ protected:
     // step pulse duration (microseconds), depends on rpm and microstep level
     unsigned long step_pulse;
 
-    void init(void);
     void calcStepPulse(void);
 
     // tWH(STEP) pulse duration, STEP high, min value (us)
@@ -83,10 +82,14 @@ public:
     BasicStepperDriver(int steps, int dir_pin, int step_pin);
     BasicStepperDriver(int steps, int dir_pin, int step_pin, int enable_pin);
     /*
+     * Initialize pins, calculate timings etc
+     */
+    void begin(int rpm=60, unsigned microsteps=1);
+    /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
      */
-    unsigned setMicrostep(unsigned microsteps);
+    virtual unsigned setMicrostep(unsigned microsteps);
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse

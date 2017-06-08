@@ -43,10 +43,9 @@ DRV8834 stepper(MOTOR_STEPS, DIR, STEP, M0, M1);
 
 void setup() {
     /*
-     * Set target motor RPM.
+     * Set target motor RPM=1 and microstepping=1
      */
-    stepper.setRPM(1);
-    stepper.setMicrostep(1); // make sure we are in full speed mode
+    stepper.begin(1, 1);
 }
 
 void loop() {

@@ -18,7 +18,6 @@ protected:
     int ms1_pin = PIN_UNCONNECTED;
     int ms2_pin = PIN_UNCONNECTED;
     int ms3_pin = PIN_UNCONNECTED;
-    void init(void);
     // tA STEP minimum, HIGH pulse width (1us)
     static const int step_high_min = 1;
     // tB STEP minimum, LOW pulse width (1us)
@@ -46,11 +45,12 @@ public:
     A4988(int steps, int dir_pin, int step_pin);
     A4988(int steps, int dir_pin, int step_pin, int enable_pin);
     
+    void begin(int rpm=60, unsigned microsteps=1);
     /*
      * Fully wired. All the necessary control pins for A4988 are connected.
      */
     A4988(int steps, int dir_pin, int step_pin, int ms1_pin, int ms2_pin, int ms3_pin);
     A4988(int steps, int dir_pin, int step_pin, int enable_pin, int ms1_pin, int ms2_pin, int ms3_pin);
-    unsigned setMicrostep(unsigned microsteps);
+    unsigned setMicrostep(unsigned microsteps) override;
 };
 #endif // A4988_H

@@ -41,8 +41,8 @@ A4988::A4988(int steps, int dir_pin, int step_pin, int enable_pin, int ms1_pin, 
 ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
 {}
 
-void A4988::init(void){
-    BasicStepperDriver::init();
+void A4988::begin(int rpm, unsigned microsteps){
+    BasicStepperDriver::begin(rpm, microsteps);
 
     if (!IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms2_pin) || !IS_CONNECTED(ms3_pin)){
         return;
@@ -65,10 +65,10 @@ unsigned A4988::setMicrostep(unsigned microsteps){
         return this->microsteps;
     }
 
-    const uint8_t* ms_table = this->getMicrostepTable();
-    size_t ms_table_size = this->getMicrostepTableSize();
+    const uint8_t* ms_table = getMicrostepTable();
+    size_t ms_table_size = getMicrostepTableSize();
 
-    int i = 0;
+    unsigned i = 0;
     while (i < ms_table_size){
         if (this->microsteps & (1<<i)){
             uint8_t mask = ms_table[i];

@@ -15,17 +15,16 @@
  */
 BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin)
 :motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin)
-{
-    init();
-}
+{}
 
 BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin, int enable_pin)
 :motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin), enable_pin(enable_pin)
-{
-    init();
-}
+{}
 
-void BasicStepperDriver::init(void){
+/*
+ * Initialize pins, calculate timings etc
+ */
+void BasicStepperDriver::begin(int rpm, unsigned microsteps){
     pinMode(dir_pin, OUTPUT);
     digitalWrite(dir_pin, HIGH);
 
@@ -37,8 +36,8 @@ void BasicStepperDriver::init(void){
         digitalWrite(enable_pin, HIGH); // disable
     }
 
-    setMicrostep(1);
-    setRPM(60); // 60 rpm is a reasonable default
+    setMicrostep(microsteps);
+    setRPM(rpm);
 
     enable();
 }
@@ -61,7 +60,7 @@ void BasicStepperDriver::setRPM(unsigned rpm){
  * Allowed ranges for BasicStepperDriver are 1:1 to 1:128
  */
 unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
-    for (unsigned ms=1; ms <= this->getMaxMicrostep(); ms<<=1){
+    for (unsigned ms=1; ms <= getMaxMicrostep(); ms<<=1){
         if (microsteps == ms){
             this->microsteps = microsteps;
             break;

@@ -49,7 +49,7 @@ void setup() {
      * These motors can do up to about 200rpm.
      * Too high will result in a high pitched whine and the motor does not move.
      */
-    stepper.setRPM(120);
+    stepper.begin(120);
 }
 
 void loop() {
