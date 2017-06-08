@@ -35,12 +35,6 @@ protected:
      */
     // ready to start a new move
     bool ready = true;
-    // how many steps are left for each motor (if ready=false)
-    long steps[MAX_MOTORS];
-    // DIR needed for each motor
-    Direction dirs[MAX_MOTORS];
-    // STEP states for each motor
-    short states[MAX_MOTORS];
     // when next state change is due for each motor
     unsigned long event_timers[MAX_MOTORS];
 
@@ -61,12 +55,27 @@ public:
      * Move the motors a given number of steps.
      * positive to move forward, negative to reverse
      */
-    virtual void move(long steps1, long steps2, long steps3=0);
+    void move(long steps1, long steps2, long steps3=0);
     void rotate(int deg1, int deg2, int deg3=0){
         rotate((long)deg1, (long)deg2, (long)deg3);
     };
     void rotate(long deg1, long deg2, long deg3=0);
     void rotate(double deg1, double deg2, double deg3=0);
+
+    /*
+     * Motor movement with external control of timing
+     */
+    virtual void startMove(long steps1, long steps2, long steps3=0);
+    void startRotate(int deg1, int deg2, int deg3=0){
+        startRotate((long)deg1, (long)deg2, (long)deg3);
+    };
+    void startRotate(long deg1, long deg2, long deg3=0);
+    void startRotate(double deg1, double deg2, double deg3=0);
+    /*
+     * Toggle step and return time until next change is needed (micros)
+     */
+    virtual unsigned long nextAction(void);
+
     /*
      * Set the same microstepping level on all motors
      */

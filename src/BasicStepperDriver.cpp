@@ -76,14 +76,13 @@ unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
  * positive to move forward, negative to reverse
  */
 void BasicStepperDriver::move(long steps){
-    Direction direction = (steps >= 0) ? DIR_FORWARD : DIR_REVERSE;
-    steps = abs(steps);
-    while (steps--){
-        microWaitUntil(micros() + step(HIGH, direction));
-        microWaitUntil(micros() + step(LOW, direction));
-    }
+    unsigned long next_event;
+    startMove(steps);
+    do {
+        next_event = nextAction();
+        microWaitUntil(micros() + next_event);
+    } while (next_event);
 }
-
 /*
  * Move the motor a given number of degrees (1-360)
  */
@@ -97,6 +96,54 @@ void BasicStepperDriver::rotate(long deg){
  */
 void BasicStepperDriver::rotate(double deg){
     move(calcStepsForRotation(deg));
+}
+
+/*
+ * Initiate a move (calculate and save the parameters)
+ */
+void BasicStepperDriver::startMove(long steps){
+    dir_state = (steps >= 0) ? HIGH : LOW;
+    step_state = LOW;
+    steps_remaining = abs(steps);
+}
+/*
+ * Move the motor a given number of degrees (1-360)
+ */
+void BasicStepperDriver::startRotate(long deg){
+    startMove(calcStepsForRotation(deg));
+}
+/*
+ * Move the motor with sub-degree precision.
+ * Note that using this function even once will add 1K to your program size
+ * due to inclusion of float support.
+ */
+void BasicStepperDriver::startRotate(double deg){
+    startMove(calcStepsForRotation(deg));
+}
+/*
+ * Toggle step and return time until next change is needed (micros)
+ */
+unsigned long BasicStepperDriver::nextAction(void){
+    if (steps_remaining > 0){
+        /*
+         * DIR pin is sampled on rising STEP edge, so it is set first
+         */
+        digitalWrite(dir_pin, dir_state);
+        if (step_state == LOW){
+            step_state = HIGH;
+        } else {
+            step_state = LOW;
+            steps_remaining--;
+        }
+        digitalWrite(step_pin, step_state);
+        /*
+         * We currently try to do a 50% duty cycle so it's easy to see.
+         * Other option is step_high_min, pulse_duration-step_high_min.
+         */
+        return step_pulse/2;
+    } else {
+        return 0; // end of move
+    }
 }
 
 /*

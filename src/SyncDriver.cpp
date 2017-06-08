@@ -11,16 +11,18 @@
 
 #define FOREACH_MOTOR(action) for (short i=count-1; i >= 0; i--){action;}
 
-void SyncDriver::move(long steps1, long steps2, long steps3){
+/*
+ * Initialize motor parameters
+ */
+void SyncDriver::startMove(long steps1, long steps2, long steps3){
     long steps[3] = {steps1, steps2, steps3};
     long timing[MAX_MOTORS];
-    unsigned rpms[MAX_MOTORS];
     /*
      * find which motor would take the longest to finish,
      */
     long move_time = 0;
     FOREACH_MOTOR(
-        long m = abs(steps[i]) * motors[i]->getTimePerStep();
+        long m = motors[i]->getTimeForMove(abs(steps[i]));
         timing[i] = m;
         if (m > move_time){
             move_time = m;
@@ -39,15 +41,29 @@ void SyncDriver::move(long steps1, long steps2, long steps3){
             }
         );
     }
-    MultiDriver::move(steps1, steps2, steps3);
     /*
-     * Restore original rpm settings
+     * Initialize state for all active motors
      */
-    if (move_time){
+    FOREACH_MOTOR(
+        if (steps[i]){
+            motors[i]->startMove(steps[i]);
+        };
+        event_timers[i] = 0;
+    );
+    ready = false;
+}
+
+unsigned long SyncDriver::nextAction(void){
+    unsigned long next_event = MultiDriver::nextAction();
+    if (!next_event){
+        /*
+         * Restore original rpm settings
+         */
         FOREACH_MOTOR(
             if (rpms[i]){
                 motors[i]->setRPM(rpms[i]);
             }
         );
     }
+    return next_event;
 }
