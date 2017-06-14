@@ -16,6 +16,7 @@
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
 enum Direction {DIR_FORWARD, DIR_REVERSE};
+enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
 
 /*
  * calculate the step pulse in microseconds for a given rpm value.
@@ -35,32 +36,23 @@ inline void microWaitUntil(unsigned long target_micros){
  */
 class BasicStepperDriver {
 protected:
-    int motor_steps;
-    int rpm = 60;
+    /*
+     * Motor Configuration
+     */
+    int motor_steps;           // motor steps per revolution (usually 200)
+    unsigned accel = 1000;     // maximum acceleration [steps/s^2]
+    unsigned decel = 1000;     // maximum deceleration [steps/s^2]
+
+    /*
+     * Driver Configuration
+     */
     int dir_pin;
     int step_pin;
     int enable_pin = PIN_UNCONNECTED;
-
-    /*
-     * Movement state
-     */
-    // how many steps are left to complete the current move (absolute value)
-    long steps_remaining;
-    // DIR pin state
-    short dir_state;
-    // STEP pin state (HIGH / LOW)
-    short step_state = LOW;
-    // microseconds until next state change
-    unsigned long next_pulse_time;
-
-    // current microstep level, must be < getMaxMicrostep()
-    // for 1:16 microsteps is 16
+    // Get max microsteps supported by the device
+    virtual unsigned getMaxMicrostep();
+    // current microstep level (1,2,4,8,...), must be < getMaxMicrostep()
     unsigned microsteps = 1;
-    // step pulse duration (microseconds), depends on rpm and microstep level
-    unsigned long step_pulse;
-
-    void calcStepPulse(void);
-
     // tWH(STEP) pulse duration, STEP high, min value (us)
     static const int step_high_min = 1;
     // tWL(STEP) pulse duration, STEP low, min value (us)
@@ -68,8 +60,24 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
     static const int wakeup_time = 0;
 
-    // Get max microsteps supported by the device
-    virtual unsigned getMaxMicrostep();
+    int rpm = 60;
+
+    /*
+     * Movement state
+     */
+    Mode mode = CONSTANT_SPEED;
+    long step_count;        // current position
+    long steps_remaining;   // to complete the current move (absolute value)
+    long steps_to_cruise;   // steps to reach cruising (max) rpm
+    long steps_to_brake;     // steps needed to come to a full stop
+    unsigned long step_pulse;// step pulse duration (microseconds)
+
+    // DIR pin state
+    short dir_state;
+    // STEP pin state (HIGH / LOW)
+    short step_state = LOW;
+
+    void calcStepPulse(void);
 
 private:
     // microstep range (1, 16, 32 etc)
@@ -91,6 +99,21 @@ public:
      */
     virtual unsigned setMicrostep(unsigned microsteps);
     /*
+     * Set target motor RPM (1-200 is a reasonable range)
+     */
+    void setRPM(unsigned rpm);
+    unsigned getRPM(void){
+        return rpm;
+    };
+    unsigned getCurrentRPM(void){
+        return 60*1000000L / step_pulse / microsteps / motor_steps;
+    }
+    /*
+     * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)
+     * accel and decel are given in [full steps/s^2]
+     */
+    void setSpeedProfile(Mode mode, unsigned accel=1000, unsigned decel=1000);
+    /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
      */
@@ -107,11 +130,6 @@ public:
      */
     void rotate(double deg);
     /*
-     * Set target motor RPM (1-200 is a reasonable range)
-     */
-    void setRPM(unsigned rpm);
-    unsigned getRPM(void){ return rpm; };
-    /*
      * Turn off/on motor to allow the motor to be moved by hand/hold the position in place
      */
     void enable(void);
@@ -124,7 +142,9 @@ public:
      * Initiate a move (calculate and save the parameters)
      */
     void startMove(long steps);
-    inline void startRotate(int deg){ startRotate((long)deg); };
+    inline void startRotate(int deg){ 
+        startRotate((long)deg);
+    };
     void startRotate(long deg);
     void startRotate(double deg);
     /*
@@ -132,9 +152,10 @@ public:
      */
     unsigned long nextAction(void);
 
-    unsigned long getTimeForMove(long steps){
-        return step_pulse * abs(steps);
-    }
+    /*
+     * Return calculated time to complete the given move
+     */
+    unsigned long getTimeForMove(long steps);
     /*
      * Calculate steps needed to rotate requested angle, given in degrees
      */
