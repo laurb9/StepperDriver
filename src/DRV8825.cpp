@@ -15,22 +15,22 @@
  */
 const uint8_t DRV8825::MS_TABLE[] = {0b000, 0b001, 0b010, 0b011, 0b100, 0b111};
 
-DRV8825::DRV8825(int steps, int dir_pin, int step_pin)
+DRV8825::DRV8825(short steps, short dir_pin, short step_pin)
 :A4988(steps, dir_pin, step_pin)
 {}
 
-DRV8825::DRV8825(int steps, int dir_pin, int step_pin, int enable_pin)
+DRV8825::DRV8825(short steps, short dir_pin, short step_pin, short enable_pin)
 :A4988(steps, dir_pin, step_pin, enable_pin)
 {}
 
 /*
  * A4988-DRV8825 Compatibility map: MS1-MODE0, MS2-MODE1, MS3-MODE2
  */
-DRV8825::DRV8825(int steps, int dir_pin, int step_pin, int mode0_pin, int mode1_pin, int mode2_pin)
+DRV8825::DRV8825(short steps, short dir_pin, short step_pin, short mode0_pin, short mode1_pin, short mode2_pin)
 :A4988(steps, dir_pin, step_pin, mode0_pin, mode1_pin, mode2_pin)
 {}
 
-DRV8825::DRV8825(int steps, int dir_pin, int step_pin, int enable_pin, int mode0_pin, int mode1_pin, int mode2_pin)
+DRV8825::DRV8825(short steps, short dir_pin, short step_pin, short enable_pin, short mode0_pin, short mode1_pin, short mode2_pin)
 :A4988(steps, dir_pin, step_pin, enable_pin, mode0_pin, mode1_pin, mode2_pin)
 {}
 
@@ -44,6 +44,6 @@ size_t DRV8825::getMicrostepTableSize()
     return sizeof(DRV8825::MS_TABLE);
 }
 
-unsigned DRV8825::getMaxMicrostep(){
+short DRV8825::getMaxMicrostep(){
     return DRV8825::MAX_MICROSTEP;
 }
