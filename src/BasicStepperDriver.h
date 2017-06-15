@@ -69,8 +69,8 @@ protected:
     long step_count;        // current position
     long steps_remaining;   // to complete the current move (absolute value)
     long steps_to_cruise;   // steps to reach cruising (max) rpm
-    long steps_to_brake;     // steps needed to come to a full stop
-    unsigned long step_pulse;// step pulse duration (microseconds)
+    long steps_to_brake;    // steps needed to come to a full stop
+    long step_pulse;        // step pulse duration (microseconds)
 
     // DIR pin state
     short dir_state;

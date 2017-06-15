@@ -34,7 +34,7 @@ void setup() {
     stepper.setSpeedProfile(LINEAR_SPEED, 1000, 1000);
 
     Serial.println("START");
-    stepper.startRotate(-360);
+    stepper.startRotate(360);
 }
 
 void loop() {
@@ -47,6 +47,7 @@ void loop() {
         Serial.println();
         microWaitUntil(micros() + wait_time);
     } else {
+        stepper.disable();
         Serial.println("END");
         delay(3600000);
     }

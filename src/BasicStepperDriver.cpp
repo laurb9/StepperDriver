@@ -132,9 +132,6 @@ void BasicStepperDriver::startMove(long steps){
             }
             // Initial pulse (c0) including error correction factor 0.676 [us]
             step_pulse = (1e+6)*0.676*sqrt(2.0f/(accel*microsteps));
-            Serial.print("max speed = "); Serial.println(speed);
-            Serial.print("steps_to_cruise = "); Serial.println(steps_to_cruise);
-            Serial.print("steps_to_brake = "); Serial.println(steps_to_brake);
             break;
         case CONSTANT_SPEED:
         default:
@@ -188,7 +185,7 @@ void BasicStepperDriver::calcStepPulse(void){
              * accelerating
              */
             step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
-            rest = (2*step_pulse+rest) % (4*step_count+1);
+            rest = (step_count < steps_to_cruise) ? (2*step_pulse+rest) % (4*step_count+1) : 0;
         } else if (steps_remaining > steps_to_brake){
             /*
              * cruising (no speed changes)
@@ -197,14 +194,8 @@ void BasicStepperDriver::calcStepPulse(void){
             /*
              * decelerating
              */
-            Serial.print("  i="); Serial.print(step_count);
-            Serial.print("  r="); Serial.print(steps_remaining);
-            Serial.print("  t="); Serial.print(step_pulse);
-            Serial.print("  rpm=");
-            Serial.print(getCurrentRPM());
-            step_pulse = step_pulse + (2*step_pulse-rest)/(4*steps_remaining+1);
-            rest = (2*step_pulse-rest) % (4*step_count+1);
-            Serial.print("  rest="); Serial.print(rest);
+            step_pulse = step_pulse - (2*step_pulse+rest)/(-4*steps_remaining+1);
+            rest = (2*step_pulse+rest) % (-4*steps_remaining+1);
         }
     }
 }
