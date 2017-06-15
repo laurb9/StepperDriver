@@ -17,18 +17,18 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin)
+BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin)
 :motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin)
 {}
 
-BasicStepperDriver::BasicStepperDriver(int steps, int dir_pin, int step_pin, int enable_pin)
+BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin, short enable_pin)
 :motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin), enable_pin(enable_pin)
 {}
 
 /*
  * Initialize pins, calculate timings etc
  */
-void BasicStepperDriver::begin(int rpm, unsigned microsteps){
+void BasicStepperDriver::begin(short rpm, short microsteps){
     pinMode(dir_pin, OUTPUT);
     digitalWrite(dir_pin, HIGH);
 
@@ -49,7 +49,7 @@ void BasicStepperDriver::begin(int rpm, unsigned microsteps){
 /*
  * Set target motor RPM (1-200 is a reasonable range)
  */
-void BasicStepperDriver::setRPM(unsigned rpm){
+void BasicStepperDriver::setRPM(short rpm){
     this->rpm = rpm;
     calcStepPulse();
 }
@@ -58,8 +58,8 @@ void BasicStepperDriver::setRPM(unsigned rpm){
  * Set stepping mode (1:microsteps)
  * Allowed ranges for BasicStepperDriver are 1:1 to 1:128
  */
-unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
-    for (unsigned ms=1; ms <= getMaxMicrostep(); ms<<=1){
+short BasicStepperDriver::setMicrostep(short microsteps){
+    for (short ms=1; ms <= getMaxMicrostep(); ms<<=1){
         if (microsteps == ms){
             this->microsteps = microsteps;
             break;
@@ -72,7 +72,7 @@ unsigned BasicStepperDriver::setMicrostep(unsigned microsteps){
 /*
  * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)
  */
-void BasicStepperDriver::setSpeedProfile(Mode mode, unsigned accel, unsigned decel){
+void BasicStepperDriver::setSpeedProfile(Mode mode, short accel, short decel){
     this->mode = mode;
     this->accel = accel;
     this->decel = decel;
@@ -83,7 +83,7 @@ void BasicStepperDriver::setSpeedProfile(Mode mode, unsigned accel, unsigned dec
  * positive to move forward, negative to reverse
  */
 void BasicStepperDriver::move(long steps){
-    unsigned long next_event;
+    long next_event;
     startMove(steps);
     do {
         next_event = nextAction();
@@ -109,7 +109,7 @@ void BasicStepperDriver::rotate(double deg){
  * Set up a new move (calculate and save the parameters)
  */
 void BasicStepperDriver::startMove(long steps){
-    unsigned long speed;
+    long speed;
     dir_state = (steps >= 0) ? HIGH : LOW;
     step_state = LOW;
     steps_remaining = abs(steps);
@@ -141,8 +141,8 @@ void BasicStepperDriver::startMove(long steps){
 /*
  * Return calculated time to complete the given move
  */
-unsigned long BasicStepperDriver::getTimeForMove(long steps){
-    unsigned long t;
+long BasicStepperDriver::getTimeForMove(long steps){
+    long t;
     switch (mode){
         case LINEAR_SPEED:
             startMove(steps);
@@ -202,7 +202,7 @@ void BasicStepperDriver::calcStepPulse(void){
 /*
  * Toggle step and return time until next change is needed (micros)
  */
-unsigned long BasicStepperDriver::nextAction(void){
+long BasicStepperDriver::nextAction(void){
     if (steps_remaining > 0){
         /*
          * DIR pin is sampled on rising STEP edge, so it is set first
@@ -242,6 +242,6 @@ void BasicStepperDriver::disable(void){
     }
 }
 
-unsigned BasicStepperDriver::getMaxMicrostep(){
+short BasicStepperDriver::getMaxMicrostep(){
     return BasicStepperDriver::MAX_MICROSTEP;
 }

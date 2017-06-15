@@ -39,20 +39,20 @@ protected:
     /*
      * Motor Configuration
      */
-    int motor_steps;           // motor steps per revolution (usually 200)
-    unsigned accel = 1000;     // maximum acceleration [steps/s^2]
-    unsigned decel = 1000;     // maximum deceleration [steps/s^2]
+    short motor_steps;           // motor steps per revolution (usually 200)
+    short accel = 1000;     // maximum acceleration [steps/s^2]
+    short decel = 1000;     // maximum deceleration [steps/s^2]
 
     /*
      * Driver Configuration
      */
-    int dir_pin;
-    int step_pin;
-    int enable_pin = PIN_UNCONNECTED;
+    short dir_pin;
+    short step_pin;
+    short enable_pin = PIN_UNCONNECTED;
     // Get max microsteps supported by the device
-    virtual unsigned getMaxMicrostep();
+    virtual short getMaxMicrostep();
     // current microstep level (1,2,4,8,...), must be < getMaxMicrostep()
-    unsigned microsteps = 1;
+    short microsteps = 1;
     // tWH(STEP) pulse duration, STEP high, min value (us)
     static const int step_high_min = 1;
     // tWL(STEP) pulse duration, STEP low, min value (us)
@@ -60,7 +60,7 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
     static const int wakeup_time = 0;
 
-    int rpm = 60;
+    short rpm = 60;
 
     /*
      * Movement state
@@ -81,38 +81,38 @@ protected:
 
 private:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MAX_MICROSTEP = 128;
+    static const short MAX_MICROSTEP = 128;
 
 public:
     /*
      * Basic connection: DIR, STEP are connected.
      */
-    BasicStepperDriver(int steps, int dir_pin, int step_pin);
-    BasicStepperDriver(int steps, int dir_pin, int step_pin, int enable_pin);
+    BasicStepperDriver(short steps, short dir_pin, short step_pin);
+    BasicStepperDriver(short steps, short dir_pin, short step_pin, short enable_pin);
     /*
      * Initialize pins, calculate timings etc
      */
-    void begin(int rpm=60, unsigned microsteps=1);
+    void begin(short rpm=60, short microsteps=1);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
      */
-    virtual unsigned setMicrostep(unsigned microsteps);
+    virtual short setMicrostep(short microsteps);
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
-    void setRPM(unsigned rpm);
-    unsigned getRPM(void){
+    void setRPM(short rpm);
+    short getRPM(void){
         return rpm;
     };
-    unsigned getCurrentRPM(void){
-        return 60*1000000L / step_pulse / microsteps / motor_steps;
+    short getCurrentRPM(void){
+        return (short)(60*1000000L / step_pulse / microsteps / motor_steps);
     }
     /*
      * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)
      * accel and decel are given in [full steps/s^2]
      */
-    void setSpeedProfile(Mode mode, unsigned accel=1000, unsigned decel=1000);
+    void setSpeedProfile(Mode mode, short accel=1000, short decel=1000);
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
@@ -150,12 +150,12 @@ public:
     /*
      * Toggle step and return time until next change is needed (micros)
      */
-    unsigned long nextAction(void);
+    long nextAction(void);
 
     /*
      * Return calculated time to complete the given move
      */
-    unsigned long getTimeForMove(long steps);
+    long getTimeForMove(long steps);
     /*
      * Calculate steps needed to rotate requested angle, given in degrees
      */
