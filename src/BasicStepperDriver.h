@@ -60,7 +60,7 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
     static const int wakeup_time = 0;
 
-    short rpm = 60;
+    short rpm = 0;
 
     /*
      * Movement state

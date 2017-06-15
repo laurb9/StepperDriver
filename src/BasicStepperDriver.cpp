@@ -40,8 +40,8 @@ void BasicStepperDriver::begin(short rpm, short microsteps){
         digitalWrite(enable_pin, HIGH); // disable
     }
 
+    this->rpm = rpm;
     setMicrostep(microsteps);
-    setRPM(rpm);
 
     enable();
 }
@@ -50,6 +50,9 @@ void BasicStepperDriver::begin(short rpm, short microsteps){
  * Set target motor RPM (1-200 is a reasonable range)
  */
 void BasicStepperDriver::setRPM(short rpm){
+    if (this->rpm == 0){        // begin() has not been called (old 1.0 code)
+        begin(rpm, microsteps);
+    }
     this->rpm = rpm;
 }
 
