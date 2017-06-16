@@ -119,9 +119,9 @@ void BasicStepperDriver::startMove(long steps){
     switch (mode){
         case LINEAR_SPEED:
             // speed is in [steps/s]
-            speed = rpm * motor_steps * microsteps / 60;
+            speed = rpm * motor_steps / 60;
             // how many steps from 0 to target rpm
-            steps_to_cruise = speed * speed / (2 * accel * microsteps);
+            steps_to_cruise = speed * speed * microsteps / (2 * accel);
             // how many steps from 0 til we need to begin slowing down
             steps_to_brake = steps_remaining * decel / (accel + decel);
             if (steps_to_cruise < steps_to_brake){
@@ -225,14 +225,18 @@ long BasicStepperDriver::nextAction(void){
             step_state = HIGH;
         } else {
             step_state = LOW;
-            calcStepPulse();
         }
         digitalWrite(step_pin, step_state);
+        unsigned m = micros();
+        if (step_state == LOW){
+            calcStepPulse();
+        }
+        m = micros() - m;
         /*
          * We currently try to do a 50% duty cycle so it's easy to see.
          * Other option is step_high_min, pulse_duration-step_high_min.
          */
-        return step_pulse/2; // FIXME: precision loss (1us)
+        return (step_state == LOW) ? step_pulse-step_high_min-m : step_high_min;
     } else {
         return 0; // end of move
     }
