@@ -40,6 +40,6 @@ public:
     {};
 
     void startMove(long steps1, long steps2, long steps3=0) override;
-    unsigned long nextAction(void) override;
+    long nextAction(void) override;
 };
 #endif // SYNC_DRIVER_H

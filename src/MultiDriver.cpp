@@ -21,15 +21,17 @@ void MultiDriver::startMove(long steps1, long steps2, long steps3){
     FOREACH_MOTOR(
         if (steps[i]){
             motors[i]->startMove(steps[i]);
-        };
-        event_timers[i] = 0;
+            event_timers[i] = 0;
+        } else {
+            event_timers[i] = -1;
+        }
     );
     ready = false;
 }
 /*
  * Trigger next step action
  */
-unsigned long MultiDriver::nextAction(void){
+long MultiDriver::nextAction(void){
     // Trigger all the motors that need it (event timer = 0)
     FOREACH_MOTOR(
         if (event_timers[i] == 0){
@@ -38,19 +40,19 @@ unsigned long MultiDriver::nextAction(void){
     );
     // Find the time when the next pulse needs to fire
     // this is the smallest non-zero timer value from all active motors
-    unsigned long next_event = ~0L;
+    long next_event = 0;
     ready = true;
     FOREACH_MOTOR(
-        if (event_timers[i]){
+        if (event_timers[i] > 0){
             ready = false;
-            if (event_timers[i] < next_event){
+            if (event_timers[i] < next_event || next_event == 0){
                 next_event = event_timers[i];
             }
         }
     );
     // Reduce all event timers by the current left time so 0 marks next
     FOREACH_MOTOR(
-        if (event_timers[i]){
+        if (event_timers[i] > 0){
             event_timers[i] -= next_event;
         }
     );

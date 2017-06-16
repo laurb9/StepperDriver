@@ -36,7 +36,7 @@ protected:
     // ready to start a new move
     bool ready = true;
     // when next state change is due for each motor
-    unsigned long event_timers[MAX_MOTORS];
+    long event_timers[MAX_MOTORS];
 
 public:
     /*
@@ -74,7 +74,7 @@ public:
     /*
      * Toggle step and return time until next change is needed (micros)
      */
-    virtual unsigned long nextAction(void);
+    virtual long nextAction(void);
 
     /*
      * Set the same microstepping level on all motors

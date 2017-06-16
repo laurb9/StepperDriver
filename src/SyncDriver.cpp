@@ -53,8 +53,8 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
     ready = false;
 }
 
-unsigned long SyncDriver::nextAction(void){
-    unsigned long next_event = MultiDriver::nextAction();
+long SyncDriver::nextAction(void){
+    long next_event = MultiDriver::nextAction();
     if (!next_event){
         /*
          * Restore original rpm settings
