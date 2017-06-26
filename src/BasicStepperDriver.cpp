@@ -40,8 +40,8 @@ void BasicStepperDriver::begin(short rpm, short microsteps){
         digitalWrite(enable_pin, HIGH); // disable
     }
 
+    this->rpm = rpm;
     setMicrostep(microsteps);
-    setRPM(rpm);
 
     enable();
 }
@@ -50,8 +50,10 @@ void BasicStepperDriver::begin(short rpm, short microsteps){
  * Set target motor RPM (1-200 is a reasonable range)
  */
 void BasicStepperDriver::setRPM(short rpm){
+    if (this->rpm == 0){        // begin() has not been called (old 1.0 code)
+        begin(rpm, microsteps);
+    }
     this->rpm = rpm;
-    calcStepPulse();
 }
 
 /*
@@ -65,12 +67,12 @@ short BasicStepperDriver::setMicrostep(short microsteps){
             break;
         }
     }
-    calcStepPulse();
     return this->microsteps;
 }
 
 /*
  * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)
+ * accel and decel are given in [full steps/s^2]
  */
 void BasicStepperDriver::setSpeedProfile(Mode mode, short accel, short decel){
     this->mode = mode;
@@ -117,9 +119,9 @@ void BasicStepperDriver::startMove(long steps){
     switch (mode){
         case LINEAR_SPEED:
             // speed is in [steps/s]
-            speed = rpm * motor_steps * microsteps / 60;
+            speed = rpm * motor_steps / 60;
             // how many steps from 0 to target rpm
-            steps_to_cruise = speed * speed / (2 * accel * microsteps);
+            steps_to_cruise = speed * speed * microsteps / (2 * accel);
             // how many steps from 0 til we need to begin slowing down
             steps_to_brake = steps_remaining * decel / (accel + decel);
             if (steps_to_cruise < steps_to_brake){
@@ -152,7 +154,7 @@ long BasicStepperDriver::getTimeForMove(long steps){
             break;
         case CONSTANT_SPEED:
         default:
-            t = step_pulse * steps_remaining;
+            t = STEP_PULSE(rpm, motor_steps, microsteps);
     }
     return t;
 }
@@ -176,11 +178,22 @@ void BasicStepperDriver::startRotate(double deg){
  * calculate the interval til the next pulse
  */
 void BasicStepperDriver::calcStepPulse(void){
-    // feed remainder into successive steps to increase accuracy (Atmel DOC8017)
-    static long rest = 0;
+    // remainder to be fed into successive steps to increase accuracy (Atmel DOC8017)
+    static long rest;
+
+    if (steps_remaining <= 0){  // this should not happen, but avoids strange calculations
+        return;
+    }
+
+    steps_remaining--;
+    step_count++;
+
     // if constant speed
     if (mode == LINEAR_SPEED){
         if (step_count <= steps_to_cruise){
+            if (step_count == 1){     // first step, initialize rest
+                rest = 0;
+            }
             /*
              * accelerating
              */
@@ -212,16 +225,18 @@ long BasicStepperDriver::nextAction(void){
             step_state = HIGH;
         } else {
             step_state = LOW;
-            steps_remaining--;
-            step_count++;
-            calcStepPulse();
         }
         digitalWrite(step_pin, step_state);
+        unsigned m = micros();
+        if (step_state == LOW){
+            calcStepPulse();
+        }
+        m = micros() - m;
         /*
          * We currently try to do a 50% duty cycle so it's easy to see.
          * Other option is step_high_min, pulse_duration-step_high_min.
          */
-        return step_pulse/2; // FIXME: precision loss (1us)
+        return (step_state == LOW) ? step_pulse-step_high_min-m : step_high_min;
     } else {
         return 0; // end of move
     }
