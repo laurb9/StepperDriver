@@ -28,16 +28,16 @@ protected:
     size_t getMicrostepTableSize() override;
 
     // Get max microsteps supported by the device
-    unsigned getMaxMicrostep() override;
+    short getMaxMicrostep() override;
 
 private:
     // microstep range (1, 16, 32 etc)
-    static const unsigned MAX_MICROSTEP = 32;
+    static const short MAX_MICROSTEP = 32;
 
 public:
-    DRV8825(int steps, int dir_pin, int step_pin);
-    DRV8825(int steps, int dir_pin, int step_pin, int enable_pin);
-    DRV8825(int steps, int dir_pin, int step_pin, int mode0_pin, int mode1_pin, int mode2_pin);
-    DRV8825(int steps, int dir_pin, int step_pin, int enable_pin, int mode0_pin, int mode1_pin, int mode2_pin);
+    DRV8825(short steps, short dir_pin, short step_pin);
+    DRV8825(short steps, short dir_pin, short step_pin, short enable_pin);
+    DRV8825(short steps, short dir_pin, short step_pin, short mode0_pin, short mode1_pin, short mode2_pin);
+    DRV8825(short steps, short dir_pin, short step_pin, short enable_pin, short mode0_pin, short mode1_pin, short mode2_pin);
 };
 #endif // DRV8825_H

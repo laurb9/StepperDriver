@@ -35,8 +35,11 @@ void setup() {
      * Set target motor RPM.
      * These motors can do up to about 200rpm.
      * Too high will result in a high pitched whine and the motor does not move.
+     *
+     * Also tell the driver the microstep level we selected.
+     * If mismatched, the motor will move at a different RPM than chosen.
      */
-    stepper.setRPM(120);
+    stepper.begin(120, MICROSTEPS);
 }
 
 void loop() {
@@ -44,12 +47,6 @@ void loop() {
     // energize coils - the motor will hold position
     // stepper.enable();
   
-    /*
-     * Tell the driver the microstep level we selected.
-     * If mismatched, the motor will move at a different RPM than chosen.
-     */
-    stepper.setMicrostep(MICROSTEPS);
-
     /*
      * Moving motor one full revolution using the degree notation
      */
