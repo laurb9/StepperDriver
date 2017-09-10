@@ -15,8 +15,6 @@
 #define PIN_UNCONNECTED -1
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
-enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
-
 /*
  * calculate the step pulse in microseconds for a given rpm value.
  * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
@@ -35,6 +33,7 @@ inline void microWaitUntil(unsigned long target_micros){
  */
 class BasicStepperDriver {
 public:
+    enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
     enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
     
 protected:

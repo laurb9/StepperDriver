@@ -31,7 +31,7 @@ void setup() {
      * LINEAR_SPEED profile needs the acceleration and deceleration values
      * in full steps / s^2.
      */
-    stepper.setSpeedProfile(LINEAR_SPEED, 1000, 1000);
+    stepper.setSpeedProfile(stepper.LINEAR_SPEED, 1000, 1000);
 
     Serial.println("START");
     stepper.startRotate(360);
