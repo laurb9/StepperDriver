@@ -122,7 +122,7 @@ void BasicStepperDriver::startMove(long steps){
             speed = rpm * motor_steps / 60;
             // how many steps from 0 to target rpm
             steps_to_cruise = speed * speed * microsteps / (2 * accel);
-            // how many steps from 0 til we need to begin slowing down
+            // how many steps are needed from target rpm to a full stop
             steps_to_brake = steps_to_cruise * accel / decel;
             if (steps_remaining < steps_to_cruise + steps_to_brake){
                 // cannot reach max speed, will need to brake early
@@ -200,27 +200,23 @@ void BasicStepperDriver::calcStepPulse(void){
     steps_remaining--;
     step_count++;
 
-    // if constant speed
     if (mode == LINEAR_SPEED){
-        if (step_count <= steps_to_cruise){
+        switch (getCurrentState()){
+        case ACCELERATING:
             if (step_count == 1){     // first step, initialize rest
                 rest = 0;
             }
-            /*
-             * accelerating
-             */
             step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
             rest = (step_count < steps_to_cruise) ? (2*step_pulse+rest) % (4*step_count+1) : 0;
-        } else if (steps_remaining > steps_to_brake){
-            /*
-             * cruising (no speed changes)
-             */
-        } else {
-            /*
-             * decelerating
-             */
+            break;
+
+        case DECELERATING:
             step_pulse = step_pulse - (2*step_pulse+rest)/(-4*steps_remaining+1);
             rest = (2*step_pulse+rest) % (-4*steps_remaining+1);
+            break;
+
+        default:
+            break; // no speed changes
         }
     }
 }
@@ -252,6 +248,21 @@ long BasicStepperDriver::nextAction(void){
     } else {
         return 0; // end of move
     }
+}
+enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){
+    enum State state;
+    if (steps_remaining <= 0){
+        state = STOPPED;
+    } else {
+        if (step_count <= steps_to_cruise){
+            state = ACCELERATING;
+        } else if (steps_remaining <= steps_to_brake){
+            state = DECELERATING;
+        } else {
+            state = CRUISING;
+        }
+    }
+    return state;
 }
 
 /*

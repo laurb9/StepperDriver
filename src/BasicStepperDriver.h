@@ -15,7 +15,6 @@
 #define PIN_UNCONNECTED -1
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
-enum Direction {DIR_FORWARD, DIR_REVERSE};
 enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
 
 /*
@@ -35,6 +34,9 @@ inline void microWaitUntil(unsigned long target_micros){
  * Microstepping level should be externally controlled or hardwired.
  */
 class BasicStepperDriver {
+public:
+    enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
+    
 protected:
     /*
      * Motor Configuration
@@ -158,6 +160,10 @@ public:
      * Toggle step and return time until next change is needed (micros)
      */
     long nextAction(void);
+    /*
+     * State querying
+     */
+    enum State getCurrentState(void);
 
     /*
      * Return calculated time to complete the given move
