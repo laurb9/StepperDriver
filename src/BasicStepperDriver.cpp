@@ -123,13 +123,10 @@ void BasicStepperDriver::startMove(long steps){
             // how many steps from 0 to target rpm
             steps_to_cruise = speed * speed * microsteps / (2 * accel);
             // how many steps from 0 til we need to begin slowing down
-            steps_to_brake = steps_remaining * decel / (accel + decel);
-            if (steps_to_cruise < steps_to_brake){
-                // will reach max speed before needing to brake
-                steps_to_brake = steps_to_cruise * accel / decel;
-            } else {
+            steps_to_brake = steps_to_cruise * accel / decel;
+            if (steps_remaining < steps_to_cruise + steps_to_brake){
                 // cannot reach max speed, will need to brake early
-                steps_to_cruise = steps_to_brake;
+                steps_to_cruise = steps_remaining * decel / (accel + decel);
                 steps_to_brake = steps_remaining - steps_to_cruise;
             }
             // Initial pulse (c0) including error correction factor 0.676 [us]
