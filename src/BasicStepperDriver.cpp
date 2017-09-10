@@ -141,6 +141,21 @@ void BasicStepperDriver::startMove(long steps){
     }
 }
 /*
+ * Brake early.
+ */
+void BasicStepperDriver::startBrake(void){
+    switch (mode){
+        case LINEAR_SPEED: 
+            if (steps_remaining > steps_to_brake){
+                steps_remaining = steps_to_brake;
+            }
+            break;
+        case CONSTANT_SPEED:
+        default:
+            steps_remaining = 0;
+    }
+}
+/*
  * Return calculated time to complete the given move
  */
 long BasicStepperDriver::getTimeForMove(long steps){

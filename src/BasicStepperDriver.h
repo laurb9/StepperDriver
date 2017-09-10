@@ -135,11 +135,14 @@ public:
     void enable(void);
     void disable(void);
     /*
-     * Methods to allow external timing control.
-     * These should not be needed for normal use.
+     * Methods for non-blocking mode.
+     * They use more code but allow doing other operations between impulses.
+     * The flow has two parts - start/initiate followed by looping with nextAction.
+     * See AccelTest example.
      */
     /*
-     * Initiate a move (calculate and save the parameters)
+     * Initiate a move over known distance (calculate and save the parameters)
+     * Pick just one based on move type and distance type.
      */
     void startMove(long steps);
     inline void startRotate(int deg){ 
@@ -147,6 +150,10 @@ public:
     };
     void startRotate(long deg);
     void startRotate(double deg);
+    /*
+     * Optionally, call this to begin braking (and then stop) early
+     */
+    void startBrake(void);
     /*
      * Toggle step and return time until next change is needed (micros)
      */
