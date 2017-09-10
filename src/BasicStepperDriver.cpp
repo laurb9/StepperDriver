@@ -132,24 +132,29 @@ void BasicStepperDriver::startMove(long steps){
             // Initial pulse (c0) including error correction factor 0.676 [us]
             step_pulse = (1e+6)*0.676*sqrt(2.0f/(accel*microsteps));
             break;
+
         case CONSTANT_SPEED:
         default:
             step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
+            steps_to_cruise = 0;
+            steps_to_brake = 0;
     }
 }
 /*
  * Brake early.
  */
 void BasicStepperDriver::startBrake(void){
-    switch (mode){
-        case LINEAR_SPEED: 
-            if (steps_remaining > steps_to_brake){
-                steps_remaining = steps_to_brake;
-            }
-            break;
-        case CONSTANT_SPEED:
-        default:
-            steps_remaining = 0;
+    switch (getCurrentState()){
+    case CRUISING:  // this applies to both CONSTANT_SPEED and LINEAR_SPEED modes
+        steps_remaining = steps_to_brake;
+        break;
+
+    case ACCELERATING:
+        steps_remaining = step_count * accel / decel;
+        break;
+
+    default:
+        break; // nothing to do if already stopped or braking
     }
 }
 /*
@@ -254,10 +259,10 @@ enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){
     if (steps_remaining <= 0){
         state = STOPPED;
     } else {
-        if (step_count <= steps_to_cruise){
-            state = ACCELERATING;
-        } else if (steps_remaining <= steps_to_brake){
+        if (steps_remaining <= steps_to_brake){
             state = DECELERATING;
+        } else if (step_count <= steps_to_cruise){
+            state = ACCELERATING;
         } else {
             state = CRUISING;
         }
