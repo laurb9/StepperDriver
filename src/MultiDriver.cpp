@@ -59,6 +59,30 @@ long MultiDriver::nextAction(void){
     return (ready) ? 0 : next_event;
 }
 /*
+ * Optionally, call this to begin braking to stop early
+ */
+void MultiDriver::startBrake(void){
+    FOREACH_MOTOR(
+        if (event_timers[i] >= 0){
+            motors[i]->startBrake();
+        }
+    )
+}
+/*
+ * State querying
+ */
+bool MultiDriver::isRunning(void){
+    bool running = false;
+    FOREACH_MOTOR(
+        if (motors[i]->getCurrentState() != Motor::STOPPED){
+            running = true;
+            break;
+        }
+    )
+    return running;
+}
+
+/*
  * Move each motor the requested number of steps, in parallel
  * positive to move forward, negative to reverse, 0 to remain still
  */
