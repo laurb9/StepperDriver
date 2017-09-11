@@ -2,12 +2,19 @@ StepperDriver
 =============
 
 A4988, DRV8825 and generic two-pin stepper motor driver library.
-Currently supported: 
+Features:
+   - Constant speed mode (low rpms)
+   - Linear (accelerated) speed mode, with separate acceleration and deceleration settings.
+   - Non-blocking mode (yields back to caller after each pulse)
+   - Early brake / increase runtime in non-blocking mode
+
+Hardware currently supported: 
    - <a href="https://www.pololu.com/product/2134">DRV8834</a> Low-Voltage Stepper Motor Driver
      up to 1:32
    - <a href="https://www.pololu.com/product/1182">A4988</a> Stepper Motor Driver up to 1:16
    - <a href="https://www.pololu.com/product/2131">DRV8825</a> up to 1:32
-   - any 2-pin stepper via DIR and STEP pins.
+   - <a href="https://www.pololu.com/product/2971">DRV8880</a> up to 1:16, with current/torque control
+   - any 2-pin stepper via DIR and STEP pins, microstepping up to 1:128 externally set
 
 Motors
 ======
@@ -35,7 +42,7 @@ Wiring
       - MS1/MODE0 - D10
       - MS2/MODE1 - D11
       - MS3/MODE2 - D12
-    - DRV8834 microstep control
+    - DRV8834/DRV8880 microstep control
       - M0 - D10
       - M1 - D11
     - ~ENABLE (optional) recommend D13 to visually check if coils are active

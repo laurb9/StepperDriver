@@ -15,17 +15,18 @@
 #define PIN_UNCONNECTED -1
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
-enum Direction {DIR_FORWARD, DIR_REVERSE};
-enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
-
 /*
  * calculate the step pulse in microseconds for a given rpm value.
  * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
  */
 #define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
+// don't call yield if we have a wait shorter than this
+#define MIN_YIELD_MICROS 25
 inline void microWaitUntil(unsigned long target_micros){
-    yield();
+    if (target_micros - micros() > MIN_YIELD_MICROS){
+        yield();
+    }
     while (micros() < target_micros);
 }
 #define DELAY_MICROS(us) microWaitUntil(micros() + us)
@@ -35,6 +36,10 @@ inline void microWaitUntil(unsigned long target_micros){
  * Microstepping level should be externally controlled or hardwired.
  */
 class BasicStepperDriver {
+public:
+    enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
+    enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
+    
 protected:
     /*
      * Motor Configuration
@@ -74,10 +79,11 @@ protected:
 
     // DIR pin state
     short dir_state;
-    // STEP pin state (HIGH / LOW)
-    short step_state = LOW;
 
     void calcStepPulse(void);
+
+    // this is internal because one can call the start methods while CRUISING to get here
+    void alterMove(long steps);
 
 private:
     // microstep range (1, 16, 32 etc)
@@ -135,11 +141,14 @@ public:
     void enable(void);
     void disable(void);
     /*
-     * Methods to allow external timing control.
-     * These should not be needed for normal use.
+     * Methods for non-blocking mode.
+     * They use more code but allow doing other operations between impulses.
+     * The flow has two parts - start/initiate followed by looping with nextAction.
+     * See AccelTest example.
      */
     /*
-     * Initiate a move (calculate and save the parameters)
+     * Initiate a move over known distance (calculate and save the parameters)
+     * Pick just one based on move type and distance type.
      */
     void startMove(long steps);
     inline void startRotate(int deg){ 
@@ -151,6 +160,14 @@ public:
      * Toggle step and return time until next change is needed (micros)
      */
     long nextAction(void);
+    /*
+     * Optionally, call this to begin braking (and then stop) early
+     */
+    void startBrake(void);
+    /*
+     * State querying
+     */
+    enum State getCurrentState(void);
 
     /*
      * Return calculated time to complete the given move

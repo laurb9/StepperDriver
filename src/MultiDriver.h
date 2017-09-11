@@ -75,7 +75,15 @@ public:
      * Toggle step and return time until next change is needed (micros)
      */
     virtual long nextAction(void);
-
+    /*
+     * Optionally, call this to begin braking to stop early
+     */
+    void startBrake(void);
+    /*
+     * State querying
+     */
+    bool isRunning(void);
+     
     /*
      * Set the same microstepping level on all motors
      */
