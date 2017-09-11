@@ -108,15 +108,19 @@ void BasicStepperDriver::rotate(double deg){
 }
 
 /*
- * Set up a new move (calculate and save the parameters)
+ * Set up a new move or alter an active move (calculate and save the parameters)
  */
 void BasicStepperDriver::startMove(long steps){
     long speed;
-    dir_state = (steps >= 0) ? HIGH : LOW;
-    step_state = LOW;
-    steps_remaining = abs(steps);
-    step_count = 0;
-    switch (mode){
+    if (steps_remaining){
+        alterMove(steps);
+    } else {
+        // set up new move
+        dir_state = (steps >= 0) ? HIGH : LOW;
+        step_state = LOW;
+        steps_remaining = abs(steps);
+        step_count = 0;
+        switch (mode){
         case LINEAR_SPEED:
             // speed is in [steps/s]
             speed = rpm * motor_steps / 60;
@@ -132,12 +136,35 @@ void BasicStepperDriver::startMove(long steps){
             // Initial pulse (c0) including error correction factor 0.676 [us]
             step_pulse = (1e+6)*0.676*sqrt(2.0f/(accel*microsteps));
             break;
-
+    
         case CONSTANT_SPEED:
         default:
             step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
             steps_to_cruise = 0;
             steps_to_brake = 0;
+        }
+    }
+}
+/*
+ * Alter a running move by adding/removing steps
+ * FIXME: This is a naive implementation and it only works well in CRUISING state
+ */
+void BasicStepperDriver::alterMove(long steps){
+    switch (getCurrentState()){
+    case ACCELERATING: // this also works but will keep the original speed target
+    case CRUISING:
+        if (steps >= 0){
+            steps_remaining += steps;
+        } else {
+            steps_remaining = max(steps_to_brake, steps_remaining+steps);
+        };
+        break;
+    case DECELERATING:
+        // would need to start accelerating again -- NOT IMPLEMENTED
+        break;
+    case STOPPED:
+        startMove(steps);
+        break;
     }
 }
 /*

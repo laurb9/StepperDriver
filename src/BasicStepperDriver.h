@@ -80,6 +80,9 @@ protected:
 
     void calcStepPulse(void);
 
+    // this is internal because one can call the start methods while CRUISING to get here
+    void alterMove(long steps);
+
 private:
     // microstep range (1, 16, 32 etc)
     static const short MAX_MICROSTEP = 128;
@@ -152,13 +155,13 @@ public:
     void startRotate(long deg);
     void startRotate(double deg);
     /*
-     * Optionally, call this to begin braking (and then stop) early
-     */
-    void startBrake(void);
-    /*
      * Toggle step and return time until next change is needed (micros)
      */
     long nextAction(void);
+    /*
+     * Optionally, call this to begin braking (and then stop) early
+     */
+    void startBrake(void);
     /*
      * State querying
      */
