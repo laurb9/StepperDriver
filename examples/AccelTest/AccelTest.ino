@@ -31,7 +31,7 @@ void setup() {
      * LINEAR_SPEED profile needs the acceleration and deceleration values
      * in full steps / s^2.
      */
-    stepper.setSpeedProfile(stepper.LINEAR_SPEED, 1000, 1000);
+    stepper.setSpeedProfile(stepper.LINEAR_SPEED, 2000, 1000);
 
     Serial.println("START");
     stepper.startRotate(360);
@@ -41,7 +41,7 @@ void loop() {
     static int step = 0;
     unsigned wait_time = stepper.nextAction();
     if (wait_time){
-        Serial.print("  step="); Serial.print(step++/2);
+        Serial.print("  step="); Serial.print(step++);
         Serial.print("  dt="); Serial.print(wait_time);
         Serial.print("  rpm="); Serial.print(stepper.getCurrentRPM());
         Serial.println();

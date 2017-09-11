@@ -117,7 +117,6 @@ void BasicStepperDriver::startMove(long steps){
     } else {
         // set up new move
         dir_state = (steps >= 0) ? HIGH : LOW;
-        step_state = LOW;
         steps_remaining = abs(steps);
         step_count = 0;
         switch (mode){
@@ -261,22 +260,19 @@ long BasicStepperDriver::nextAction(void){
          * DIR pin is sampled on rising STEP edge, so it is set first
          */
         digitalWrite(dir_pin, dir_state);
-        if (step_state == LOW){
-            step_state = HIGH;
-        } else {
-            step_state = LOW;
-        }
-        digitalWrite(step_pin, step_state);
+        digitalWrite(step_pin, HIGH);
         unsigned m = micros();
-        if (step_state == LOW){
-            calcStepPulse();
-        }
+        long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
+        calcStepPulse();
         m = micros() - m;
-        /*
-         * We currently try to do a 50% duty cycle so it's easy to see.
-         * Other option is step_high_min, pulse_duration-step_high_min.
-         */
-        return (step_state == LOW) ? step_pulse-step_high_min-m : step_high_min;
+        // We should pull HIGH for 1-2us (step_high_min)
+        if (m < step_high_min){ // fast MCPU or CONSTANT_SPEED
+            DELAY_MICROS(step_high_min-m);
+            m = step_high_min;
+        };
+        digitalWrite(step_pin, LOW);
+        // account for calcStepPulse() execution time
+        return pulse - m;
     } else {
         return 0; // end of move
     }

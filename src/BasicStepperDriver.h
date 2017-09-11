@@ -21,8 +21,12 @@
  */
 #define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
+// don't call yield if we have a wait shorter than this
+#define MIN_YIELD_MICROS 25
 inline void microWaitUntil(unsigned long target_micros){
-    yield();
+    if (target_micros - micros() > MIN_YIELD_MICROS){
+        yield();
+    }
     while (micros() < target_micros);
 }
 #define DELAY_MICROS(us) microWaitUntil(micros() + us)
@@ -75,8 +79,6 @@ protected:
 
     // DIR pin state
     short dir_state;
-    // STEP pin state (HIGH / LOW)
-    short step_state = LOW;
 
     void calcStepPulse(void);
 
