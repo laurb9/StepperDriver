@@ -45,7 +45,6 @@ void loop() {
         Serial.print("  dt="); Serial.print(wait_time);
         Serial.print("  rpm="); Serial.print(stepper.getCurrentRPM());
         Serial.println();
-        microWaitUntil(micros() + wait_time);
     } else {
         stepper.disable();
         Serial.println("END");

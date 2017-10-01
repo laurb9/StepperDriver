@@ -144,7 +144,7 @@ public:
      * Methods for non-blocking mode.
      * They use more code but allow doing other operations between impulses.
      * The flow has two parts - start/initiate followed by looping with nextAction.
-     * See AccelTest example.
+     * See NonBlocking example.
      */
     /*
      * Initiate a move over known distance (calculate and save the parameters)
@@ -157,7 +157,7 @@ public:
     void startRotate(long deg);
     void startRotate(double deg);
     /*
-     * Toggle step and return time until next change is needed (micros)
+     * Toggle step at the right time and return time until next change is needed (micros)
      */
     long nextAction(void);
     /*
