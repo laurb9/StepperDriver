@@ -3,7 +3,7 @@
  *
  * Connect STEP, DIR as indicated
  *
- * Copyright (C)2015 Laurentiu Badea
+ * Copyright (C)2015-2017 Laurentiu Badea
  *
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
@@ -13,33 +13,27 @@
 
 // Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
 #define MOTOR_STEPS 200
+#define RPM 120
+
+// Since microstepping is set externally, make sure this matches the selected mode
+// If it doesn't, the motor will move at a different RPM than chosen
+// 1=full step, 2=half step etc.
+#define MICROSTEPS 1
 
 // All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
 //Uncomment line to use enable/disable functionality
-//#define ENBL 7
-
-// Since microstepping is set externally, make sure this matches the selected mode
-// 1=full step, 2=half step etc.
-#define MICROSTEPS 1
+//#define ENABLE 13
 
 // 2-wire basic config, microstepping is hardwired on the driver
 BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 
 //Uncomment line to use enable/disable functionality
-//BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP, ENBL);
+//BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP, ENABLE);
 
 void setup() {
-    /*
-     * Set target motor RPM.
-     * These motors can do up to about 200rpm.
-     * Too high will result in a high pitched whine and the motor does not move.
-     *
-     * Also tell the driver the microstep level we selected.
-     * If mismatched, the motor will move at a different RPM than chosen.
-     */
-    stepper.begin(120, MICROSTEPS);
+    stepper.begin(RPM, MICROSTEPS);
 }
 
 void loop() {

@@ -1,7 +1,8 @@
 /*
- * Multi-motor control
+ * Multi-motor control (experimental)
  *
  * Move two or three motors at the same time.
+ * This module is still work in progress and may not work well or at all.
  *
  * Copyright (C)2017 Laurentiu Badea
  *
@@ -16,12 +17,12 @@
 #define MOTOR_STEPS 200
 
 // X motor
-#define DIR_X 5
+#define DIR_X 8
 #define STEP_X 9
 
 // Y motor
-#define DIR_Y 8
-#define STEP_Y 6
+#define DIR_Y 6
+#define STEP_Y 7
 
 // If microstepping is set externally, make sure this matches the selected mode
 // 1=full step, 2=half step etc.
