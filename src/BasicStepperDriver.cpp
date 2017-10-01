@@ -115,6 +115,7 @@ void BasicStepperDriver::startMove(long steps){
         dir_state = (steps >= 0) ? HIGH : LOW;
         steps_remaining = abs(steps);
         step_count = 0;
+        rest = 0;
         switch (mode){
         case LINEAR_SPEED:
             // speed is in [steps/s]
@@ -233,9 +234,6 @@ void BasicStepperDriver::calcStepPulse(void){
     if (mode == LINEAR_SPEED){
         switch (getCurrentState()){
         case ACCELERATING:
-            if (step_count == 1){     // first step, initialize rest
-                rest = 0;
-            }
             step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
             rest = (step_count < steps_to_cruise) ? (2*step_pulse+rest) % (4*step_count+1) : 0;
             break;
@@ -255,7 +253,7 @@ void BasicStepperDriver::calcStepPulse(void){
  * Toggle step and return time until next change is needed (micros)
  */
 long BasicStepperDriver::nextAction(void){
-    long next_action_interval = 0;
+    long next_action_interval;
     if (steps_remaining > 0){
         microWaitUntil(next_action_time);
         /*
@@ -273,8 +271,8 @@ long BasicStepperDriver::nextAction(void){
             m = step_high_min;
         };
         digitalWrite(step_pin, LOW);
-        // account for calcStepPulse() execution time
-        next_action_interval = pulse - m;
+        // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
+        next_action_interval = (pulse > m) ? pulse - m : 1;
     } else {
         // end of move
         next_action_interval = 0;
@@ -282,6 +280,7 @@ long BasicStepperDriver::nextAction(void){
     next_action_time = micros() + next_action_interval;
     return next_action_interval;
 }
+
 enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){
     enum State state;
     if (steps_remaining <= 0){
