@@ -40,6 +40,11 @@ public:
     enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
     enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
     
+private:
+    // calculation remainder to be fed into successive steps to increase accuracy (Atmel DOC8017)
+    long rest;
+    unsigned long next_action_time = 0;
+
 protected:
     /*
      * Motor Configuration

@@ -223,9 +223,6 @@ void BasicStepperDriver::startRotate(double deg){
  * calculate the interval til the next pulse
  */
 void BasicStepperDriver::calcStepPulse(void){
-    // remainder to be fed into successive steps to increase accuracy (Atmel DOC8017)
-    static long rest;
-
     if (steps_remaining <= 0){  // this should not happen, but avoids strange calculations
         return;
     }
@@ -258,7 +255,6 @@ void BasicStepperDriver::calcStepPulse(void){
  * Toggle step and return time until next change is needed (micros)
  */
 long BasicStepperDriver::nextAction(void){
-    static unsigned long next_action_time = 0;
     long next_action_interval = 0;
     if (steps_remaining > 0){
         microWaitUntil(next_action_time);
