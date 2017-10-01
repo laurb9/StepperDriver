@@ -9,47 +9,56 @@
  * A copy of this license has been included with this distribution in the file LICENSE.
  */
 #include <Arduino.h>
-#include "DRV8834.h"
-#include "A4988.h"
-#include "DRV8825.h"
 
 // Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
 #define MOTOR_STEPS 200
+#define RPM 120
 
-// All the wires needed for full functionality
 #define DIR 8
 #define STEP 9
-#define ENBL 10
+#define ENABLE 13 // optional (just delete ENABLE from everywhere if not used)
 
-// 2-wire basic config, microstepping is hardwired on the driver
-// BasicStepperDriver stepper(DIR, STEP);
+/*
+ * Choose one of the sections below that match your board
+ */
 
-// microstep control for DRV8834
+#include "DRV8834.h"
 #define M0 10
 #define M1 11
-DRV8834 stepper(MOTOR_STEPS, DIR, STEP, M0, M1);
-// DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENBL, M0, M1);
+DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1);
 
-// microstep control for A4988
+// #include "A4988.h"
 // #define MS1 10
 // #define MS2 11
 // #define MS3 12
-// A4988 stepper(MOTOR_STEPS, DIR, STEP, MS1, MS2, MS3);
+// A4988 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, MS1, MS2, MS3);
 
-// microstep control for DRV8825
-// same pinout as A4988, different pin names, supports 32 microsteps
+// #include "DRV8825.h"
 // #define MODE0 10
 // #define MODE1 11
 // #define MODE2 12
-// DRV8825 stepper(MOTOR_STEPS, DIR, STEP, MODE0, MODE1, MODE2);
+// DRV8825 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, MODE0, MODE1, MODE2);
+
+// #include "DRV8880.h"
+// #define M0 10
+// #define M1 11
+// #define TRQ0 6
+// #define TRQ1 7
+// DRV8880 stepper(MOTORS_STEPS, DIR, STEP, ENABLE, M0, M1, TRQ0, TRQ1);
+
+// #include "BasicStepperDriver.h" // generic
+// BasicStepperDriver stepper(DIR, STEP);
 
 void setup() {
     /*
      * Set target motor RPM.
-     * These motors can do up to about 200rpm.
      * Too high will result in a high pitched whine and the motor does not move.
      */
-    stepper.begin(120);
+    stepper.begin(RPM);
+    stepper.enable();
+    
+    // set current level (for DRV8880 only). Valid percent values are 25, 50, 75 or 100.
+    // stepper.setCurrent(100);
 }
 
 void loop() {

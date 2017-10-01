@@ -1,5 +1,5 @@
 /*
- * Example for using non-blocking mode to move until condition
+ * Example using non-blocking mode to move until a switch is triggered.
  *
  * Copyright (C)2015-2017 Laurentiu Badea
  *
@@ -8,27 +8,29 @@
  */
 #include <Arduino.h>
 
+// this pin should connect to Ground when want to stop the motor
+#define STOPPER_PIN 4
+
 // Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
 #define MOTOR_STEPS 200
+#define RPM 120
 // Microstepping mode. If you hardwired it to save pins, set to the same value here.
 #define MICROSTEPS 16
 
 #define DIR 8
 #define STEP 9
-#define ENABLE 7 // optional (just delete ENABLE from everywhere if not used)
+#define ENABLE 13 // optional (just delete ENABLE from everywhere if not used)
 
-// Choose the section below matching your board
-
-// #include "BasicStepperDriver.h"
-// 2-wire basic config, microstepping is hardwired on the driver
-// BasicStepperDriver stepper(DIR, STEP);
+/*
+ * Choose one of the sections below that match your board
+ */
 
 #include "DRV8834.h"
 #define M0 10
 #define M1 11
 DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1);
 
-//#include "A4988.h"
+// #include "A4988.h"
 // #define MS1 10
 // #define MS2 11
 // #define MS3 12
@@ -40,8 +42,15 @@ DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1);
 // #define MODE2 12
 // DRV8825 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, MODE0, MODE1, MODE2);
 
-// this pin should connect to Ground when want to stop the motor
-#define STOPPER_PIN 4
+// #include "DRV8880.h"
+// #define M0 10
+// #define M1 11
+// #define TRQ0 6
+// #define TRQ1 7
+// DRV8880 stepper(MOTORS_STEPS, DIR, STEP, ENABLE, M0, M1, TRQ0, TRQ1);
+
+// #include "BasicStepperDriver.h" // generic
+// BasicStepperDriver stepper(DIR, STEP);
 
 void setup() {
     Serial.begin(115200);
@@ -49,8 +58,11 @@ void setup() {
     // Configure stopper pin to read HIGH unless grounded
     pinMode(STOPPER_PIN, INPUT_PULLUP);
 
-    stepper.begin(120, MICROSTEPS);
+    stepper.begin(RPM, MICROSTEPS);
     stepper.enable();
+
+    // set current level (for DRV8880 only). Valid percent values are 25, 50, 75 or 100.
+    // stepper.setCurrent(100);
 
     Serial.println("START");
 
