@@ -75,12 +75,16 @@ void loop() {
     // first, check if stopper was hit
     if (digitalRead(STOPPER_PIN) == LOW){
         Serial.println("STOPPER REACHED");
+
         /*
-         * In constant speed mode, startBrake() is an immediate stop but in accelerated modes
-         * the motor will go a little past the stopper while braking. For immediate stop
-         * we can just stop calling nextAction()
+         * Choosing stop() vs startBrake():
+         *
+         * constant speed mode, they are the same (stop immediately)
+         * linear (accelerated) mode with brake, the motor will go past the stopper a bit
          */
-         stepper.startBrake();
+
+        stepper.stop();
+        // stepper.startBrake();
     }
 
     // motor control loop - send pulse and return how long to wait until next pulse

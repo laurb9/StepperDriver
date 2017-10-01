@@ -162,8 +162,14 @@ public:
     long nextAction(void);
     /*
      * Optionally, call this to begin braking (and then stop) early
+     * For constant speed, this is the same as stop()
      */
     void startBrake(void);
+    /*
+     * Immediate stop
+     */
+    void stop(void);
+     */
     /*
      * State querying
      */
