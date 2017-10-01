@@ -180,6 +180,12 @@ void BasicStepperDriver::startBrake(void){
     }
 }
 /*
+ * Stop movement immediately.
+ */
+void BasicStepperDriver::stop(void){
+    steps_remaining = 0;
+}
+/*
  * Return calculated time to complete the given move
  */
 long BasicStepperDriver::getTimeForMove(long steps){
