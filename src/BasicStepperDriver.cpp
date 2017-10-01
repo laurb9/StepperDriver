@@ -85,12 +85,8 @@ void BasicStepperDriver::setSpeedProfile(Mode mode, short accel, short decel){
  * positive to move forward, negative to reverse
  */
 void BasicStepperDriver::move(long steps){
-    long next_event;
     startMove(steps);
-    do {
-        next_event = nextAction();
-        microWaitUntil(micros() + next_event);
-    } while (next_event);
+    while (nextAction());
 }
 /*
  * Move the motor a given number of degrees (1-360)
@@ -184,6 +180,12 @@ void BasicStepperDriver::startBrake(void){
     }
 }
 /*
+ * Stop movement immediately.
+ */
+void BasicStepperDriver::stop(void){
+    steps_remaining = 0;
+}
+/*
  * Return calculated time to complete the given move
  */
 long BasicStepperDriver::getTimeForMove(long steps){
@@ -252,10 +254,14 @@ void BasicStepperDriver::calcStepPulse(void){
     }
 }
 /*
+ * Yield to step control
  * Toggle step and return time until next change is needed (micros)
  */
 long BasicStepperDriver::nextAction(void){
+    static unsigned long next_action_time = 0;
+    long next_action_interval = 0;
     if (steps_remaining > 0){
+        microWaitUntil(next_action_time);
         /*
          * DIR pin is sampled on rising STEP edge, so it is set first
          */
@@ -272,10 +278,13 @@ long BasicStepperDriver::nextAction(void){
         };
         digitalWrite(step_pin, LOW);
         // account for calcStepPulse() execution time
-        return pulse - m;
+        next_action_interval = pulse - m;
     } else {
-        return 0; // end of move
+        // end of move
+        next_action_interval = 0;
     }
+    next_action_time = micros() + next_action_interval;
+    return next_action_interval;
 }
 enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){
     enum State state;

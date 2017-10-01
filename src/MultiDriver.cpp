@@ -32,6 +32,11 @@ void MultiDriver::startMove(long steps1, long steps2, long steps3){
  * Trigger next step action
  */
 long MultiDriver::nextAction(void){
+    static unsigned long next_action_time = 0;
+    long next_action_interval = 0;
+
+    microWaitUntil(next_action_time);
+    
     // Trigger all the motors that need it (event timer = 0)
     FOREACH_MOTOR(
         if (event_timers[i] == 0){
@@ -40,23 +45,23 @@ long MultiDriver::nextAction(void){
     );
     // Find the time when the next pulse needs to fire
     // this is the smallest non-zero timer value from all active motors
-    long next_event = 0;
     ready = true;
     FOREACH_MOTOR(
         if (event_timers[i] > 0){
             ready = false;
-            if (event_timers[i] < next_event || next_event == 0){
-                next_event = event_timers[i];
+            if (event_timers[i] < next_action_interval || next_action_interval == 0){
+                next_action_interval = event_timers[i];
             }
         }
     );
     // Reduce all event timers by the current left time so 0 marks next
     FOREACH_MOTOR(
         if (event_timers[i] > 0){
-            event_timers[i] -= next_event;
+            event_timers[i] -= next_action_interval;
         }
     );
-    return (ready) ? 0 : next_event;
+    next_action_time = micros() + next_action_interval;
+    return next_action_interval;
 }
 /*
  * Optionally, call this to begin braking to stop early
@@ -91,8 +96,6 @@ void MultiDriver::move(long steps1, long steps2, long steps3){
     startMove(steps1, steps2, steps3);
     while (!ready){
         next_event = nextAction();
-        // wait until the next event
-        microWaitUntil(micros() + next_event);
     }
 }
 

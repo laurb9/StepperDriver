@@ -1,7 +1,7 @@
 StepperDriver
 =============
 
-A4988, DRV8825 and generic two-pin stepper motor driver library.
+A4988, DRV8825, DRV8834, DRV8880 and generic two-pin stepper motor driver library.
 Features:
    - Constant speed mode (low rpms)
    - Linear (accelerated) speed mode, with separate acceleration and deceleration settings.
@@ -14,7 +14,7 @@ Hardware currently supported:
    - <a href="https://www.pololu.com/product/1182">A4988</a> Stepper Motor Driver up to 1:16
    - <a href="https://www.pololu.com/product/2131">DRV8825</a> up to 1:32
    - <a href="https://www.pololu.com/product/2971">DRV8880</a> up to 1:16, with current/torque control
-   - any 2-pin stepper via DIR and STEP pins, microstepping up to 1:128 externally set
+   - any other 2-pin stepper via DIR and STEP pins, microstepping up to 1:128 externally set
 
 Motors
 ======
@@ -31,6 +31,8 @@ Minimal configuration from <a href="https://www.pololu.com/product/2134">Pololu 
 Wiring
 ======
 
+This is suggested wiring for running the examples unmodified. All the pins below can be changed.
+
 - Arduino to driver board:
     - DIR - D8
     - STEP - D9
@@ -45,18 +47,13 @@ Wiring
     - DRV8834/DRV8880 microstep control
       - M0 - D10
       - M1 - D11
-    - ~ENABLE (optional) recommend D13 to visually check if coils are active
+    - ~ENABLE (optional) recommend D13 to see when coils are active
 
 - driver board to motor (this varies from motor to motor, check motor coils schematic).
-  I just list the motor wires counter-clockwise
-    - A1 - RED
-    - A2 - GRN
-    - B1 - YEL
-    - B2 - BLU 
-
 - 100uF capacitor between GND - VMOT 
-- Set the max current on the driver board to the motor limit (see below).
+- Make sure to set the max current on the driver board to the motor limit (see below).
 - Have a motor power supply that can deliver that current.
+- Make sure the motor power supply is within the range supported by the driver board.
 
 Set Max Current
 ===============
@@ -70,6 +67,8 @@ The formula is V = I*5*R where I=max current, R=current sense resistor installed
 
 - DRV8825 low-current board, R=0.33 and V = 1.65 * max current(A).
   For example, for 0.5A the reference voltage should be 0.82V
+
+For latest info, see the Pololu board information pages.
 
 Code
 ====
@@ -91,10 +90,8 @@ stepper motor like the seconds hand of a watch:
 A4988 stepper(200, 8, 9, 10, 11, 12);
 
 void setup() {
-    // Set target motor RPM to 1RPM
-    stepper.setRPM(1);
-    // Set full speed mode (microstepping also works for smoother hand movement
-    stepper.setMicrostep(1);
+    // Set target motor RPM to 1RPM and microstepping to 1 (full step mode)
+    stepper.begin(1, 1);
 }
 
 void loop() {
@@ -109,8 +106,3 @@ Hardware
 - A <a href="https://www.pololu.com/category/120/stepper-motor-drivers">stepper motor driver</a>, for example DRV8834, DRV8825, DRV8824, A4988.
 - A <a href="http://www.circuitspecialists.com/stepper-motor">Stepper Motor</a>.
 - 1 x 100uF capacitor
-
-Notes
-=====
-For DRV8834, if 1:4 and 1:32 microstepping modes do not work, add a 470K resistor
-from M0 to GND.
