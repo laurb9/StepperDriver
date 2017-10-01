@@ -169,7 +169,6 @@ public:
      * Immediate stop
      */
     void stop(void);
-     */
     /*
      * State querying
      */
