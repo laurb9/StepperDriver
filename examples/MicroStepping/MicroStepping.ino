@@ -1,7 +1,7 @@
 /*
  * Microstepping demo
  *
- * This requires that M0, M1 be connected in addition to STEP,DIR
+ * This requires that microstep control pins be connected in addition to STEP,DIR
  *
  * Copyright (C)2015 Laurentiu Badea
  *
@@ -44,7 +44,7 @@ DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1);
 // #define M1 11
 // #define TRQ0 6
 // #define TRQ1 7
-// DRV8880 stepper(MOTORS_STEPS, DIR, STEP, ENABLE, M0, M1, TRQ0, TRQ1);
+// DRV8880 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1, TRQ0, TRQ1);
 
 // #include "BasicStepperDriver.h" // generic
 // BasicStepperDriver stepper(DIR, STEP);
@@ -52,12 +52,12 @@ DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1);
 void setup() {
     /*
      * Set target motor RPM.
-     * Too high will result in a high pitched whine and the motor does not move.
      */
     stepper.begin(RPM);
     stepper.enable();
     
-    // set current level (for DRV8880 only). Valid percent values are 25, 50, 75 or 100.
+    // set current level (for DRV8880 only). 
+    // Valid percent values are 25, 50, 75 or 100.
     // stepper.setCurrent(100);
 }
 
@@ -65,34 +65,35 @@ void loop() {
     delay(1000);
 
     /*
-     * Moving motor at full speed is simple:
+     * Moving motor in full step mode is simple:
      */
-    stepper.setMicrostep(1); // make sure we are in full speed mode
+    stepper.setMicrostep(1);  // Set microstep mode to 1:1
 
-    // these two are equivalent: 180 degrees is 100 steps in full speed mode
-    stepper.move(100);
-    stepper.rotate(180);
+    // One complete revolution is 360°
+    stepper.rotate(360);     // forward revolution
+    stepper.rotate(-360);    // reverse revolution
 
-    // one full reverse rotation
-    stepper.move(-100);
-    stepper.rotate(-180);
+    // One complete revolution is also MOTOR_STEPS steps in full step mode
+    stepper.move(MOTOR_STEPS);    // forward revolution
+    stepper.move(-MOTOR_STEPS);   // reverse revolution
 
     /*
-     * Microstepping mode: 1,2,4,8,16 or 32(DRV8834 only)
+     * Microstepping mode: 1, 2, 4, 8, 16 or 32 (where supported by driver)
      * Mode 1 is full speed.
      * Mode 32 is 32 microsteps per step.
-     * The motor should rotate just as fast (set RPM),
-     * but movement precision is increased.
+     * The motor should rotate just as fast (at the set RPM),
+     * but movement precision is increased, which may become visually apparent at lower RPMs.
      */
-    stepper.setMicrostep(8);
+    stepper.setMicrostep(8);   // Set microstep mode to 1:8
 
-    // 180 degrees now takes 100 * 8 microsteps
-    stepper.move(100*8);
-    stepper.rotate(180);
-
-    // as you can see, using degrees is easier
-    stepper.move(-100*8);
-    stepper.rotate(-180);
+    // In 1:8 microstepping mode, one revolution takes 8 times as many microsteps
+    stepper.move(8 * MOTOR_STEPS);    // forward revolution
+    stepper.move(-8 * MOTOR_STEPS);   // reverse revolution
+    
+    // One complete revolution is still 360° regardless of microstepping mode
+    // rotate() is easier to use than move() when no need to land on precise microstep position
+    stepper.rotate(360);
+    stepper.rotate(-360);
 
     delay(5000);
 }

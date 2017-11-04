@@ -46,7 +46,7 @@ DRV8834 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1);
 // #define M1 11
 // #define TRQ0 6
 // #define TRQ1 7
-// DRV8880 stepper(MOTORS_STEPS, DIR, STEP, ENABLE, M0, M1, TRQ0, TRQ1);
+// DRV8880 stepper(MOTOR_STEPS, DIR, STEP, ENABLE, M0, M1, TRQ0, TRQ1);
 
 // #include "BasicStepperDriver.h" // generic
 // BasicStepperDriver stepper(DIR, STEP);

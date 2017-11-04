@@ -11,10 +11,15 @@
  */
 #include <Arduino.h>
 #include "BasicStepperDriver.h"
+#include "MultiDriver.h"
 #include "SyncDriver.h"
 
 // Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
 #define MOTOR_STEPS 200
+// Target RPM for X axis motor
+#define MOTOR_X_RPM 30
+// Target RPM for Y axis motor
+#define MOTOR_Y_RPM 90
 
 // X motor
 #define DIR_X 8
@@ -33,14 +38,19 @@
 BasicStepperDriver stepperX(MOTOR_STEPS, DIR_X, STEP_X);
 BasicStepperDriver stepperY(MOTOR_STEPS, DIR_Y, STEP_Y);
 
+// Pick one of the two controllers below
+// each motor moves independently, trajectory is a hockey stick
+// MultiDriver controller(stepperX, stepperY);
+// OR
+// synchronized move, trajectory is a straight line
 SyncDriver controller(stepperX, stepperY);
 
 void setup() {
     /*
      * Set target motors RPM.
      */
-    stepperX.begin(30, MICROSTEPS);
-    stepperY.begin(90, MICROSTEPS);
+    stepperX.begin(MOTOR_X_RPM, MICROSTEPS);
+    stepperY.begin(MOTOR_Y_RPM, MICROSTEPS);
 }
 
 void loop() {
