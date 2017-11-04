@@ -53,7 +53,7 @@ This is suggested wiring for running the examples unmodified. All the pins below
 - 100uF capacitor between GND - VMOT 
 - Make sure to set the max current on the driver board to the motor limit (see below).
 - Have a motor power supply that can deliver that current.
-- Make sure the motor power supply is within the range supported by the driver board.
+- Make sure the motor power supply voltage is within the range supported by the driver board.
 
 Set Max Current
 ===============
@@ -86,8 +86,14 @@ stepper motor like the seconds hand of a watch:
 #include "A4988.h"
 
 // using a 200-step motor (most common)
-// pins used are DIR, STEP, MS1, MS2, MS3 in that order
-A4988 stepper(200, 8, 9, 10, 11, 12);
+#define MOTOR_STEPS 200
+// configure the pins connected
+#define DIR 8
+#define STEP 9
+#define MS1 10
+#define MS2 11
+#define MS3 12
+A4988 stepper(MOTOR_STEPS, DIR, STEP, MS1, MS2, MS3);
 
 void setup() {
     // Set target motor RPM to 1RPM and microstepping to 1 (full step mode)
