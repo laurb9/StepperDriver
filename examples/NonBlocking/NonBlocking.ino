@@ -67,8 +67,9 @@ void setup() {
     Serial.println("START");
 
     // set the motor to move continuously for a reasonable time to hit the stopper
-    stepper.startMove(20000);     // 20000 full steps = 100 full rotations
-    // stepper.startRotate(36000);   // 36000 degrees = 100 rotations
+    // let's say 100 complete revolutions (arbitrary number)
+    stepper.startMove(100 * MOTOR_STEPS * MICROSTEPS);     // in microsteps
+    // stepper.startRotate(100 * 360);                     // or in degrees
 }
 
 void loop() {
