@@ -27,15 +27,14 @@ void MultiDriver::startMove(long steps1, long steps2, long steps3){
         }
     );
     ready = false;
+    last_action_end = 0;
 }
 /*
  * Trigger next step action
  */
 long MultiDriver::nextAction(void){
-    static unsigned long next_action_time = 0;
-    long next_action_interval = 0;
-
-    microWaitUntil(next_action_time);
+    Motor::delayMicros(next_action_interval, last_action_end);
+    next_action_interval = 0;
     
     // Trigger all the motors that need it (event timer = 0)
     FOREACH_MOTOR(
@@ -60,7 +59,7 @@ long MultiDriver::nextAction(void){
             event_timers[i] -= next_action_interval;
         }
     );
-    next_action_time = micros() + next_action_interval;
+    last_action_end = 0;
     return next_action_interval;
 }
 /*
