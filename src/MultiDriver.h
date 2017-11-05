@@ -37,6 +37,8 @@ protected:
     bool ready = true;
     // when next state change is due for each motor
     long event_timers[MAX_MOTORS];
+    unsigned long next_action_interval = 0;
+    unsigned long last_action_end = 0;
 
 public:
     /*

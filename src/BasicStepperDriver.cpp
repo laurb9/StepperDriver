@@ -113,6 +113,7 @@ void BasicStepperDriver::startMove(long steps){
     } else {
         // set up new move
         dir_state = (steps >= 0) ? HIGH : LOW;
+        last_action_end = 0;
         steps_remaining = abs(steps);
         step_count = 0;
         rest = 0;
@@ -253,9 +254,8 @@ void BasicStepperDriver::calcStepPulse(void){
  * Toggle step and return time until next change is needed (micros)
  */
 long BasicStepperDriver::nextAction(void){
-    long next_action_interval;
     if (steps_remaining > 0){
-        microWaitUntil(next_action_time);
+        delayMicros(next_action_interval, last_action_end);
         /*
          * DIR pin is sampled on rising STEP edge, so it is set first
          */
@@ -267,17 +267,18 @@ long BasicStepperDriver::nextAction(void){
         m = micros() - m;
         // We should pull HIGH for 1-2us (step_high_min)
         if (m < step_high_min){ // fast MCPU or CONSTANT_SPEED
-            DELAY_MICROS(step_high_min-m);
+            delayMicros(step_high_min-m);
             m = step_high_min;
         };
         digitalWrite(step_pin, LOW);
         // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
+        last_action_end = micros();
         next_action_interval = (pulse > m) ? pulse - m : 1;
     } else {
         // end of move
+        last_action_end = 0;
         next_action_interval = 0;
     }
-    next_action_time = micros() + next_action_interval;
     return next_action_interval;
 }
 

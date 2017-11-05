@@ -22,14 +22,7 @@
 #define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
 // don't call yield if we have a wait shorter than this
-#define MIN_YIELD_MICROS 25
-inline void microWaitUntil(unsigned long target_micros){
-    if (target_micros - micros() > MIN_YIELD_MICROS){
-        yield();
-    }
-    while (micros() < target_micros);
-}
-#define DELAY_MICROS(us) microWaitUntil(micros() + us)
+#define MIN_YIELD_MICROS 50
 
 /*
  * Basic Stepper Driver class.
@@ -40,10 +33,24 @@ public:
     enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
     enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
     
+    static inline void delayMicros(unsigned long delay_us, unsigned long start_us = 0){
+        if (delay_us){
+            if (!start_us){
+                start_us = micros();
+            }
+            if (delay_us > MIN_YIELD_MICROS){
+                yield();
+            }
+            // See https://www.gammon.com.au/millis
+            while (micros() - start_us < delay_us);
+        }
+    }
+
 private:
     // calculation remainder to be fed into successive steps to increase accuracy (Atmel DOC8017)
     long rest;
-    unsigned long next_action_time = 0;
+    unsigned long last_action_end = 0;
+    unsigned long next_action_interval = 0;
 
 protected:
     /*
