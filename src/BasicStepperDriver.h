@@ -32,7 +32,11 @@ class BasicStepperDriver {
 public:
     enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
     enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
-    
+    struct Profile {
+        Mode mode = CONSTANT_SPEED;
+        short accel = 1000;     // acceleration [steps/s^2]
+        short decel = 1000;     // deceleration [steps/s^2]    
+    };
     static inline void delayMicros(unsigned long delay_us, unsigned long start_us = 0){
         if (delay_us){
             if (!start_us){
@@ -57,8 +61,6 @@ protected:
      * Motor Configuration
      */
     short motor_steps;           // motor steps per revolution (usually 200)
-    short accel = 1000;     // maximum acceleration [steps/s^2]
-    short decel = 1000;     // maximum deceleration [steps/s^2]
 
     /*
      * Driver Configuration
@@ -82,7 +84,8 @@ protected:
     /*
      * Movement state
      */
-    Mode mode = CONSTANT_SPEED;
+    struct Profile profile;
+
     long step_count;        // current position
     long steps_remaining;   // to complete the current move (absolute value)
     long steps_to_cruise;   // steps to reach cruising (max) rpm
@@ -116,6 +119,12 @@ public:
      * Returns new level or previous level if value out of range
      */
     virtual short setMicrostep(short microsteps);
+    short getMicrostep(void){
+        return microsteps;
+    }
+    short getSteps(void){
+        return motor_steps;
+    }
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
@@ -131,6 +140,16 @@ public:
      * accel and decel are given in [full steps/s^2]
      */
     void setSpeedProfile(Mode mode, short accel=1000, short decel=1000);
+    void setSpeedProfile(struct Profile profile);
+    struct Profile getSpeedProfile(void){
+        return profile;
+    }
+    short getAcceleration(void){
+        return profile.accel;
+    }
+    short getDeceleration(void){
+        return profile.decel;
+    }
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
