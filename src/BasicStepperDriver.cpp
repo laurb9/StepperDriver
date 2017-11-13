@@ -75,9 +75,12 @@ short BasicStepperDriver::setMicrostep(short microsteps){
  * accel and decel are given in [full steps/s^2]
  */
 void BasicStepperDriver::setSpeedProfile(Mode mode, short accel, short decel){
-    this->mode = mode;
-    this->accel = accel;
-    this->decel = decel;
+    profile.mode = mode;
+    profile.accel = accel;
+    profile.decel = decel;
+}
+void BasicStepperDriver::setSpeedProfile(struct Profile profile){
+    this->profile = profile;
 }
 
 /*
@@ -117,21 +120,21 @@ void BasicStepperDriver::startMove(long steps){
         steps_remaining = abs(steps);
         step_count = 0;
         rest = 0;
-        switch (mode){
+        switch (profile.mode){
         case LINEAR_SPEED:
             // speed is in [steps/s]
             speed = rpm * motor_steps / 60;
             // how many steps from 0 to target rpm
-            steps_to_cruise = speed * speed * microsteps / (2 * accel);
+            steps_to_cruise = speed * speed * microsteps / (2 * profile.accel);
             // how many steps are needed from target rpm to a full stop
-            steps_to_brake = steps_to_cruise * accel / decel;
+            steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
             if (steps_remaining < steps_to_cruise + steps_to_brake){
                 // cannot reach max speed, will need to brake early
-                steps_to_cruise = steps_remaining * decel / (accel + decel);
+                steps_to_cruise = steps_remaining * profile.decel / (profile.accel + profile.decel);
                 steps_to_brake = steps_remaining - steps_to_cruise;
             }
             // Initial pulse (c0) including error correction factor 0.676 [us]
-            step_pulse = (1e+6)*0.676*sqrt(2.0f/(accel*microsteps));
+            step_pulse = (1e+6)*0.676*sqrt(2.0f/(profile.accel*microsteps));
             break;
     
         case CONSTANT_SPEED:
@@ -174,7 +177,7 @@ void BasicStepperDriver::startBrake(void){
         break;
 
     case ACCELERATING:
-        steps_remaining = step_count * accel / decel;
+        steps_remaining = step_count * profile.accel / profile.decel;
         break;
 
     default:
@@ -192,12 +195,12 @@ void BasicStepperDriver::stop(void){
  */
 long BasicStepperDriver::getTimeForMove(long steps){
     long t;
-    switch (mode){
+    switch (profile.mode){
         case LINEAR_SPEED:
             startMove(steps);
-            t = sqrt(2 * steps_to_cruise / accel) + 
+            t = sqrt(2 * steps_to_cruise / profile.accel) + 
                 (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
-                sqrt(2 * steps_to_brake / decel);
+                sqrt(2 * steps_to_brake / profile.decel);
             break;
         case CONSTANT_SPEED:
         default:
@@ -232,7 +235,7 @@ void BasicStepperDriver::calcStepPulse(void){
     steps_remaining--;
     step_count++;
 
-    if (mode == LINEAR_SPEED){
+    if (profile.mode == LINEAR_SPEED){
         switch (getCurrentState()){
         case ACCELERATING:
             step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
