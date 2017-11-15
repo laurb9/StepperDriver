@@ -37,6 +37,8 @@ protected:
     bool ready = true;
     // when next state change is due for each motor
     long event_timers[MAX_MOTORS];
+    unsigned long next_action_interval = 0;
+    unsigned long last_action_end = 0;
 
 public:
     /*
@@ -51,6 +53,12 @@ public:
     MultiDriver(Motor& motor1, Motor& motor2, Motor& motor3)
     :MultiDriver(3, new Motor* const[3]{&motor1, &motor2, &motor3})
     {};
+    unsigned short getCount(void){
+        return count;
+    }
+    Motor& getMotor(short index){
+        return *motors[index];
+    }
     /*
      * Move the motors a given number of steps.
      * positive to move forward, negative to reverse

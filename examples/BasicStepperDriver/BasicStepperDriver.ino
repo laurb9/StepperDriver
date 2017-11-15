@@ -49,7 +49,7 @@ void loop() {
     /*
      * Moving motor to original position using steps
      */
-    stepper.move(-200*MICROSTEPS);
+    stepper.move(-MOTOR_STEPS*MICROSTEPS);
 
     // pause and allow the motor to be moved by hand
     // stepper.disable();

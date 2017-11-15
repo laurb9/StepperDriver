@@ -75,9 +75,12 @@ short BasicStepperDriver::setMicrostep(short microsteps){
  * accel and decel are given in [full steps/s^2]
  */
 void BasicStepperDriver::setSpeedProfile(Mode mode, short accel, short decel){
-    this->mode = mode;
-    this->accel = accel;
-    this->decel = decel;
+    profile.mode = mode;
+    profile.accel = accel;
+    profile.decel = decel;
+}
+void BasicStepperDriver::setSpeedProfile(struct Profile profile){
+    this->profile = profile;
 }
 
 /*
@@ -113,23 +116,25 @@ void BasicStepperDriver::startMove(long steps){
     } else {
         // set up new move
         dir_state = (steps >= 0) ? HIGH : LOW;
+        last_action_end = 0;
         steps_remaining = abs(steps);
         step_count = 0;
-        switch (mode){
+        rest = 0;
+        switch (profile.mode){
         case LINEAR_SPEED:
             // speed is in [steps/s]
             speed = rpm * motor_steps / 60;
             // how many steps from 0 to target rpm
-            steps_to_cruise = speed * speed * microsteps / (2 * accel);
+            steps_to_cruise = speed * speed * microsteps / (2 * profile.accel);
             // how many steps are needed from target rpm to a full stop
-            steps_to_brake = steps_to_cruise * accel / decel;
+            steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
             if (steps_remaining < steps_to_cruise + steps_to_brake){
                 // cannot reach max speed, will need to brake early
-                steps_to_cruise = steps_remaining * decel / (accel + decel);
+                steps_to_cruise = steps_remaining * profile.decel / (profile.accel + profile.decel);
                 steps_to_brake = steps_remaining - steps_to_cruise;
             }
             // Initial pulse (c0) including error correction factor 0.676 [us]
-            step_pulse = (1e+6)*0.676*sqrt(2.0f/(accel*microsteps));
+            step_pulse = (1e+6)*0.676*sqrt(2.0f/(profile.accel*microsteps));
             break;
     
         case CONSTANT_SPEED:
@@ -172,7 +177,7 @@ void BasicStepperDriver::startBrake(void){
         break;
 
     case ACCELERATING:
-        steps_remaining = step_count * accel / decel;
+        steps_remaining = step_count * profile.accel / profile.decel;
         break;
 
     default:
@@ -190,12 +195,12 @@ void BasicStepperDriver::stop(void){
  */
 long BasicStepperDriver::getTimeForMove(long steps){
     long t;
-    switch (mode){
+    switch (profile.mode){
         case LINEAR_SPEED:
             startMove(steps);
-            t = sqrt(2 * steps_to_cruise / accel) + 
+            t = sqrt(2 * steps_to_cruise / profile.accel) + 
                 (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
-                sqrt(2 * steps_to_brake / decel);
+                sqrt(2 * steps_to_brake / profile.decel);
             break;
         case CONSTANT_SPEED:
         default:
@@ -223,9 +228,6 @@ void BasicStepperDriver::startRotate(double deg){
  * calculate the interval til the next pulse
  */
 void BasicStepperDriver::calcStepPulse(void){
-    // remainder to be fed into successive steps to increase accuracy (Atmel DOC8017)
-    static long rest;
-
     if (steps_remaining <= 0){  // this should not happen, but avoids strange calculations
         return;
     }
@@ -233,12 +235,9 @@ void BasicStepperDriver::calcStepPulse(void){
     steps_remaining--;
     step_count++;
 
-    if (mode == LINEAR_SPEED){
+    if (profile.mode == LINEAR_SPEED){
         switch (getCurrentState()){
         case ACCELERATING:
-            if (step_count == 1){     // first step, initialize rest
-                rest = 0;
-            }
             step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
             rest = (step_count < steps_to_cruise) ? (2*step_pulse+rest) % (4*step_count+1) : 0;
             break;
@@ -258,10 +257,8 @@ void BasicStepperDriver::calcStepPulse(void){
  * Toggle step and return time until next change is needed (micros)
  */
 long BasicStepperDriver::nextAction(void){
-    static unsigned long next_action_time = 0;
-    long next_action_interval = 0;
     if (steps_remaining > 0){
-        microWaitUntil(next_action_time);
+        delayMicros(next_action_interval, last_action_end);
         /*
          * DIR pin is sampled on rising STEP edge, so it is set first
          */
@@ -273,19 +270,21 @@ long BasicStepperDriver::nextAction(void){
         m = micros() - m;
         // We should pull HIGH for 1-2us (step_high_min)
         if (m < step_high_min){ // fast MCPU or CONSTANT_SPEED
-            DELAY_MICROS(step_high_min-m);
+            delayMicros(step_high_min-m);
             m = step_high_min;
         };
         digitalWrite(step_pin, LOW);
-        // account for calcStepPulse() execution time
-        next_action_interval = pulse - m;
+        // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
+        last_action_end = micros();
+        next_action_interval = (pulse > m) ? pulse - m : 1;
     } else {
         // end of move
+        last_action_end = 0;
         next_action_interval = 0;
     }
-    next_action_time = micros() + next_action_interval;
     return next_action_interval;
 }
+
 enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){
     enum State state;
     if (steps_remaining <= 0){

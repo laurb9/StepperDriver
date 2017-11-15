@@ -22,14 +22,7 @@
 #define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
 
 // don't call yield if we have a wait shorter than this
-#define MIN_YIELD_MICROS 25
-inline void microWaitUntil(unsigned long target_micros){
-    if (target_micros - micros() > MIN_YIELD_MICROS){
-        yield();
-    }
-    while (micros() < target_micros);
-}
-#define DELAY_MICROS(us) microWaitUntil(micros() + us)
+#define MIN_YIELD_MICROS 50
 
 /*
  * Basic Stepper Driver class.
@@ -39,14 +32,35 @@ class BasicStepperDriver {
 public:
     enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
     enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
-    
+    struct Profile {
+        Mode mode = CONSTANT_SPEED;
+        short accel = 1000;     // acceleration [steps/s^2]
+        short decel = 1000;     // deceleration [steps/s^2]    
+    };
+    static inline void delayMicros(unsigned long delay_us, unsigned long start_us = 0){
+        if (delay_us){
+            if (!start_us){
+                start_us = micros();
+            }
+            if (delay_us > MIN_YIELD_MICROS){
+                yield();
+            }
+            // See https://www.gammon.com.au/millis
+            while (micros() - start_us < delay_us);
+        }
+    }
+
+private:
+    // calculation remainder to be fed into successive steps to increase accuracy (Atmel DOC8017)
+    long rest;
+    unsigned long last_action_end = 0;
+    unsigned long next_action_interval = 0;
+
 protected:
     /*
      * Motor Configuration
      */
     short motor_steps;           // motor steps per revolution (usually 200)
-    short accel = 1000;     // maximum acceleration [steps/s^2]
-    short decel = 1000;     // maximum deceleration [steps/s^2]
 
     /*
      * Driver Configuration
@@ -70,7 +84,8 @@ protected:
     /*
      * Movement state
      */
-    Mode mode = CONSTANT_SPEED;
+    struct Profile profile;
+
     long step_count;        // current position
     long steps_remaining;   // to complete the current move (absolute value)
     long steps_to_cruise;   // steps to reach cruising (max) rpm
@@ -104,6 +119,12 @@ public:
      * Returns new level or previous level if value out of range
      */
     virtual short setMicrostep(short microsteps);
+    short getMicrostep(void){
+        return microsteps;
+    }
+    short getSteps(void){
+        return motor_steps;
+    }
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
@@ -119,6 +140,16 @@ public:
      * accel and decel are given in [full steps/s^2]
      */
     void setSpeedProfile(Mode mode, short accel=1000, short decel=1000);
+    void setSpeedProfile(struct Profile profile);
+    struct Profile getSpeedProfile(void){
+        return profile;
+    }
+    short getAcceleration(void){
+        return profile.accel;
+    }
+    short getDeceleration(void){
+        return profile.decel;
+    }
     /*
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
