@@ -62,10 +62,10 @@ The max current is set via the potentiometer on board.
 Turn it while measuring voltage at the passthrough next to it.
 The formula is V = I*5*R where I=max current, R=current sense resistor installed onboard
 
-- DRV8834 Pololu board, R=0.1 and V = 0.5 * max current(A). 
+- DRV8825 Pololu board, R=0.1 and V = 0.5 * max current(A). 
   For example, for 1A you will set it to 0.5V.
 
-- DRV8825 low-current board, R=0.33 and V = 1.65 * max current(A).
+- DRV8834 low-current board, R=0.33 and V = 1.65 * max current(A).
   For example, for 0.5A the reference voltage should be 0.82V
 
 For latest info, see the Pololu board information pages.
