@@ -19,11 +19,27 @@
  */
 BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin)
 :motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin)
-{}
+{
+	steps_to_cruise = 0;
+	steps_remaining = 0;
+	dir_state = 0;
+	steps_to_brake = 0;
+	step_pulse = 0;
+	rest = 0;
+	step_count = 0;
+}
 
 BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin, short enable_pin)
 :motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin), enable_pin(enable_pin)
-{}
+{
+	steps_to_cruise = 0;
+	steps_remaining = 0;
+	dir_state = 0;
+	steps_to_brake = 0;
+	step_pulse = 0;
+	rest = 0;
+	step_count = 0;
+}
 
 /*
  * Initialize pins, calculate timings etc
@@ -265,7 +281,7 @@ long BasicStepperDriver::nextAction(void){
         digitalWrite(dir_pin, dir_state);
         digitalWrite(step_pin, HIGH);
         unsigned m = micros();
-        long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
+        unsigned long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
         calcStepPulse();
         m = micros() - m;
         // We should pull HIGH for 1-2us (step_high_min)
