@@ -15,11 +15,14 @@
 #define PIN_UNCONNECTED -1
 #define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
 
+#define timerFreq 100000
+
+
 /*
  * calculate the step pulse in microseconds for a given rpm value.
  * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
  */
-#define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
+#define STEP_PULSE(steps, microsteps, rpm) (60*timerFreq/steps/microsteps/rpm)
 
 // don't call yield if we have a wait shorter than this
 #define MIN_YIELD_MICROS 50
@@ -55,12 +58,17 @@ private:
     long rest;
     unsigned long last_action_end = 0;
     unsigned long next_action_interval = 0;
+    //volatile uint32_t ticksToWait = 0;
 
 protected:
     /*
      * Motor Configuration
      */
     short motor_steps;           // motor steps per revolution (usually 200)
+
+    int32_t actualPositionInSteps = 0;
+    uint16_t stepsPerUnit = 1;
+
 
     /*
      * Driver Configuration
@@ -71,13 +79,16 @@ protected:
     // Get max microsteps supported by the device
     virtual short getMaxMicrostep();
     // current microstep level (1,2,4,8,...), must be < getMaxMicrostep()
-    short microsteps = 1;
+    short microsteps = 16;
     // tWH(STEP) pulse duration, STEP high, min value (us)
     static const int step_high_min = 1;
     // tWL(STEP) pulse duration, STEP low, min value (us)
     static const int step_low_min = 1;
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
     static const int wakeup_time = 0;
+
+    bool invertDirection = false;
+    bool directionCCW = false; //false = CW
 
     short rpm = 0;
 
@@ -87,10 +98,10 @@ protected:
     struct Profile profile;
 
     long step_count;        // current position
-    long steps_remaining;   // to complete the current move (absolute value)
-    long steps_to_cruise;   // steps to reach cruising (max) rpm
-    long steps_to_brake;    // steps needed to come to a full stop
-    long step_pulse;        // step pulse duration (microseconds)
+    long steps_remaining = 0;   // to complete the current move (absolute value)
+    long steps_to_cruise = 0;   // steps to reach cruising (max) rpm
+    long steps_to_brake = 0;    // steps needed to come to a full stop
+    long step_pulse = 0;        // step pulse duration (microseconds)
 
     // DIR pin state
     short dir_state;
@@ -133,7 +144,7 @@ public:
         return rpm;
     };
     short getCurrentRPM(void){
-        return (short)(60*1000000L / step_pulse / microsteps / motor_steps);
+        return (short)(60*timerFreq / step_pulse / microsteps / motor_steps);
     }
     /*
      * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)
@@ -217,6 +228,61 @@ public:
     }
     long calcStepsForRotation(double deg){
         return deg * motor_steps * microsteps / 360;
+    }
+
+    int32_t getCurrentPositionInSteps(void)
+    {
+      return actualPositionInSteps;
+    }
+
+    int32_t getCurrentPositionInUnits(void)
+    {
+      //Check for division through zero!
+      if(stepsPerUnit) return actualPositionInSteps / stepsPerUnit;
+      else return 0;
+    }
+
+    void setStepsPerUnit(uint16_t SPU)
+    {
+      stepsPerUnit = SPU;
+    }
+
+    void setMotorSteps(uint16_t revolSteps)
+    {
+      motor_steps = revolSteps;
+    }
+
+    uint16_t getMotorSteps(void)
+    {
+      return motor_steps;
+    }
+
+    void setOrigin(void)
+    {
+      actualPositionInSteps = 0; //Resets the actual position.
+    }
+
+    void setRPS(uint16_t RPS)
+    {
+      if(1000 >= RPS)
+      {
+        setRPM(RPS * 60); //Calculate RPM
+      }
+    }
+
+    void setSPM(uint16_t SPM)
+    {
+      if(SPM / (motor_steps * microsteps)) setRPM(SPM / (motor_steps * microsteps));
+    }
+
+    void setUPM(uint16_t UPM)
+    {
+      setSPM((UPM * stepsPerUnit) * 60); // Calculate SPM
+    }
+
+    void setInversionOfDirection(bool value)
+    {
+      invertDirection = value;
     }
 };
 #endif // STEPPER_DRIVER_BASE_H
