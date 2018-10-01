@@ -153,8 +153,8 @@ void BasicStepperDriver::alterMove(long steps){
     switch (getCurrentState()){
     case ACCELERATING: // this also works but will keep the original speed target
     case CRUISING:
-        if (steps >= 0){
-            steps_remaining += steps;
+        if ((steps >= 0 && dir_state == HIGH) || (steps < 0 && dir_state == LOW)){
+            steps_remaining += abs(steps);
         } else {
             steps_remaining = max(steps_to_brake, steps_remaining+steps);
         };
