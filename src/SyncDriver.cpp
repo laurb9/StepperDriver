@@ -45,9 +45,6 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
      * Initialize state for all active motors
      */
     FOREACH_MOTOR(
-        if (steps[i]){
-            motors[i]->startMove(steps[i]);
-        };
         event_timers[i] = 0;
     );
     ready = false;
