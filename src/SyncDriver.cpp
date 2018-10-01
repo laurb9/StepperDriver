@@ -22,7 +22,7 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
      */
     long move_time = 0;
     FOREACH_MOTOR(
-        long m = motors[i]->getTimeForMove(abs(steps[i]));
+        long m = motors[i]->getTimeForMove(steps[i]);
         timing[i] = m;
         if (m > move_time){
             move_time = m;
