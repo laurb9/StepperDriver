@@ -47,21 +47,3 @@ size_t DRV8825::getMicrostepTableSize()
 short DRV8825::getMaxMicrostep(){
     return DRV8825::MAX_MICROSTEP;
 }
-
-/*
- * Enable/Disable the motor by setting a digital flag
- * for DRV8825
- * enable = HIGH
- * disable = LOW
- */
-void DRV8825::enable(void){
-    if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, HIGH);
-    }
-}
-
-void DRV8825::disable(void){
-    if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, LOW);
-    }
-}
