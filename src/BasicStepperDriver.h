@@ -218,5 +218,17 @@ public:
     long calcStepsForRotation(double deg){
         return deg * motor_steps * microsteps / 360;
     }
+    /*
+     * Return steps remaining for a specific movement
+     */
+    long getStepsRemaining(){
+        return steps_remaining;
+    }
+    /*
+     * Return the movement direction
+     */
+    bool getDir(){
+        return dir_state;
+    }
 };
 #endif // STEPPER_DRIVER_BASE_H
