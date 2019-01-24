@@ -319,3 +319,9 @@ void BasicStepperDriver::disable(void){
 short BasicStepperDriver::getMaxMicrostep(){
     return BasicStepperDriver::MAX_MICROSTEP;
 }
+
+long BasicStepperDriver::getStepCount(){
+    return step_count;
+}
+
+
