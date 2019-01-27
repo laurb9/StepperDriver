@@ -59,9 +59,5 @@ public:
      * current percent value must be 25, 50, 75 or 100.
      */
     void setCurrent(short percent=100);
-
-    // override enable/disable to change polarisation for DRV8880
-    void enable(void);
-    void disable(void);
 };
 #endif // DRV8880_H

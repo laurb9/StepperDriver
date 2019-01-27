@@ -119,20 +119,3 @@ void DRV8880::setCurrent(short percent){
     digitalWrite(trq0, percent & 1);
 }
 
-/*
- * Enable/Disable the motor by setting a digital flag
- * for DRV8880
- * enable = HIGH
- * disable = LOW
- */
-void DRV8880::enable(void){
-    if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, HIGH);
-    }
-}
-
-void DRV8880::disable(void){
-    if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, LOW);
-    }
-}
