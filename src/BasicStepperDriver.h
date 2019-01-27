@@ -2,7 +2,7 @@
  * Generic Stepper Motor Driver Driver
  * Indexer mode only.
  *
- * Copyright (C)2015-2017 Laurentiu Badea
+ * Copyright (C)2015-2018 Laurentiu Badea
  *
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
@@ -68,6 +68,7 @@ protected:
     short dir_pin;
     short step_pin;
     short enable_pin = PIN_UNCONNECTED;
+    short enable_active_state = HIGH;
     // Get max microsteps supported by the device
     virtual short getMaxMicrostep();
     // current microstep level (1,2,4,8,...), must be < getMaxMicrostep()
@@ -166,6 +167,11 @@ public:
      * Rotate using a float or double for increased movement precision.
      */
     void rotate(double deg);
+    /*
+     * Configure which logic state on ENABLE pin means active
+     * when using SLEEP (default) this is active HIGH
+     */
+    void setEnableActiveState(short state);
     /*
      * Turn off/on motor to allow the motor to be moved by hand/hold the position in place
      */

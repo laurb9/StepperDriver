@@ -24,16 +24,18 @@
 #define DIR 8
 #define STEP 9
 //Uncomment line to use enable/disable functionality
-//#define ENABLE 13
+//#define SLEEP 13
 
 // 2-wire basic config, microstepping is hardwired on the driver
 BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 
 //Uncomment line to use enable/disable functionality
-//BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP, ENABLE);
+//BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP, SLEEP);
 
 void setup() {
     stepper.begin(RPM, MICROSTEPS);
+    // if using enable/disable on ENABLE pin (active LOW) instead of SLEEP uncomment next line
+    // stepper.setEnableActiveState(LOW);
 }
 
 void loop() {

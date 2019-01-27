@@ -51,6 +51,9 @@ void setup() {
      */
     stepperX.begin(MOTOR_X_RPM, MICROSTEPS);
     stepperY.begin(MOTOR_Y_RPM, MICROSTEPS);
+    // if using enable/disable on ENABLE pin (active LOW) instead of SLEEP uncomment next two lines
+    // stepperX.setEnableActiveState(LOW);
+    // stepperY.setEnableActiveState(LOW);
 }
 
 void loop() {
