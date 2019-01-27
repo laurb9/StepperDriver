@@ -123,42 +123,38 @@ void BasicStepperDriver::rotate(double deg){
 }
 
 /*
- * Set up a new move or alter an active move (calculate and save the parameters)
+ * Set up a new move (calculate and save the parameters)
  */
 void BasicStepperDriver::startMove(long steps){
     long speed;
-    if (steps_remaining){
-        alterMove(steps);
-    } else {
-        // set up new move
-        dir_state = (steps >= 0) ? HIGH : LOW;
-        last_action_end = 0;
-        steps_remaining = abs(steps);
-        step_count = 0;
-        rest = 0;
-        switch (profile.mode){
-        case LINEAR_SPEED:
-            // speed is in [steps/s]
-            speed = rpm * motor_steps / 60;
-            // how many steps from 0 to target rpm
-            steps_to_cruise = speed * speed * microsteps / (2 * profile.accel);
-            // how many steps are needed from target rpm to a full stop
-            steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
-            if (steps_remaining < steps_to_cruise + steps_to_brake){
-                // cannot reach max speed, will need to brake early
-                steps_to_cruise = steps_remaining * profile.decel / (profile.accel + profile.decel);
-                steps_to_brake = steps_remaining - steps_to_cruise;
-            }
-            // Initial pulse (c0) including error correction factor 0.676 [us]
-            step_pulse = (1e+6)*0.676*sqrt(2.0f/(profile.accel*microsteps));
-            break;
-    
-        case CONSTANT_SPEED:
-        default:
-            step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
-            steps_to_cruise = 0;
-            steps_to_brake = 0;
+    // set up new move
+    dir_state = (steps >= 0) ? HIGH : LOW;
+    last_action_end = 0;
+    steps_remaining = abs(steps);
+    step_count = 0;
+    rest = 0;
+    switch (profile.mode){
+    case LINEAR_SPEED:
+        // speed is in [steps/s]
+        speed = rpm * motor_steps / 60;
+        // how many steps from 0 to target rpm
+        steps_to_cruise = speed * speed * microsteps / (2 * profile.accel);
+        // how many steps are needed from target rpm to a full stop
+        steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
+        if (steps_remaining < steps_to_cruise + steps_to_brake){
+            // cannot reach max speed, will need to brake early
+            steps_to_cruise = steps_remaining * profile.decel / (profile.accel + profile.decel);
+            steps_to_brake = steps_remaining - steps_to_cruise;
         }
+        // Initial pulse (c0) including error correction factor 0.676 [us]
+        step_pulse = (1e+6)*0.676*sqrt(2.0f/(profile.accel*microsteps));
+        break;
+
+    case CONSTANT_SPEED:
+    default:
+        step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
+        steps_to_cruise = 0;
+        steps_to_brake = 0;
     }
 }
 /*
