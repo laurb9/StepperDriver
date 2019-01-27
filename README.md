@@ -36,7 +36,6 @@ This is suggested wiring for running the examples unmodified. All the pins below
 - Arduino to driver board:
     - DIR - D8
     - STEP - D9
-    - SLEEP - HIGH (Vdd)
     - GND - Arduino GND
     - GND - Motor power GND
     - VMOT - Motor power (check driver-specific voltage range)
@@ -47,7 +46,7 @@ This is suggested wiring for running the examples unmodified. All the pins below
     - DRV8834/DRV8880 microstep control
       - M0 - D10
       - M1 - D11
-    - ~ENABLE (optional) recommend D13 to see when coils are active
+    - ~SLEEP (optional) D13
 
 - driver board to motor (this varies from motor to motor, check motor coils schematic).
 - 100uF capacitor between GND - VMOT 
