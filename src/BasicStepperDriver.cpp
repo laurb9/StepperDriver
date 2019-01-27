@@ -53,7 +53,7 @@ void BasicStepperDriver::begin(short rpm, short microsteps){
 
     if IS_CONNECTED(enable_pin){
         pinMode(enable_pin, OUTPUT);
-        digitalWrite(enable_pin, HIGH); // disable
+        disable();
     }
 
     this->rpm = rpm;
