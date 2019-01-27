@@ -169,8 +169,8 @@ public:
     /*
      * Turn off/on motor to allow the motor to be moved by hand/hold the position in place
      */
-    void enable(void);
-    void disable(void);
+    virtual void enable(void);
+    virtual void disable(void);
     /*
      * Methods for non-blocking mode.
      * They use more code but allow doing other operations between impulses.

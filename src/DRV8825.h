@@ -39,9 +39,5 @@ public:
     DRV8825(short steps, short dir_pin, short step_pin, short enable_pin);
     DRV8825(short steps, short dir_pin, short step_pin, short mode0_pin, short mode1_pin, short mode2_pin);
     DRV8825(short steps, short dir_pin, short step_pin, short enable_pin, short mode0_pin, short mode1_pin, short mode2_pin);
-    
-    // override enable/disable to change polarisation for DRV8825
-    void enable(void);
-    void disable(void);
 };
 #endif // DRV8825_H
