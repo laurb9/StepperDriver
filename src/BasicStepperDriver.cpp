@@ -220,7 +220,7 @@ long BasicStepperDriver::getTimeForMove(long steps){
             break;
         case CONSTANT_SPEED:
         default:
-            t = STEP_PULSE(rpm, motor_steps, microsteps);
+            t = steps * STEP_PULSE(rpm, motor_steps, microsteps);
     }
     return t;
 }
