@@ -325,7 +325,8 @@ void BasicStepperDriver::setEnableActiveState(short state){
 void BasicStepperDriver::enable(void){
     if IS_CONNECTED(enable_pin){
         digitalWrite(enable_pin, enable_active_state);
-    }
+    };
+    delayMicros(2);
 }
 
 void BasicStepperDriver::disable(void){
