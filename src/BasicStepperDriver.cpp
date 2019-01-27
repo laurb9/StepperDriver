@@ -2,7 +2,7 @@
  * Generic Stepper Motor Driver Driver
  * Indexer mode only.
 
- * Copyright (C)2015-2017 Laurentiu Badea
+ * Copyright (C)2015-2018 Laurentiu Badea
  *
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
@@ -312,19 +312,25 @@ enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){
     }
     return state;
 }
-
+/*
+ * Configure which logic state on ENABLE pin means active
+ * when using SLEEP (default) this is active HIGH
+ */
+void BasicStepperDriver::setEnableActiveState(short state){
+    enable_active_state = state;
+}
 /*
  * Enable/Disable the motor by setting a digital flag
  */
 void BasicStepperDriver::enable(void){
     if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, LOW);
+        digitalWrite(enable_pin, enable_active_state);
     }
 }
 
 void BasicStepperDriver::disable(void){
     if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, HIGH);
+        digitalWrite(enable_pin, (enable_active_state == HIGH) ? LOW : HIGH);
     }
 }
 
