@@ -197,10 +197,12 @@ void BasicStepperDriver::startBrake(void){
     }
 }
 /*
- * Stop movement immediately.
+ * Stop movement immediately and return remaining steps.
  */
-void BasicStepperDriver::stop(void){
+long BasicStepperDriver::stop(void){
+    long retval = steps_remaining;
     steps_remaining = 0;
+    return retval;
 }
 /*
  * Return calculated time to complete the given move

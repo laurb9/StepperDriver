@@ -204,13 +204,33 @@ public:
     void startBrake(void);
     /*
      * Immediate stop
+     * Returns the number of steps remaining.
      */
-    void stop(void);
+    long stop(void);
     /*
      * State querying
      */
     enum State getCurrentState(void);
-
+    /*
+     * Get the number of completed steps so far.
+     * This is always a positive number
+     */
+    long getStepsCompleted(void){
+        return step_count;
+    }
+    /*
+     * Get the number of steps remaining to complete the move
+     * This is always a positive number
+     */
+    long getStepsRemaining(void){
+        return steps_remaining;
+    }
+    /*
+     * Get movement direction: forward +1, back -1
+     */
+    int getDirection(void){
+        return (dir_state == HIGH) ? 1 : -1;
+    }
     /*
      * Return calculated time to complete the given move
      */
