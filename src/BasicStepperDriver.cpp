@@ -208,19 +208,24 @@ long BasicStepperDriver::stop(void){
  * Return calculated time to complete the given move
  */
 long BasicStepperDriver::getTimeForMove(long steps){
-    long t;
+    float t;
     switch (profile.mode){
         case LINEAR_SPEED:
             startMove(steps);
-            t = (1e+6)*sqrt(2.0 * steps_to_cruise / profile.accel / microsteps) +
-                (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
-                (1e+6)*sqrt(2.0 * steps_to_brake / profile.decel / microsteps);
+            if (steps_remaining >= steps_to_cruise + steps_to_brake){
+                float speed = rpm * motor_steps / 60;   // full steps/s
+                t = (steps / (microsteps * speed)) + (speed / (2 * profile.accel)) + (speed / (2 * profile.decel)); // seconds
+            } else {
+                t = sqrt(2.0 * steps_to_cruise / profile.accel / microsteps) +
+                    sqrt(2.0 * steps_to_brake / profile.decel / microsteps);
+            }
+            t *= (1e+6); // seconds -> micros
             break;
         case CONSTANT_SPEED:
         default:
             t = steps * STEP_PULSE(rpm, motor_steps, microsteps);
     }
-    return t;
+    return round(t);
 }
 /*
  * Move the motor an integer number of degrees (360 = full rotation)
@@ -245,7 +250,6 @@ void BasicStepperDriver::calcStepPulse(void){
     if (steps_remaining <= 0){  // this should not happen, but avoids strange calculations
         return;
     }
-
     steps_remaining--;
     step_count++;
 
