@@ -44,7 +44,7 @@ BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pi
 /*
  * Initialize pins, calculate timings etc
  */
-void BasicStepperDriver::begin(short rpm, short microsteps){
+void BasicStepperDriver::begin(float rpm, short microsteps){
     pinMode(dir_pin, OUTPUT);
     digitalWrite(dir_pin, HIGH);
 
@@ -65,7 +65,7 @@ void BasicStepperDriver::begin(short rpm, short microsteps){
 /*
  * Set target motor RPM (1-200 is a reasonable range)
  */
-void BasicStepperDriver::setRPM(short rpm){
+void BasicStepperDriver::setRPM(float rpm){
     if (this->rpm == 0){        // begin() has not been called (old 1.0 code)
         begin(rpm, microsteps);
     }
@@ -126,7 +126,7 @@ void BasicStepperDriver::rotate(double deg){
  * Set up a new move (calculate and save the parameters)
  */
 void BasicStepperDriver::startMove(long steps){
-    long speed;
+    float speed;
     // set up new move
     dir_state = (steps >= 0) ? HIGH : LOW;
     last_action_end = 0;
@@ -137,9 +137,9 @@ void BasicStepperDriver::startMove(long steps){
     case LINEAR_SPEED:
         // speed is in [steps/s]
         speed = rpm * motor_steps / 60;
-        // how many steps from 0 to target rpm
+        // how many microsteps from 0 to target rpm
         steps_to_cruise = speed * speed * microsteps / (2 * profile.accel);
-        // how many steps are needed from target rpm to a full stop
+        // how many microsteps are needed from target rpm to a full stop
         steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
         if (steps_remaining < steps_to_cruise + steps_to_brake){
             // cannot reach max speed, will need to brake early
