@@ -212,9 +212,9 @@ long BasicStepperDriver::getTimeForMove(long steps){
     switch (profile.mode){
         case LINEAR_SPEED:
             startMove(steps);
-            t = sqrt(2 * steps_to_cruise / profile.accel) + 
+            t = (1e+6)*sqrt(2.0 * steps_to_cruise / profile.accel / microsteps) +
                 (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
-                sqrt(2 * steps_to_brake / profile.decel);
+                (1e+6)*sqrt(2.0 * steps_to_brake / profile.decel / microsteps);
             break;
         case CONSTANT_SPEED:
         default:
