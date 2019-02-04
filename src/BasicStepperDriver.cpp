@@ -302,15 +302,12 @@ long BasicStepperDriver::nextAction(void){
         unsigned m = micros();
         unsigned long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
         calcStepPulse();
-        m = micros() - m;
-        // We should pull HIGH for 1-2us (step_high_min)
-        if (m < step_high_min){ // fast MCPU or CONSTANT_SPEED
-            delayMicros(step_high_min-m);
-            m = step_high_min;
-        };
+        // We should pull HIGH for at least 1-2us (step_high_min)
+        delayMicros(step_high_min);
         digitalWrite(step_pin, LOW);
         // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
         last_action_end = micros();
+        m = last_action_end - m;
         next_action_interval = (pulse > m) ? pulse - m : 1;
     } else {
         // end of move
