@@ -18,15 +18,8 @@
  * Microstepping controls should be hardwired.
  */
 BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin)
-:motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin)
+:BasicStepperDriver(steps, dir_pin, step_pin, PIN_UNCONNECTED)
 {
-	steps_to_cruise = 0;
-	steps_remaining = 0;
-	dir_state = 0;
-	steps_to_brake = 0;
-	step_pulse = 0;
-	rest = 0;
-	step_count = 0;
 }
 
 BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin, short enable_pin)
@@ -37,6 +30,7 @@ BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pi
 	dir_state = 0;
 	steps_to_brake = 0;
 	step_pulse = 0;
+    cruise_step_pulse = 0;
 	rest = 0;
 	step_count = 0;
 }
@@ -125,7 +119,7 @@ void BasicStepperDriver::rotate(double deg){
 /*
  * Set up a new move (calculate and save the parameters)
  */
-void BasicStepperDriver::startMove(long steps){
+void BasicStepperDriver::startMove(long steps, long time){
     float speed;
     // set up new move
     dir_state = (steps >= 0) ? HIGH : LOW;
@@ -137,9 +131,19 @@ void BasicStepperDriver::startMove(long steps){
     case LINEAR_SPEED:
         // speed is in [steps/s]
         speed = rpm * motor_steps / 60;
-        // how many microsteps from 0 to target rpm
-        steps_to_cruise = speed * speed * microsteps / (2 * profile.accel);
-        // how many microsteps are needed from target rpm to a full stop
+        if (time > 0){
+            // Calculate a new speed to finish in the time requested
+            float t = time / (1e+6);                  // convert to seconds
+            float d = steps_remaining / microsteps;   // convert to full steps
+            float a2 = 1.0 / profile.accel + 1.0 / profile.decel;
+            float sqrt_candidate = t*t - 2 * a2 * d;  // in √b^2-4ac
+            if (sqrt_candidate >= 0){
+                speed = min(speed, (t - sqrt(sqrt_candidate)) / a2);
+            };
+        }
+        // how many microsteps from 0 to target speed
+        steps_to_cruise = microsteps * (speed * speed / (2 * profile.accel));
+        // how many microsteps are needed from cruise speed to a full stop
         steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
         if (steps_remaining < steps_to_cruise + steps_to_brake){
             // cannot reach max speed, will need to brake early
@@ -147,14 +151,19 @@ void BasicStepperDriver::startMove(long steps){
             steps_to_brake = steps_remaining - steps_to_cruise;
         }
         // Initial pulse (c0) including error correction factor 0.676 [us]
-        step_pulse = (1e+6)*0.676*sqrt(2.0f/(profile.accel*microsteps));
+        step_pulse = (1e+6)*0.676*sqrt(2.0f/profile.accel/microsteps);
+        // Save cruise timing since we will no longer have the calculated target speed later
+        cruise_step_pulse = 1e+6 / speed / microsteps;
         break;
 
     case CONSTANT_SPEED:
     default:
-        step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
         steps_to_cruise = 0;
         steps_to_brake = 0;
+        step_pulse = cruise_step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
+        if (time > steps_remaining * step_pulse){
+            step_pulse = (float)time / steps_remaining;
+        }
     }
 }
 /*
@@ -209,6 +218,9 @@ long BasicStepperDriver::stop(void){
  */
 long BasicStepperDriver::getTimeForMove(long steps){
     float t;
+    if (steps == 0){
+        return 0;
+    }
     switch (profile.mode){
         case LINEAR_SPEED:
             startMove(steps);
@@ -261,7 +273,7 @@ void BasicStepperDriver::calcStepPulse(void){
                 rest = (step_count < steps_to_cruise) ? (2*step_pulse+rest) % (4*step_count+1) : 0;
             } else {
                 // The series approximates target, set the final value to what it should be instead
-                step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
+                step_pulse = cruise_step_pulse;
             }
             break;
 
