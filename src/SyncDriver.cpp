@@ -28,7 +28,6 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
             move_time = m;
         }
     );
-    Serial.println(move_time);
     /*
      * Initialize state for all active motors to complete with <move_time> micros
      */
