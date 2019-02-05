@@ -92,6 +92,7 @@ protected:
     long steps_to_cruise;   // steps to reach cruising (max) rpm
     long steps_to_brake;    // steps needed to come to a full stop
     long step_pulse;        // step pulse duration (microseconds)
+    long cruise_step_pulse; // step pulse duration for constant speed section (max rpm)
 
     // DIR pin state
     short dir_state;
@@ -186,9 +187,11 @@ public:
     /*
      * Initiate a move over known distance (calculate and save the parameters)
      * Pick just one based on move type and distance type.
+     * If time (microseconds) is given, the driver will attempt to execute the move in exactly that time
+     * by altering rpm for this move only (up to preset rpm).
      */
-    void startMove(long steps);
-    inline void startRotate(int deg){ 
+    void startMove(long steps, long time=0);
+    inline void startRotate(int deg){
         startRotate((long)deg);
     };
     void startRotate(long deg);
