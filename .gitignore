@@ -33,5 +33,8 @@
 # VScode
 .vscode
 
+# PyCharm/Jetbrains editors
+.idea
+
 # Mac
 .DS_Store
