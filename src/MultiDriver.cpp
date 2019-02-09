@@ -67,7 +67,7 @@ long MultiDriver::nextAction(void){
  */
 void MultiDriver::startBrake(void){
     FOREACH_MOTOR(
-        if (event_timers[i] >= 0){
+        if (event_timers[i] > 0){
             motors[i]->startBrake();
         }
     )
@@ -91,10 +91,9 @@ bool MultiDriver::isRunning(void){
  * positive to move forward, negative to reverse, 0 to remain still
  */
 void MultiDriver::move(long steps1, long steps2, long steps3){
-    unsigned long next_event;
     startMove(steps1, steps2, steps3);
     while (!ready){
-        next_event = nextAction();
+        nextAction();
     }
 }
 

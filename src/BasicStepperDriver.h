@@ -19,7 +19,7 @@
  * calculate the step pulse in microseconds for a given rpm value.
  * 60[s/min] * 1000000[us/s] / microsteps / steps / rpm
  */
-#define STEP_PULSE(steps, microsteps, rpm) (60*1000000L/steps/microsteps/rpm)
+#define STEP_PULSE(steps, microsteps, rpm) (60.0*1000000L/steps/microsteps/rpm)
 
 // don't call yield if we have a wait shorter than this
 #define MIN_YIELD_MICROS 50
@@ -80,7 +80,7 @@ protected:
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
     static const int wakeup_time = 0;
 
-    short rpm = 0;
+    float rpm = 0;
 
     /*
      * Movement state
@@ -92,6 +92,7 @@ protected:
     long steps_to_cruise;   // steps to reach cruising (max) rpm
     long steps_to_brake;    // steps needed to come to a full stop
     long step_pulse;        // step pulse duration (microseconds)
+    long cruise_step_pulse; // step pulse duration for constant speed section (max rpm)
 
     // DIR pin state
     short dir_state;
@@ -114,7 +115,7 @@ public:
     /*
      * Initialize pins, calculate timings etc
      */
-    void begin(short rpm=60, short microsteps=1);
+    void begin(float rpm=60, short microsteps=1);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range
@@ -129,12 +130,12 @@ public:
     /*
      * Set target motor RPM (1-200 is a reasonable range)
      */
-    void setRPM(short rpm);
-    short getRPM(void){
+    void setRPM(float rpm);
+    float getRPM(void){
         return rpm;
     };
-    short getCurrentRPM(void){
-        return (short)(60*1000000L / step_pulse / microsteps / motor_steps);
+    float getCurrentRPM(void){
+        return (60.0*1000000L / step_pulse / microsteps / motor_steps);
     }
     /*
      * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)
@@ -186,9 +187,11 @@ public:
     /*
      * Initiate a move over known distance (calculate and save the parameters)
      * Pick just one based on move type and distance type.
+     * If time (microseconds) is given, the driver will attempt to execute the move in exactly that time
+     * by altering rpm for this move only (up to preset rpm).
      */
-    void startMove(long steps);
-    inline void startRotate(int deg){ 
+    void startMove(long steps, long time=0);
+    inline void startRotate(int deg){
         startRotate((long)deg);
     };
     void startRotate(long deg);

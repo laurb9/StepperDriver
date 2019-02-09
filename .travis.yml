@@ -1,0 +1,21 @@
+language: minimal
+git:
+  depth: false
+addons:
+  apt:
+    packages:
+    - python
+env:
+  matrix:
+    - TARGET=arduino:avr:uno
+    - TARGET=adafruit:samd:adafruit_feather_m0
+    - TARGET=arduino:avr:mega
+    - TARGET=esp8266:esp8266:nodemcu
+before_install:
+  - make setup
+install: true
+script:
+  - make all
+cache:
+  directories:
+    - .arduino
