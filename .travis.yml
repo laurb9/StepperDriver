@@ -1,0 +1,11 @@
+language: minimal
+git:
+  depth: false
+before_install:
+  - make setup
+install: true
+script:
+  - make all
+cache:
+  directories:
+    - .arduino

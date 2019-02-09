@@ -33,5 +33,14 @@
 # VScode
 .vscode
 
+# PyCharm/Jetbrains editors
+.idea
+
 # Mac
 .DS_Store
+
+# Arduino
+*.hex
+*.bin
+*.elf
+.arduino
