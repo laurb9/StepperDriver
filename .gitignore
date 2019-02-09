@@ -38,3 +38,9 @@
 
 # Mac
 .DS_Store
+
+# Arduino
+*.hex
+*.bin
+*.elf
+.arduino
