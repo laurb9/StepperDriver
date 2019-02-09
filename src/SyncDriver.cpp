@@ -16,14 +16,12 @@
  */
 void SyncDriver::startMove(long steps1, long steps2, long steps3){
     long steps[3] = {steps1, steps2, steps3};
-    long timing[MAX_MOTORS];
     /*
      * find which motor would take the longest to finish,
      */
     long move_time = 0;
     FOREACH_MOTOR(
         long m = motors[i]->getTimeForMove(abs(steps[i]));
-        timing[i] = m;
         if (m > move_time){
             move_time = m;
         }

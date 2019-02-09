@@ -50,3 +50,5 @@ setup: $(ARDUINO_DIR)/arduino-cli
 	$(ARDUINO_CLI) core update-index
 	$(ARDUINO_CLI) core install $(CORES)
 	$(ARDUINO_CLI) core list
+
+.PHONY: clean %.hex all setup

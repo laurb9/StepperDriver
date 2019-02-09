@@ -138,7 +138,7 @@ void BasicStepperDriver::startMove(long steps, long time){
             float a2 = 1.0 / profile.accel + 1.0 / profile.decel;
             float sqrt_candidate = t*t - 2 * a2 * d;  // in √b^2-4ac
             if (sqrt_candidate >= 0){
-                speed = min(speed, (t - sqrt(sqrt_candidate)) / a2);
+                speed = min(speed, (t - (float)sqrt(sqrt_candidate)) / a2);
             };
         }
         // how many microsteps from 0 to target speed
