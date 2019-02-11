@@ -1,3 +1,4 @@
+[![arduino-library-badge](https://www.ardu-badge.com/badge/StepperDriver.svg?)](https://www.ardu-badge.com/StepperDriver)
 [![Build Status](https://travis-ci.com/laurb9/StepperDriver.svg?branch=master)](https://travis-ci.com/laurb9/StepperDriver)
 
 StepperDriver
