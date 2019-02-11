@@ -2,7 +2,7 @@
  * Synchronous Multi-motor group driver
  * All motors reach their target at the same time.
  *
- * Copyright (C)2017-2018 Laurentiu Badea
+ * Copyright (C)2017-2019 Laurentiu Badea
  *
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
@@ -32,23 +32,12 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
     FOREACH_MOTOR(
         if (steps[i]){
             motors[i]->startMove(steps[i], move_time);
-        };
-        event_timers[i] = 0;
+            event_timers[i] = 1;
+        } else {
+         event_timers[i] = 0;
+       }
     );
     ready = false;
-}
-
-long SyncDriver::nextAction(void){
-    long next_event = MultiDriver::nextAction();
-    if (!next_event){
-        /*
-         * Restore original rpm settings
-         */
-        FOREACH_MOTOR(
-            if (rpms[i]){
-                motors[i]->setRPM(rpms[i]);
-            }
-        );
-    }
-    return next_event;
+    last_action_end = 0;
+    next_action_interval = 1;
 }

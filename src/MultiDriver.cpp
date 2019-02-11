@@ -1,7 +1,7 @@
 /*
  * Multi-motor group driver
  *
- * Copyright (C)2017 Laurentiu Badea
+ * Copyright (C)2017-2019 Laurentiu Badea
  *
  * This file may be redistributed under the terms of the MIT license.
  * A copy of this license has been included with this distribution in the file LICENSE.
@@ -21,45 +21,42 @@ void MultiDriver::startMove(long steps1, long steps2, long steps3){
     FOREACH_MOTOR(
         if (steps[i]){
             motors[i]->startMove(steps[i]);
-            event_timers[i] = 0;
+            event_timers[i] = 1;
         } else {
-            event_timers[i] = -1;
+            event_timers[i] = 0;
         }
     );
     ready = false;
     last_action_end = 0;
+    next_action_interval = 1;
 }
 /*
  * Trigger next step action
  */
 long MultiDriver::nextAction(void){
     Motor::delayMicros(next_action_interval, last_action_end);
-    next_action_interval = 0;
-    
-    // Trigger all the motors that need it (event timer = 0)
+
+    // TODO: unroll these loops
+    // Trigger all the motors that need it
     FOREACH_MOTOR(
-        if (event_timers[i] == 0){
+        if (event_timers[i] <= next_action_interval){
             event_timers[i] = motors[i]->nextAction();
-        }
-    );
-    // Find the time when the next pulse needs to fire
-    // this is the smallest non-zero timer value from all active motors
-    ready = true;
-    FOREACH_MOTOR(
-        if (event_timers[i] > 0){
-            ready = false;
-            if (event_timers[i] < next_action_interval || next_action_interval == 0){
-                next_action_interval = event_timers[i];
-            }
-        }
-    );
-    // Reduce all event timers by the current left time so 0 marks next
-    FOREACH_MOTOR(
-        if (event_timers[i] > 0){
+        } else {
             event_timers[i] -= next_action_interval;
         }
     );
-    last_action_end = 0;
+    last_action_end = micros();
+
+    next_action_interval = 0;
+    // Find the time when the next pulse needs to fire
+    // this is the smallest non-zero timer value from all active motors
+    FOREACH_MOTOR(
+        if (event_timers[i] > 0 && (event_timers[i] < next_action_interval || next_action_interval == 0)){
+            next_action_interval = event_timers[i];
+        }
+    );
+    ready = (next_action_interval == 0);
+
     return next_action_interval;
 }
 /*
