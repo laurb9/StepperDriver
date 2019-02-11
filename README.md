@@ -18,10 +18,20 @@ Hardware currently supported:
    - <a href="https://www.pololu.com/product/2971">DRV8880</a> up to 1:16, with current/torque control
    - any other 2-pin stepper via DIR and STEP pins, microstepping up to 1:128 externally set
 
+Microstepping
+=============
+
+The library can set microstepping and generate the signals for each of the support driver boards.
+
+High RPM plus high microstep combinations may not work correctly on slower MCUs, there is a maximum speed
+achieveable for each board, especially with acceleration on multiple motors at the same time.
+
 Motors
 ======
 
-4-wire bipolar stepper motor or some 6-wire unipolar in 4-wire configuration (leaving centers out).
+- 4-wire bipolar stepper motor or 
+- some 6-wire unipolar in 4-wire configuration (leaving centers out) or
+- 28BYJ-48 (commonly available) with a small modification (search for "convert 28byj-48 to 4-wire").
 
 Connections
 ===========
