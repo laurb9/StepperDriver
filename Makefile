@@ -4,7 +4,7 @@ TARGET ?= arduino:avr:uno
 # Default list of cores to install with `make setup`
 CORES ?= arduino:avr adafruit:samd esp8266:esp8266 esp32:esp32
 
-# Where to save the Arduino support files, this should match what is in .cli-config.yml
+# Where to save the Arduino support files, this should match what is in arduino-cli.yaml
 ARDUINO_DIR ?= .arduino
 
 default:
@@ -14,11 +14,11 @@ default:
 	# Build all the examples: make all TARGET=adafruit:samd:adafruit_feather_m0
 	#
 	# Install more cores: make setup CORES=arduino:samd
-	# (edit .cli-config.yml and add repository if needed)
+	# (edit arduino-cli.yaml and add repository if needed)
 	#################################################################################################
 
 ARDUINO_CLI_URL = http://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linux64.tar.bz2
-ARDUINO_CLI ?= $(ARDUINO_DIR)/arduino-cli --config-file .cli-config.yml
+ARDUINO_CLI ?= $(ARDUINO_DIR)/arduino-cli --config-file arduino-cli.yaml
 EXAMPLES := $(shell ls examples)
 
 all: # Build all example sketches
@@ -31,7 +31,7 @@ all: $(EXAMPLES:%=%.hex)
 
 # Remove built objects
 clean:
-	rm -fv $(EXAMPLES:%=%.{hex,elf}*)
+	rm -fv $(EXAMPLES:%=%.hex) $(EXAMPLES:%=%.elf)
 
 $(ARDUINO_DIR)/arduino-cli:  # Download and install arduino-cli
 $(ARDUINO_DIR)/arduino-cli:
