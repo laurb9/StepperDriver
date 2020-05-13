@@ -50,7 +50,7 @@ public:
     DRV8880(short steps, short dir_pin, short step_pin, short m0, short m1, short trq0, short trq1);
     DRV8880(short steps, short dir_pin, short step_pin, short enable_pin, short m0, short m1, short trq0, short trq1);
 
-    void begin(short rpm=60, short microsteps=1);
+    void begin(float rpm=60, short microsteps=1);
 
     short setMicrostep(short microsteps) override;
 
