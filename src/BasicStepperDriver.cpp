@@ -160,7 +160,7 @@ void BasicStepperDriver::startMove(long steps, long time){
     default:
         steps_to_cruise = 0;
         steps_to_brake = 0;
-        step_pulse = cruise_step_pulse = STEP_PULSE(rpm, motor_steps, microsteps);
+        step_pulse = cruise_step_pulse = STEP_PULSE(motor_steps, microsteps, rpm);
         if (time > steps_remaining * step_pulse){
             step_pulse = (float)time / steps_remaining;
         }
@@ -235,7 +235,7 @@ long BasicStepperDriver::getTimeForMove(long steps){
             break;
         case CONSTANT_SPEED:
         default:
-            t = steps * STEP_PULSE(rpm, motor_steps, microsteps);
+            t = steps * STEP_PULSE(motor_steps, microsteps, rpm);
     }
     return round(t);
 }
