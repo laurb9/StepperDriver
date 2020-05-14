@@ -17,7 +17,8 @@ default:
 	# (edit arduino-cli.yaml and add repository if needed)
 	#################################################################################################
 
-ARDUINO_CLI_URL = http://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linux64.tar.bz2
+# See https://arduino.github.io/arduino-cli/installation/
+ARDUINO_CLI_URL = https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz
 ARDUINO_CLI ?= $(ARDUINO_DIR)/arduino-cli --config-file arduino-cli.yaml
 EXAMPLES := $(shell ls examples)
 
@@ -37,10 +38,10 @@ $(ARDUINO_DIR)/arduino-cli:  # Download and install arduino-cli
 $(ARDUINO_DIR)/arduino-cli:
 	mkdir -p $(ARDUINO_DIR)
 	cd $(ARDUINO_DIR)
-	curl -s $(ARDUINO_CLI_URL) \
-	| tar xfj - -O -C $(ARDUINO_DIR) \
-	> $@
+	curl -L -s $(ARDUINO_CLI_URL) \
+	| tar xfz - -C $(ARDUINO_DIR) arduino-cli
 	chmod 755 $@
+	$(ARDUINO_CLI) version
 
 setup: # Configure cores and libraries for arduino-cli (which it will download if missing)
 setup: $(ARDUINO_DIR)/arduino-cli
