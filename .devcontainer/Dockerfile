@@ -11,11 +11,10 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-ubuntu-18.04
 #
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
-   && apt-get -y install --no-install-recommends make curl \
+   && apt-get -y install --no-install-recommends make curl clang clang-tools \
    #
    # Clean up
    && apt-get autoremove -y \
    && apt-get clean -y \
    && rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=dialog
-
