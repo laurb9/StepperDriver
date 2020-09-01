@@ -20,31 +20,36 @@
 #include "SyncDriver.h"
 
 // RPMS contains the list of RPMS to test at, assuming microstep=1
-const float RPMS[] = {60, 0.5, 1, 10, 100, 200, 300, 600, 1200, 2400, 4800, 9600};
+const float RPMS[] = {6000, 600, 60, 6};
 const int RPMS_COUNT = sizeof(RPMS)/sizeof(*RPMS);
+const long DURATION_CONSTANT[] = {10000, 100000, 1000000, 10000000};
+const long DURATION_LINEAR[] = {365148, 365148, 1033246, 10000000};
 // STEPS is how many steps for each test. More has better accuracy but slower
-#define STEPS 20
+#define STEPS 200
 // ALLOWED_DEVIATION is the error tolerance. 0.10 considers 90% - 110% range aceptable
 #define ALLOWED_DEVIATION 0.10
 
 /*
  * Verify that the expected time calculation is correct at different rpms and two microstep levels
  */
-bool test_calculations(BasicStepperDriver stepper){
+bool test_calculations(BasicStepperDriver stepper, const long duration[]){
     bool pass = true;
     char t[128];
     for (int i = 0; i < RPMS_COUNT; i++){
         float rpm = RPMS[i];
         for (int microstep = 1; microstep <= 16; microstep <<= 4){
-            long expected_micros = long(1000000.0f * 60.0f / rpm);
+            long expected_micros = duration[i];
             stepper.begin(rpm, microstep);
-            long estimated_micros = stepper.getTimeForMove(200*microstep);
-            sprintf(t, "rpm=%-3d expected=%9uµs estimated %9uµs", 
-                    int(rpm), expected_micros, estimated_micros);
-            Serial.println(t);
-            if (estimated_micros != expected_micros) {
+            long estimated_micros = stepper.getTimeForMove(STEPS*microstep);
+            sprintf(t, "  rpm=%-4d microstep=%-2d expected=%10uµs estimated %10uµs", 
+                    int(rpm), microstep, expected_micros, estimated_micros);
+            Serial.print(t);
+            float ratio = float(estimated_micros) / float(expected_micros);
+            if (ratio > 1.01 or ratio < 0.99) {
+                Serial.print(" FAIL");
                 pass = false;
             }
+            Serial.println();
         }
     }  
     return pass;  
@@ -56,13 +61,13 @@ bool test_calculations(BasicStepperDriver stepper){
 bool result(float rpm, int microstep, int steps, long elapsed_micros, long expected_micros){
     bool pass = true;
     char t[128];
-    float error = (float(elapsed_micros) - float(expected_micros)) / float(expected_micros);
+    float error = float(elapsed_micros) / float(expected_micros);
     unsigned step_micros = expected_micros / steps;
     unsigned error_micros = abs(elapsed_micros - expected_micros) / steps;
-    sprintf(t, "microstep=%-3d rpm=%-3d expected=%9uµs elapsed=%9uµs step_err=%4dµs step=%6dµs", 
-            microstep, int(rpm), expected_micros, elapsed_micros, error_micros, step_micros);
+    sprintf(t, "  rpm=%-4d expected=%10uµs elapsed=%10uµs step_err=%6dµs avgstep=%6dµs", 
+            int(rpm), expected_micros, elapsed_micros, error_micros, step_micros);
     Serial.print(t);
-    if (error >= ALLOWED_DEVIATION || error <= -ALLOWED_DEVIATION) {
+    if (error >= 1.0f + ALLOWED_DEVIATION || error <= 1.0f - ALLOWED_DEVIATION) {
         pass = false;
         Serial.print(" FAIL");
     }
@@ -133,12 +138,24 @@ void setup() {
     BasicStepperDriver s2(200, 12, 13);
     BasicStepperDriver s3(200, 12, 13);
 
-    Serial.begin(1000000);
+    Serial.begin(115200);
     delay(2000);
-    RUN_TEST("Timing Calculation test", test_calculations, s1);
-    RUN_TEST("BasicStepperDriver test", test_basic, s1);
-    RUN_TEST("MultiDriver test", test_multi, s1, s2, s3);
-    RUN_TEST("SyncDriver test", test_sync, s1, s2, s3);
+#ifdef ARDUINO_BOARD
+    Serial.println(ARDUINO_BOARD);
+#endif
+    RUN_TEST("Timing Calculation test, constant speed", test_calculations, s1, DURATION_CONSTANT);
+    RUN_TEST("BasicStepperDriver test, constant speed", test_basic, s1);
+    RUN_TEST("MultiDriver test, constant speed", test_multi, s1, s2, s3);
+    RUN_TEST("SyncDriver test, constant speed", test_sync, s1, s2, s3);
+
+    s1.setSpeedProfile(s1.LINEAR_SPEED, 6000, 6000);
+    s2.setSpeedProfile(s2.LINEAR_SPEED, 6000, 6000);
+    s3.setSpeedProfile(s3.LINEAR_SPEED, 6000, 6000);
+
+    RUN_TEST("Timing Calculation test, linear speed", test_calculations, s1, DURATION_LINEAR);
+    RUN_TEST("BasicStepperDriver test, linear speed", test_basic, s1);
+    RUN_TEST("MultiDriver test, linear speed", test_multi, s1, s2, s3);
+    RUN_TEST("SyncDriver test, linear speed", test_sync, s1, s2, s3);
 }
 
 void loop() {
