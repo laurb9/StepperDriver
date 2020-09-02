@@ -22,17 +22,19 @@ ARDUINO_CLI_URL = https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Li
 ARDUINO_CLI ?= $(ARDUINO_DIR)/arduino-cli --config-file arduino-cli.yaml
 EXAMPLES := $(shell ls examples)
 
+COMPILE = $(ARDUINO_CLI) compile --warnings all --fqbn $(TARGET)
+
 all: # Build all example sketches
 all: $(EXAMPLES:%=%.hex)
+	ls -l build
 
 %.hex: # Generic rule for compiling sketch to uploadable hex file
 %.hex: examples/%
-	$(ARDUINO_CLI) compile --warnings all --fqbn $(TARGET) $< --output $@
-	ls -l $@*
+	$(ARDUINO_CLI) compile --warnings all --fqbn $(TARGET) --output-dir build $<
 
 # Remove built objects
 clean:
-	rm -fv $(EXAMPLES:%=%.hex) $(EXAMPLES:%=%.elf)
+	rm -rfv build
 
 $(ARDUINO_DIR)/arduino-cli:  # Download and install arduino-cli
 $(ARDUINO_DIR)/arduino-cli:
