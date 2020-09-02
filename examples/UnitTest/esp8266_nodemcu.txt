@@ -1,0 +1,58 @@
+
+ESP8266_NODEMCU
+Timing Calculation test, constant speed
+  rpm=6000 microstep=1  expected=     10000µs estimated      10000µs
+  rpm=6000 microstep=16 expected=     10000µs estimated      10000µs
+  rpm=600  microstep=1  expected=    100000µs estimated     100000µs
+  rpm=600  microstep=16 expected=    100000µs estimated     100000µs
+  rpm=60   microstep=1  expected=   1000000µs estimated    1000000µs
+  rpm=60   microstep=16 expected=   1000000µs estimated    1000000µs
+  rpm=6    microstep=1  expected=  10000000µs estimated   10000000µs
+  rpm=6    microstep=16 expected=  10000000µs estimated   10000000µs
+test_calculations(s1, DURATION_CONSTANT): OK
+BasicStepperDriver test, constant speed
+  rpm=6000 expected=     10000µs elapsed=     10346µs step_err=     1µs avgstep=    50µs
+  rpm=600  expected=    100000µs elapsed=     99760µs step_err=     1µs avgstep=   500µs
+  rpm=60   expected=   1000000µs elapsed=    995291µs step_err=    23µs avgstep=  5000µs
+  rpm=6    expected=  10000000µs elapsed=   9950300µs step_err=   248µs avgstep= 50000µs
+test_basic(s1): OK
+MultiDriver test, constant speed
+  rpm=6000 expected=     10000µs elapsed=     12420µs step_err=    12µs avgstep=    50µs FAIL
+  rpm=600  expected=    100000µs elapsed=    105190µs step_err=    25µs avgstep=   500µs
+  rpm=60   expected=   1000000µs elapsed=   1006547µs step_err=    32µs avgstep=  5000µs
+  rpm=6    expected=  10000000µs elapsed=  10017375µs step_err=    86µs avgstep= 50000µs
+test_multi(s1, s2, s3): FAIL
+SyncDriver test, constant speed
+  rpm=6000 expected=     10000µs elapsed=     14511µs step_err=    22µs avgstep=    50µs FAIL
+  rpm=600  expected=    100000µs elapsed=    105689µs step_err=    28µs avgstep=   500µs
+  rpm=60   expected=   1000000µs elapsed=   1006867µs step_err=    34µs avgstep=  5000µs
+  rpm=6    expected=  10000000µs elapsed=  10018707µs step_err=    93µs avgstep= 50000µs
+test_sync(s1, s2, s3): FAIL
+Timing Calculation test, linear speed
+  rpm=6000 microstep=1  expected=    365148µs estimated     365148µs
+  rpm=6000 microstep=16 expected=    365148µs estimated     365148µs
+  rpm=600  microstep=1  expected=    365148µs estimated     365148µs
+  rpm=600  microstep=16 expected=    365148µs estimated     365148µs
+  rpm=60   microstep=1  expected=   1033246µs estimated    1033246µs
+  rpm=60   microstep=16 expected=   1033246µs estimated    1033333µs
+  rpm=6    microstep=1  expected=  10000000µs estimated   10000000µs
+  rpm=6    microstep=16 expected=  10000000µs estimated   10000000µs
+test_calculations(s1, DURATION_LINEAR): OK
+BasicStepperDriver test, linear speed
+  rpm=6000 expected=    365148µs elapsed=    342337µs step_err=   114µs avgstep=  1825µs
+  rpm=600  expected=    365148µs elapsed=    342328µs step_err=   114µs avgstep=  1825µs
+  rpm=60   expected=   1033246µs elapsed=   1009343µs step_err=   119µs avgstep=  5166µs
+  rpm=6    expected=  10000000µs elapsed=   2456407µs step_err= 37717µs avgstep= 50000µs FAIL
+test_basic(s1): FAIL
+MultiDriver test, linear speed
+  rpm=6000 expected=    365148µs elapsed=    360765µs step_err=    21µs avgstep=  1825µs
+  rpm=600  expected=    365148µs elapsed=    360705µs step_err=    22µs avgstep=  1825µs
+  rpm=60   expected=   1033246µs elapsed=   1028486µs step_err=    23µs avgstep=  5166µs
+  rpm=6    expected=  10000000µs elapsed=   2477224µs step_err= 37613µs avgstep= 50000µs FAIL
+test_multi(s1, s2, s3): FAIL
+SyncDriver test, linear speed
+  rpm=6000 expected=    365148µs elapsed=    361367µs step_err=    18µs avgstep=  1825µs
+  rpm=600  expected=    365148µs elapsed=    361408µs step_err=    18µs avgstep=  1825µs
+  rpm=60   expected=   1033246µs elapsed=   1242580µs step_err=  1046µs avgstep=  5166µs FAIL
+  rpm=6    expected=  10000000µs elapsed=   2477912µs step_err= 37610µs avgstep= 50000µs FAIL
+test_sync(s1, s2, s3): FAIL

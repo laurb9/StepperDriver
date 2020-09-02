@@ -39,7 +39,7 @@ DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin, s
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0(m0), m1(m1), trq0(trq0), trq1(trq1)
 {}
 
-void DRV8880::begin(short rpm, short microsteps){
+void DRV8880::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);
     setCurrent(100);
 }

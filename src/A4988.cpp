@@ -41,7 +41,7 @@ A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin, short
 ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
 {}
 
-void A4988::begin(short rpm, short microsteps){
+void A4988::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);
 
     if (!IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms2_pin) || !IS_CONNECTED(ms3_pin)){
