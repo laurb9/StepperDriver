@@ -41,7 +41,7 @@ bool test_calculations(BasicStepperDriver stepper, const long duration[]){
             long expected_micros = duration[i];
             stepper.begin(rpm, microstep);
             long estimated_micros = stepper.getTimeForMove(STEPS*microstep);
-            sprintf(t, "  rpm=%-4d microstep=%-2d expected=%10uµs estimated %10uµs", 
+            sprintf(t, "  rpm=%-4d microstep=%-2d expected=%10luµs estimated %10luµs", 
                     int(rpm), microstep, expected_micros, estimated_micros);
             Serial.print(t);
             float ratio = float(estimated_micros) / float(expected_micros);
@@ -64,7 +64,7 @@ bool result(float rpm, int microstep, int steps, long elapsed_micros, long expec
     float error = float(elapsed_micros) / float(expected_micros);
     unsigned step_micros = expected_micros / steps;
     unsigned error_micros = abs(elapsed_micros - expected_micros) / steps;
-    sprintf(t, "  rpm=%-4d expected=%10uµs elapsed=%10uµs step_err=%6dµs avgstep=%6dµs", 
+    sprintf(t, "  rpm=%-4d expected=%10luµs elapsed=%10luµs step_err=%6uµs avgstep=%6uµs", 
             int(rpm), expected_micros, elapsed_micros, error_micros, step_micros);
     Serial.print(t);
     if (error >= 1.0f + ALLOWED_DEVIATION || error <= 1.0f - ALLOWED_DEVIATION) {

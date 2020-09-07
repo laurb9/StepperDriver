@@ -1,8 +1,6 @@
 # Default build architecture and board
 TARGET ?= arduino:avr:uno
-
-# Default list of cores to install with `make setup`
-CORES ?= arduino:avr adafruit:samd esp8266:esp8266 esp32:esp32
+CORE = $(shell echo $(TARGET) | cut -d: -f1,2)
 
 # Where to save the Arduino support files, this should match what is in arduino-cli.yaml
 ARDUINO_DIR ?= .arduino
@@ -13,7 +11,7 @@ default:
 	#
 	# Build all the examples: make all TARGET=adafruit:samd:adafruit_feather_m0
 	#
-	# Install more cores: make setup CORES=arduino:samd
+	# Install more cores: make core TARGET=adafruit:samd:adafruit_feather_m0
 	# (edit arduino-cli.yaml and add repository if needed)
 	#################################################################################################
 
@@ -29,12 +27,15 @@ all: $(EXAMPLES:%=%.hex)
 	ls -l build
 
 %.hex: # Generic rule for compiling sketch to uploadable hex file
-%.hex: examples/%
+%.hex: examples/% core
 	$(ARDUINO_CLI) compile --warnings all --fqbn $(TARGET) --output-dir build $<
 
 # Remove built objects
 clean:
 	rm -rfv build
+
+core: $(ARDUINO_DIR)/arduino-cli
+	$(ARDUINO_CLI) core install $(CORE)
 
 $(ARDUINO_DIR)/arduino-cli:  # Download and install arduino-cli
 $(ARDUINO_DIR)/arduino-cli:
@@ -51,7 +52,6 @@ setup: $(ARDUINO_DIR)/arduino-cli
 	ln -sf $(CURDIR) $(ARDUINO_DIR)/libraries/
 	$(ARDUINO_CLI) config dump
 	$(ARDUINO_CLI) core update-index
-	$(ARDUINO_CLI) core install $(CORES)
 	$(ARDUINO_CLI) core list
 
 .PHONY: clean %.hex all setup

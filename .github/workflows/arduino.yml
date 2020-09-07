@@ -1,0 +1,36 @@
+name: Arduino
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  release:
+    types:
+      - created
+
+jobs:
+  Boards:
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        board:
+          - arduino:avr:uno
+          - arduino:avr:mega
+          - adafruit:samd:adafruit_feather_m0
+          - esp8266:esp8266:nodemcu
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+      - name: Install arduino-cli
+        run: |
+          make setup
+      - name: Build
+        run: |
+          make setup
+          make all TARGET=${{ matrix.board }}
