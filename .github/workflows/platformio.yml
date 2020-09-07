@@ -1,0 +1,64 @@
+name: PlatformIO
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  release:
+    types:
+      - created
+
+jobs:
+  Boards:
+    needs: Examples
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        board:
+          - esp32dev
+          - nodemcuv2
+          - teensylc
+          - adafruit_feather_m0
+          - uno
+          
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+      - name: Build
+        run: |
+          platformio run -e ${{ matrix.board }}
+
+  Examples:
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+      matrix:
+        board:
+          - adafruit_feather_m0
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+      - name: Build
+        run: |
+          for sketch in examples/*; do
+            platformio ci --lib src --keep-build-dir --board ${{ matrix.board }} ${sketch} || exit 1;
+          done
