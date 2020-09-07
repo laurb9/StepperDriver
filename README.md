@@ -1,5 +1,6 @@
 [![arduino-library-badge](https://www.ardu-badge.com/badge/StepperDriver.svg?)](https://www.ardu-badge.com/StepperDriver)
 [![Actions Status](https://github.com/laurb9/StepperDriver/workflows/PlatformIO/badge.svg)](https://github.com/laurb9/StepperDriver/actions)
+[![Actions Status](https://github.com/laurb9/StepperDriver/workflows/Arduino/badge.svg)](https://github.com/laurb9/StepperDriver/actions)
 
 StepperDriver
 =============
