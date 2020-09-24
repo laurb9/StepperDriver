@@ -63,7 +63,7 @@ bool result(float rpm, int microstep, int steps, long elapsed_micros, long expec
     char t[128];
     float error = float(elapsed_micros) / float(expected_micros);
     unsigned step_micros = expected_micros / steps;
-    unsigned error_micros = abs(elapsed_micros - expected_micros) / steps;
+    unsigned error_micros = labs(elapsed_micros - expected_micros) / steps;
     sprintf(t, "  rpm=%-4d expected=%10luµs elapsed=%10luµs step_err=%6uµs avgstep=%6uµs", 
             int(rpm), expected_micros, elapsed_micros, error_micros, step_micros);
     Serial.print(t);
