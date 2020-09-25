@@ -124,7 +124,7 @@ void BasicStepperDriver::startMove(long steps, long time){
     // set up new move
     dir_state = (steps >= 0) ? HIGH : LOW;
     last_action_end = 0;
-    steps_remaining = abs(steps);
+    steps_remaining = labs(steps);
     step_count = 0;
     rest = 0;
     switch (profile.mode){
