@@ -251,10 +251,10 @@ public:
         return deg * motor_steps * microsteps / 360;
     }
 
-    long getPosition(void){
+    long getPositionAbs(void){
         return step_pos_abs;
     }
-    void setPosition(long pos){
+    void setPositionAbs(long pos){
         step_pos_abs = pos;
     }
 
