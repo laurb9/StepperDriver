@@ -33,7 +33,7 @@ BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pi
     cruise_step_pulse = 0;
 	rest = 0;
 	step_count = 0;
-    step_position = 0;
+    step_pos_abs = 0;
 }
 
 /*
@@ -122,7 +122,7 @@ void BasicStepperDriver::rotate(double deg){
  * Set up a new move to an absolute position
  */
 void BasicStepperDriver::startMoveAbs(long AbsPosTrgt, long time){
-    startMove (AbsPosTrgt - step_position, time);
+    startMove (AbsPosTrgt - step_pos_abs, time);
 }
 
 /*
@@ -276,9 +276,9 @@ void BasicStepperDriver::calcStepPulse(void){
     
     // absolute position
     if (dir_state)
-        step_position++;
+        step_pos_abs++;
     else
-        step_position--;
+        step_pos_abs--;
 
     if (profile.mode == LINEAR_SPEED){
         switch (getCurrentState()){
