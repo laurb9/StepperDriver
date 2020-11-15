@@ -33,6 +33,7 @@ BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pi
     cruise_step_pulse = 0;
 	rest = 0;
 	step_count = 0;
+    step_position = 0;
 }
 
 /*
@@ -114,6 +115,14 @@ void BasicStepperDriver::rotate(long deg){
  */
 void BasicStepperDriver::rotate(double deg){
     move(calcStepsForRotation(deg));
+}
+
+
+/*
+ * Set up a new move to an absolute position
+ */
+void BasicStepperDriver::startMoveAbs(long AbsPosTrgt, long time){
+    startMove (AbsPosTrgt - step_position, time);
 }
 
 /*
@@ -264,6 +273,12 @@ void BasicStepperDriver::calcStepPulse(void){
     }
     steps_remaining--;
     step_count++;
+    
+    // absolute position
+    if (dir_state)
+        step_position++;
+    else
+        step_position--;
 
     if (profile.mode == LINEAR_SPEED){
         switch (getCurrentState()){
@@ -358,3 +373,5 @@ void BasicStepperDriver::disable(void){
 short BasicStepperDriver::getMaxMicrostep(){
     return BasicStepperDriver::MAX_MICROSTEP;
 }
+
+

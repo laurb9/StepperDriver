@@ -93,6 +93,7 @@ protected:
     long steps_to_brake;    // steps needed to come to a full stop
     long step_pulse;        // step pulse duration (microseconds)
     long cruise_step_pulse; // step pulse duration for constant speed section (max rpm)
+    long step_pos_abs;      // absolute step position
 
     // DIR pin state
     short dir_state;
@@ -191,11 +192,13 @@ public:
      * by altering rpm for this move only (up to preset rpm).
      */
     void startMove(long steps, long time=0);
+    void startMoveAbs(long AbsPosTrgt, long time=0);
     inline void startRotate(int deg){
         startRotate((long)deg);
     };
     void startRotate(long deg);
     void startRotate(double deg);
+
     /*
      * Toggle step at the right time and return time until next change is needed (micros)
      */
@@ -247,5 +250,13 @@ public:
     long calcStepsForRotation(double deg){
         return deg * motor_steps * microsteps / 360;
     }
+
+    long getPosition(void){
+        return step_pos_abs;
+    }
+    void setPosition(long pos){
+        step_pos_abs = pos;
+    }
+
 };
 #endif // STEPPER_DRIVER_BASE_H
