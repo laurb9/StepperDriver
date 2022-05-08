@@ -44,3 +44,6 @@
 *.bin
 *.elf
 .arduino
+
+# PlatformIO
+.pio

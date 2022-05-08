@@ -70,6 +70,19 @@ void MultiDriver::startBrake(void){
     )
 }
 /*
+ * Immediate stop
+ * Returns the number of steps remaining.
+ */
+MultiDriver::Steps MultiDriver::stop(void){
+    Steps retval = Steps();
+    FOREACH_MOTOR(
+        if (event_timers[i] > 0){
+            retval.steps[i] = motors[i]->stop();
+        }
+    )
+    return retval;
+}
+/*
  * State querying
  */
 bool MultiDriver::isRunning(void){

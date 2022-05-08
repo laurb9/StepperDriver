@@ -41,6 +41,9 @@ protected:
     unsigned long last_action_end = 0;
 
 public:
+    struct Steps {
+        long steps[3];
+    };
     /*
      * Two-motor setup
      */
@@ -88,10 +91,15 @@ public:
      */
     void startBrake(void);
     /*
+     * Immediate stop
+     * Returns the number of steps remaining.
+     */
+    Steps stop(void);
+    /*
      * State querying
      */
     bool isRunning(void);
-     
+
     /*
      * Set the same microstepping level on all motors
      */
