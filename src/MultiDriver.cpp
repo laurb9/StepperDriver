@@ -137,6 +137,10 @@ void MultiDriver::setMicrostep(unsigned microsteps){
     FOREACH_MOTOR(motors[i]->setMicrostep(microsteps));
 }
 
+void MultiDriver::setRPM(float rpm){
+    FOREACH_MOTOR(motors[i]->setRPM(rpm));
+}
+
 void MultiDriver::enable(void){
     FOREACH_MOTOR(motors[i]->enable());
 }

@@ -109,6 +109,10 @@ public:
      */
     void setMicrostep(unsigned microsteps);
     /*
+     * Set all motors RPM (1-200 is a reasonable range)
+     */
+    void setRPM(float rpm);
+    /*
      * Turn all motors on or off
      */
     void enable(void);
