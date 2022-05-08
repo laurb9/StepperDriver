@@ -63,6 +63,10 @@ public:
         return *motors[index];
     }
     /*
+     * Initialize pins, calculate timings etc
+     */
+    void begin(float rpm=60, short microsteps=1);
+    /*
      * Move the motors a given number of steps.
      * positive to move forward, negative to reverse
      */

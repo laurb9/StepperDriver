@@ -97,6 +97,15 @@ bool MultiDriver::isRunning(void){
 }
 
 /*
+ * Initialize pins, calculate timings etc
+ */
+void MultiDriver::begin(float rpm, short microsteps){
+    FOREACH_MOTOR(
+        motors[i]->begin(rpm, microsteps);
+    )
+}
+
+/*
  * Move each motor the requested number of steps, in parallel
  * positive to move forward, negative to reverse, 0 to remain still
  */
