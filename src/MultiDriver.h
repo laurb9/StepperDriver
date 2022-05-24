@@ -41,6 +41,9 @@ protected:
     unsigned long last_action_end = 0;
 
 public:
+    struct Steps {
+        long steps[3];
+    };
     /*
      * Two-motor setup
      */
@@ -59,6 +62,10 @@ public:
     Motor& getMotor(short index){
         return *motors[index];
     }
+    /*
+     * Initialize pins, calculate timings etc
+     */
+    void begin(float rpm=60, short microsteps=1);
     /*
      * Move the motors a given number of steps.
      * positive to move forward, negative to reverse
@@ -88,14 +95,23 @@ public:
      */
     void startBrake(void);
     /*
+     * Immediate stop
+     * Returns the number of steps remaining.
+     */
+    Steps stop(void);
+    /*
      * State querying
      */
     bool isRunning(void);
-     
+
     /*
      * Set the same microstepping level on all motors
      */
     void setMicrostep(unsigned microsteps);
+    /*
+     * Set all motors RPM (1-200 is a reasonable range)
+     */
+    void setRPM(float rpm);
     /*
      * Turn all motors on or off
      */

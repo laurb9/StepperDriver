@@ -70,6 +70,19 @@ void MultiDriver::startBrake(void){
     )
 }
 /*
+ * Immediate stop
+ * Returns the number of steps remaining.
+ */
+MultiDriver::Steps MultiDriver::stop(void){
+    Steps retval = Steps();
+    FOREACH_MOTOR(
+        if (event_timers[i] > 0){
+            retval.steps[i] = motors[i]->stop();
+        }
+    )
+    return retval;
+}
+/*
  * State querying
  */
 bool MultiDriver::isRunning(void){
@@ -81,6 +94,15 @@ bool MultiDriver::isRunning(void){
         }
     )
     return running;
+}
+
+/*
+ * Initialize pins, calculate timings etc
+ */
+void MultiDriver::begin(float rpm, short microsteps){
+    FOREACH_MOTOR(
+        motors[i]->begin(rpm, microsteps);
+    )
 }
 
 /*
@@ -113,6 +135,10 @@ void MultiDriver::startRotate(double deg1, double deg2, double deg3){
 
 void MultiDriver::setMicrostep(unsigned microsteps){
     FOREACH_MOTOR(motors[i]->setMicrostep(microsteps));
+}
+
+void MultiDriver::setRPM(float rpm){
+    FOREACH_MOTOR(motors[i]->setRPM(rpm));
 }
 
 void MultiDriver::enable(void){
