@@ -13,6 +13,23 @@
  */
 #include "BasicStepperDriver.h"
 
+
+/*
+ * Min/Max functions which avoid evaluating the arguments multiple times.
+ * See also https://github.com/arduino/Arduino/issues/2069
+ */
+template<typename T>
+constexpr const T& stepperMin(const T& a, const T& b)
+{
+    return b < a ? b : a;
+}
+
+template<typename T>
+constexpr const T& stepperMax(const T& a, const T& b)
+{
+    return a < b ? b : a;
+}
+
 /*
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
@@ -138,7 +155,7 @@ void BasicStepperDriver::startMove(long steps, long time){
             float a2 = 1.0 / profile.accel + 1.0 / profile.decel;
             float sqrt_candidate = t*t - 2 * a2 * d;  // in √b^2-4ac
             if (sqrt_candidate >= 0){
-                speed = min(speed, (t - (float)sqrt(sqrt_candidate)) / a2);
+                speed = stepperMin(speed, (t - (float)sqrt(sqrt_candidate)) / a2);
             };
         }
         // how many microsteps from 0 to target speed
@@ -177,7 +194,7 @@ void BasicStepperDriver::alterMove(long steps){
         if (steps >= 0){
             steps_remaining += steps;
         } else {
-            steps_remaining = max(steps_to_brake, steps_remaining+steps);
+            steps_remaining = stepperMax(steps_to_brake, steps_remaining+steps);
         };
         break;
     case DECELERATING:
@@ -228,7 +245,7 @@ long BasicStepperDriver::getTimeForMove(long steps){
             startMove(steps);
             cruise_steps = steps_remaining - steps_to_cruise - steps_to_brake;
             speed = rpm * motor_steps / 60;   // full steps/s
-            t = (cruise_steps / (microsteps * speed)) + 
+            t = (cruise_steps / (microsteps * speed)) +
                 sqrt(2.0 * steps_to_cruise / profile.accel / microsteps) +
                 sqrt(2.0 * steps_to_brake / profile.decel / microsteps);
             t *= (1e+6); // seconds -> micros
