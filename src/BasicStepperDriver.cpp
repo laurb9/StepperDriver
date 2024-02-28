@@ -290,8 +290,8 @@ void BasicStepperDriver::calcStepPulse(void){
                 rest = (2*step_pulse+rest) % (4*step_count+1);
             } else {
                 // The series approximates target, set the final value to what it should be instead
-                rest = 0;
                 step_pulse = cruise_step_pulse;
+                rest = 0;
             }
             break;
 
