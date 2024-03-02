@@ -287,10 +287,11 @@ void BasicStepperDriver::calcStepPulse(void){
         case ACCELERATING:
             if (step_count < steps_to_cruise){
                 step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
-                rest = (step_count < steps_to_cruise) ? (2*step_pulse+rest) % (4*step_count+1) : 0;
+                rest = (2*step_pulse+rest) % (4*step_count+1);
             } else {
                 // The series approximates target, set the final value to what it should be instead
                 step_pulse = cruise_step_pulse;
+                rest = 0;
             }
             break;
 
