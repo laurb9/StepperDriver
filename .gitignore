@@ -47,3 +47,6 @@
 
 # PlatformIO
 .pio
+
+build
+.aider*

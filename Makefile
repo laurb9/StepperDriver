@@ -16,7 +16,13 @@ default:
 	#################################################################################################
 
 # See https://arduino.github.io/arduino-cli/installation/
-ARDUINO_CLI_URL = https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz
+# Detect architecture and use appropriate arduino-cli build
+ARCH := $(shell uname -m)
+ifeq ($(ARCH),aarch64)
+	ARDUINO_CLI_URL = https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_ARM64.tar.gz
+else
+	ARDUINO_CLI_URL = https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz
+endif
 ARDUINO_CLI ?= $(ARDUINO_DIR)/arduino-cli --config-file arduino-cli.yaml
 EXAMPLES := $(shell ls examples)
 
