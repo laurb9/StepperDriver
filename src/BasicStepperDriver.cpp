@@ -151,7 +151,7 @@ void BasicStepperDriver::startMove(long steps, long time){
         if (time > 0){
             // Calculate a new speed to finish in the time requested
             float t = time / (1e+6);                  // convert to seconds
-            float d = steps_remaining / microsteps;   // convert to full steps
+            float d = (float) steps_remaining / microsteps;   // convert to full steps
             float a2 = 1.0 / profile.accel + 1.0 / profile.decel;
             float sqrt_candidate = t*t - 2 * a2 * d;  // in √b^2-4ac
             if (sqrt_candidate >= 0){
@@ -286,8 +286,10 @@ void BasicStepperDriver::calcStepPulse(void){
         switch (getCurrentState()){
         case ACCELERATING:
             if (step_count < steps_to_cruise){
-                step_pulse = step_pulse - (2*step_pulse+rest)/(4*step_count+1);
-                rest = (2*step_pulse+rest) % (4*step_count+1);
+                long divisor = 4 * step_count + 1;
+                long dividend = 2 * step_pulse + rest;
+                step_pulse -= dividend / divisor;
+                rest = dividend % divisor;
             } else {
                 // The series approximates target, set the final value to what it should be instead
                 step_pulse = cruise_step_pulse;
@@ -296,8 +298,12 @@ void BasicStepperDriver::calcStepPulse(void){
             break;
 
         case DECELERATING:
-            step_pulse = step_pulse - (2*step_pulse+rest)/(-4*steps_remaining+1);
-            rest = (2*step_pulse+rest) % (-4*steps_remaining+1);
+            {
+                long divisor = -4 * steps_remaining + 1;
+                long dividend = 2 * step_pulse + rest;
+                step_pulse -= dividend / divisor;
+                rest = dividend % divisor;
+            }
             break;
 
         default:
