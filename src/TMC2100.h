@@ -36,7 +36,7 @@ public:
     TMC2100(short steps, short dir_pin, short step_pin);
     TMC2100(short steps, short dir_pin, short step_pin, short enable_pin);
     
-    void begin(float rpm=60, short microsteps=1);
+    void begin(float rpm=60, short microsteps=1) override;
     /*
      * Fully wired. All the necessary control pins for TMC2100 are connected.
      * The CFG pins are used to set microstepping.

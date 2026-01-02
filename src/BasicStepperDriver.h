@@ -115,7 +115,7 @@ public:
     /*
      * Initialize pins, calculate timings etc
      */
-    void begin(float rpm=60, short microsteps=1);
+    virtual void begin(float rpm=60, short microsteps=1);
     /*
      * Set current microstep level, 1=full speed, 32=fine microstepping
      * Returns new level or previous level if value out of range

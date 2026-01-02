@@ -26,7 +26,7 @@
 // Basic connection: only DIR, STEP are connected.
 // TMC2100 stepper(MOTOR_STEPS, DIR, STEP);
 
-// Fully wired: DIR, STEP, SLEEP, CFG1, CFG2
+// Fully wired: DIR, STEP, SLEEP/ENABLE, CFG1, CFG2
 TMC2100 stepper(MOTOR_STEPS, DIR, STEP, SLEEP, CFG1, CFG2);
 
 void setup() {
