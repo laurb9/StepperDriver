@@ -1,6 +1,9 @@
 {
 	"name": "Arduino & C++ Development",
-	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+
 	"workspaceFolder": "/workspaces/StepperDriver",
 	"mounts": [
 		{
@@ -22,13 +25,15 @@
 				"ms-vscode.cpptools",
 				"ms-vscode.cpptools-themes",
 				"vsciot-vscode.vscode-arduino",
-				"eamodio.gitlens"
+				"eamodio.gitlens",
+				"platformio.platformio-ide"
 			],
 			"mcp": {
 				"servers": {}
 			}
 		}
 	},
+
 	"postCreateCommand": "sudo chown vscode /workspaces/StepperDriver/.arduino && make setup",
 	"remoteUser": "vscode"
 }

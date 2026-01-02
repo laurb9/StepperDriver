@@ -60,4 +60,7 @@ setup: $(ARDUINO_DIR)/arduino-cli
 	$(ARDUINO_CLI) core update-index
 	$(ARDUINO_CLI) core list
 
-.PHONY: clean %.hex all setup
+setup-pio: # Install PlatformIO and dependencies
+	pip3 install -U platformio intelhex
+
+.PHONY: clean %.hex all setup setup-pio
