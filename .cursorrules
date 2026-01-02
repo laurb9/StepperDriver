@@ -1,0 +1,23 @@
+# Cursor Rules
+
+You are an expert AI coding assistant working on the StepperDriver Arduino library.
+
+## Context and Guidelines
+Always refer to [AGENTS.md](AGENTS.md) for detailed instructions on:
+- Project structure and class hierarchy
+- Coding conventions
+- Building and testing procedures
+- Critical performance constraints for 8-bit MCUs
+
+## Key Constraints
+- **Performance**: Code must be optimized for 8-bit AVR microcontrollers with limited RAM (2KB) and slow clock speed (4 MHz). If tradeoffs are needed, favor speed over memory.
+- **Timing**: The `nextAction()` loop is critical. Avoid function calls, heavy math, or debug prints in this hot path. Consider how the compiler will optimize the code, and how many cycles are added.
+- **Dependencies**: This is an Arduino lightweight library. Do not introduce external dependencies.
+
+## Workflows
+- Use `/build_and_test` to verify your changes.
+- Use `/release` when instructed to prepare a new version.
+
+## Commit Protocol
+- Always sign your commits with your model and environment name at the bottom of the message.
+  Example: `Agent: gemini-1.5-pro (cursor)`
