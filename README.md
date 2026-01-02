@@ -18,6 +18,7 @@ Hardware currently supported:
    - <a href="https://www.pololu.com/product/1182">A4988</a> Stepper Motor Driver up to 1:16
    - <a href="https://www.pololu.com/product/2131">DRV8825</a> up to 1:32
    - <a href="https://www.pololu.com/product/2971">DRV8880</a> up to 1:16, with current/torque control
+   - <a href="https://www.trinamic.com/products/integrated-circuits/details/tmc2100/">TMC2100</a> up to 1:16 native (1:256 interpolated)
    - any other 2-pin stepper via DIR and STEP pins, microstepping up to 1:128 externally set
 
 Microstepping
@@ -60,6 +61,9 @@ This is suggested wiring for running the examples unmodified. All the pins below
     - DRV8834/DRV8880 microstep control
       - M0 - D10
       - M1 - D11
+    - TMC2100 microstep control
+      - CFG1 - D10
+      - CFG2 - D11
     - ~SLEEP (optional) D13
 
 - driver board to motor (this varies from motor to motor, check motor coils schematic).

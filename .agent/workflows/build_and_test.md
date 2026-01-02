@@ -9,14 +9,12 @@ description: Build the project and run tests to ensure code integrity
    // turbo
    platformio run
 
-2. Build using Arduino CLI (covers AVR)
+3. Build using Arduino CLI (covers AVR)
    // turbo
    make all TARGET=arduino:avr:uno
 
-3. Run PlatformIO Unit Tests
+4. Run examples (covers all examples)
    // turbo
-   platformio test
-
-4. Run examples (covers one example)
-   // turbo
-   platformio ci --lib src --keep-build-dir --board esp32dev examples/BasicStepperDriver
+   for sketch in examples/*; do
+     platformio ci --lib src --keep-build-dir --board esp32dev ${sketch}
+   done
