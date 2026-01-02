@@ -1,0 +1,47 @@
+{
+  "name": "StepperDriver",
+  "version": "1.4.2",
+  "description": "Control steppers via a driver board providing STEP+DIR like the ones from Pololu. Microstepping is supported. Acceleration is supported. Supported drivers are A4988, DRV8824, DRV8825, DRV8834, DRV8880.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laurb9/StepperDriver"
+  },
+  "keywords": [
+    "stepper",
+    "driver",
+    "A4988",
+    "DRV8824",
+    "DRV8825",
+    "DRV8880"
+  ],
+  "authors": [
+    {
+      "name": "Laurentiu Badea",
+      "url": "https://github.com/laurb9",
+      "maintainer": true
+    }
+  ],
+  "homepage": "https://github.com/laurb9/StepperDriver",
+  "license": "MIT",
+  "export": {
+    "exclude": [
+      ".*"
+    ]
+  },
+  "frameworks": ["arduino"],
+  "platforms": "*",
+  "examples": [
+    {
+      "name": "UnitTest",
+      "base": "examples/UnitTest",
+      "files": ["UnitTest.ino"]
+    },
+    {
+      "name": "SpeedProfile",
+      "base": "examples/SpeedProfile",
+      "files": ["SpeedProfile.ino"]
+    }
+  ],
+  "includeDir": "src",
+  "srcDir": "src"
+}
