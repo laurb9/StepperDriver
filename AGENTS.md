@@ -21,6 +21,7 @@ StepperDriver/
 │   ├── DRV8825.h/cpp            # DRV8825-specific driver
 │   ├── DRV8834.h/cpp            # DRV8834-specific driver
 │   ├── DRV8880.h/cpp            # DRV8880-specific driver
+│   ├── TMC2100.h/cpp            # TMC2100-specific driver
 │   ├── MultiDriver.h/cpp        # Multi-motor coordination
 │   └── SyncDriver.h/cpp         # Synchronized multi-motor movement
 ├── examples/               # Arduino example sketches
@@ -41,6 +42,7 @@ BasicStepperDriver        # Base class - generic 2-pin (DIR/STEP) control
 │   └── DRV8825          # Extends A4988 with M0/M1/M2 and 1:32 support
 │       └── DRV8834      # Low-voltage variant, M0/M1 only
 │           └── DRV8880  # Adds current/torque control
+├── TMC2100               # SilentStepStick-specific driver
 └── MultiDriver           # Coordinates multiple motors
     └── SyncDriver       # Synchronized movement for multiple motors
 ```
@@ -122,11 +124,22 @@ All CI must pass before merging PRs.
 
 ## Commit & Pull Request Guidelines
 
-- **Commit messages**: Use clear, descriptive titles summarizing changes; reference issue numbers where applicable
-- **Pull requests**: Include a brief description of the feature or fix, any relevant test results, and performance impact on which platform, if any
-- **Signature**: Please add a footer to your commit message indicating your identity, e.g., `Agent: gemini-2.0-pro (antigravity)` or `Agent: claude-3.5-sonnet (cursor)`
-- **Branch naming**: Create feature branches from main with descriptive names (e.g., feature/new-driver, fix/timeout-issue)
+- **Commit messages**: Use clear, descriptive titles summarizing changes; reference issue numbers where applicable.
+- **Commit Authorship (Agents)**: When making commits, AI agents should use environment variables as applicable to identify themselves (including model name and version if available) without changing the user's global or local Git configuration.
+  ```bash
+  GIT_AUTHOR_NAME="gemini-2.0-pro (antigravity)" GIT_COMMITTER_NAME="gemini-2.0-pro (antigravity)" git commit -m "commit message"
+  ```
+- **Pull requests**: Include a brief description of the feature or fix, any relevant test results, and performance impact on which platform, if any. If the PR references an issue, mention it in the description. If it addresses the issue, use the keyword `fixes` or `resolves`.
+- **Signature**: Please add a footer to your commit message and eventual pull request description indicating your identity, e.g., `Agent: gemini-2.0-pro (antigravity)` or `Agent: claude-3.5-sonnet (cursor)`. This is especially important for PR descriptions and comments since GitHub displays the identity associated with the access token.
+- **Branch naming**: Create feature branches from main with descriptive names (e.g., feature/new-driver, fix/timeout-issue).
 - All PRs should pass CI checks before merge
+
+## Documentation Maintenance
+
+- **Stay in Sync**: Since this library is used as a reference for AI agents, it is **critical** that the `AGENTS.md` file stays in sync with the actual repository.
+- **Repository Structure**: If you add, move, or delete files, update the [Repository Structure](#repository-structure) diagram.
+- **Class Hierarchy**: If you add new drivers or change inheritance, update the [Class Hierarchy](#class-hierarchy) diagram.
+- **Verification**: Always verify that your changes to the codebase are reflected in these diagrams before opening a PR.
 
 ## Key Technical Details
 
