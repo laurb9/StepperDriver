@@ -1,6 +1,6 @@
 {
   "name": "StepperDriver",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "Control steppers via a driver board providing STEP+DIR like the ones from Pololu. Microstepping is supported. Acceleration is supported. Supported drivers are A4988, DRV8824, DRV8825, DRV8834, DRV8880, TMC2100.",
   "repository": {
     "type": "git",
