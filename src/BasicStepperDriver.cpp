@@ -171,6 +171,10 @@ void BasicStepperDriver::startMove(long steps, long time){
         step_pulse = (1e+6)*0.676*sqrt(2.0f/profile.accel/microsteps);
         // Save cruise timing since we will no longer have the calculated target speed later
         cruise_step_pulse = 1e+6 / speed / microsteps;
+        // If target speed is reached within the first step (steps_to_cruise == 0),
+        // the accelerating state is never entered and c0 would be used for the entire
+        // move, which is faster than the cruise speed. Start at cruise speed instead.
+        step_pulse = stepperMax(step_pulse, cruise_step_pulse);
         break;
 
     case CONSTANT_SPEED:
