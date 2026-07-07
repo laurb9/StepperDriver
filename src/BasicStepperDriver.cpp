@@ -161,7 +161,9 @@ void BasicStepperDriver::startMove(long steps, long time){
         // how many microsteps from 0 to target speed
         steps_to_cruise = microsteps * (speed * speed / (2 * profile.accel));
         // how many microsteps are needed from cruise speed to a full stop
-        steps_to_brake = steps_to_cruise * profile.accel / profile.decel;
+        // (calculated from speed like steps_to_cruise, to avoid 32-bit overflow
+        // of steps_to_cruise * accel with high microstep/rpm/accel combinations)
+        steps_to_brake = microsteps * (speed * speed / (2 * profile.decel));
         if (steps_remaining < steps_to_cruise + steps_to_brake){
             // cannot reach max speed, will need to brake early
             steps_to_cruise = steps_remaining * profile.decel / (profile.accel + profile.decel);
@@ -182,7 +184,8 @@ void BasicStepperDriver::startMove(long steps, long time){
         steps_to_cruise = 0;
         steps_to_brake = 0;
         step_pulse = cruise_step_pulse = STEP_PULSE(motor_steps, microsteps, rpm);
-        if (time > steps_remaining * step_pulse){
+        // compare in float to avoid 32-bit overflow of steps_remaining * step_pulse
+        if (steps_remaining && time > (float)steps_remaining * step_pulse){
             step_pulse = (float)time / steps_remaining;
         }
     }
@@ -290,8 +293,9 @@ void BasicStepperDriver::calcStepPulse(void){
         switch (getCurrentState()){
         case ACCELERATING:
             if (step_count < steps_to_cruise){
-                long divisor = 4 * step_count + 1;
-                long dividend = 2 * step_pulse + rest;
+                // unsigned division is faster than signed on MCUs without hardware divide
+                unsigned long divisor = 4 * step_count + 1;
+                unsigned long dividend = 2 * step_pulse + rest;
                 step_pulse -= dividend / divisor;
                 rest = dividend % divisor;
             } else {
@@ -303,9 +307,11 @@ void BasicStepperDriver::calcStepPulse(void){
 
         case DECELERATING:
             {
-                long divisor = -4 * steps_remaining + 1;
-                long dividend = 2 * step_pulse + rest;
-                step_pulse -= dividend / divisor;
+                // same series as acceleration with negative n = -steps_remaining;
+                // kept in unsigned form: c -= 2c/(-4n+1) is identical to c += 2c/(4n-1)
+                unsigned long divisor = 4 * steps_remaining - 1;
+                unsigned long dividend = 2 * step_pulse + rest;
+                step_pulse += dividend / divisor;
                 rest = dividend % divisor;
             }
             break;
