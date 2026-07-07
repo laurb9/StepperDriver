@@ -18,12 +18,8 @@ protected:
     short ms1_pin = PIN_UNCONNECTED;
     short ms2_pin = PIN_UNCONNECTED;
     short ms3_pin = PIN_UNCONNECTED;
-    // tA STEP minimum, HIGH pulse width (1us)
-    static const int step_high_min = 1;
-    // tB STEP minimum, LOW pulse width (1us)
-    static const int step_low_min = 1;
-    // wakeup time, nSLEEP inactive to STEP (1000us)
-    static const int wakeup_time = 1000;
+    // Timing (set in constructors): tA STEP HIGH min 1us, tB STEP LOW min 1us,
+    // wakeup time nSLEEP inactive to STEP 1000us.
     // also 200ns between ENBL/DIR/MSx changes and STEP HIGH
 
     // Get the microstep table

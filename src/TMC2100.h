@@ -13,12 +13,8 @@ class TMC2100 : public BasicStepperDriver {
 protected:
     short cf1_pin = PIN_UNCONNECTED;
     short cf2_pin = PIN_UNCONNECTED;
-    // tA STEP minimum, HIGH pulse width (1us)
-    static const int step_high_min = 1;
-    // tB STEP minimum, LOW pulse width (1us)
-    static const int step_low_min = 1;
-    // wakeup time, nSLEEP inactive to STEP (1000us)
-    static const int wakeup_time = 1000;
+    // Timing (set in constructors): tA STEP HIGH min 1us, tB STEP LOW min 1us,
+    // wakeup time nSLEEP inactive to STEP 1000us.
 
     // Get max microsteps supported by the device
     short getMaxMicrostep() override;

@@ -15,12 +15,8 @@
 class DRV8825 : public A4988 {
 protected:
     static const uint8_t MS_TABLE[];
-    // tWH(STEP) pulse duration, STEP high, min value (1.9us)
-    static const int step_high_min = 2;
-    // tWL(STEP) pulse duration, STEP low, min value (1.9us)
-    static const int step_low_min = 2;
-    // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
-    static const int wakeup_time = 1700;
+    // Timing (set in constructors): tWH(STEP) HIGH min 1.9us -> 2,
+    // tWL(STEP) LOW min 1.9us -> 2, tWAKE wakeup time 1700us.
     // also 650ns between ENBL/DIR/MODEx changes and STEP HIGH
 
     // Get the microstep table

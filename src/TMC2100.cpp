@@ -10,13 +10,16 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
+// TMC2100 datasheet timing: STEP HIGH/LOW min 1us, wakeup 1000us
+#define TMC2100_SET_TIMING() do { step_high_min = 1; step_low_min = 1; wakeup_time = 1000; } while (0)
+
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{}
+{ TMC2100_SET_TIMING(); }
 
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{}
+{ TMC2100_SET_TIMING(); }
 
 /*
  * Fully wired.
@@ -25,12 +28,12 @@ TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short enable_pin)
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short cf1_pin, short cf2_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin),
     cf1_pin(cf1_pin), cf2_pin(cf2_pin)
-{}
+{ TMC2100_SET_TIMING(); }
 
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short enable_pin, short cf1_pin, short cf2_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin),
 cf1_pin(cf1_pin), cf2_pin(cf2_pin)
-{}
+{ TMC2100_SET_TIMING(); }
 
 void TMC2100::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);

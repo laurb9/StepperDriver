@@ -19,13 +19,16 @@ const uint8_t A4988::MS_TABLE[] = {0b000, 0b001, 0b010, 0b011, 0b111};
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
+// A4988 datasheet timing: STEP HIGH/LOW min 1us, wakeup 1000us
+#define A4988_SET_TIMING() do { step_high_min = 1; step_low_min = 1; wakeup_time = 1000; } while (0)
+
 A4988::A4988(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{}
+{ A4988_SET_TIMING(); }
 
 A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{}
+{ A4988_SET_TIMING(); }
 
 /*
  * Fully wired.
@@ -34,12 +37,12 @@ A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin)
 A4988::A4988(short steps, short dir_pin, short step_pin, short ms1_pin, short ms2_pin, short ms3_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin),
     ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
-{}
+{ A4988_SET_TIMING(); }
 
 A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin, short ms1_pin, short ms2_pin, short ms3_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin),
 ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
-{}
+{ A4988_SET_TIMING(); }
 
 void A4988::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);

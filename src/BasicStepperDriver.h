@@ -74,11 +74,13 @@ protected:
     // current microstep level (1,2,4,8,...), must be < getMaxMicrostep()
     short microsteps = 1;
     // tWH(STEP) pulse duration, STEP high, min value (us)
-    static const int step_high_min = 1;
+    // Instance members (not static const) so derived drivers can set datasheet
+    // values in their constructors and users can override via setMinStepPulse().
+    short step_high_min = 1;
     // tWL(STEP) pulse duration, STEP low, min value (us)
-    static const int step_low_min = 1;
+    short step_low_min = 1;
     // tWAKE wakeup time, nSLEEP inactive to STEP (us)
-    static const int wakeup_time = 0;
+    short wakeup_time = 0;
 
     float rpm = 0;
 
@@ -136,6 +138,22 @@ public:
     };
     float getCurrentRPM(void){
         return (60.0*1000000L / step_pulse / microsteps / motor_steps);
+    }
+    /*
+     * Set minimum STEP pulse HIGH and LOW durations (microseconds).
+     * Useful on fast MCUs (e.g. Arduino Opta) whose GPIO toggles faster than
+     * the driver can register the default 1us pulses. See issue #136.
+     */
+    void setMinStepPulse(short high_us, short low_us){
+        step_high_min = (high_us > 0) ? high_us : 0;
+        // LOW interval must stay >= 1: nextAction() returning 0 means move complete
+        step_low_min = (low_us > 1) ? low_us : 1;
+    }
+    short getMinStepPulseHigh(void){
+        return step_high_min;
+    }
+    short getMinStepPulseLow(void){
+        return step_low_min;
     }
     /*
      * Set speed profile - CONSTANT_SPEED, LINEAR_SPEED (accelerated)

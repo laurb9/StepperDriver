@@ -17,12 +17,9 @@ protected:
     short m1 = PIN_UNCONNECTED;
     short trq0 = PIN_UNCONNECTED;
     short trq1 = PIN_UNCONNECTED;
-    // tWH(STEP) pulse duration, STEP high, min value
-    static const int step_high_min = 0;   // 0.47us
-    // tWL(STEP) pulse duration, STEP low, min value
-    static const int step_low_min = 0;    // 0.47us
-    // tWAKE wakeup time, nSLEEP inactive to STEP
-    static const int wakeup_time = 1500;
+    // Timing (set in constructors): tWH(STEP) HIGH min 0.47us -> 1,
+    // tWL(STEP) LOW min 0.47us -> 1 (rounded up; a 0 delay could produce
+    // sub-datasheet pulses on fast ARM boards), tWAKE wakeup time 1500us.
     // also 200ns between ENBL/DIR/Mx changes and STEP HIGH
 
     // Get max microsteps supported by the device
