@@ -13,6 +13,9 @@ default:
 	#
 	# Install more cores: make core TARGET=adafruit:samd:adafruit_feather_m0
 	# (edit arduino-cli.yaml and add repository if needed)
+	#
+	# Run the UnitTest sketch on a simulated ATmega328P (simavr): make sim-test
+	# Regenerate the simavr golden baseline: make sim-test-update
 	#################################################################################################
 
 # See https://arduino.github.io/arduino-cli/installation/
@@ -63,4 +66,12 @@ setup: $(ARDUINO_DIR)/arduino-cli
 setup-pio: # Install PlatformIO and dependencies
 	pip3 install -U platformio intelhex
 
-.PHONY: clean %.hex all setup setup-pio
+sim-test: # Build UnitTest for Uno and run it under simavr, comparing to the golden baseline
+	pio run -e uno
+	test/simavr-run.sh
+
+sim-test-update: # Build UnitTest for Uno and regenerate the simavr golden baseline
+	pio run -e uno
+	test/simavr-run.sh --update
+
+.PHONY: clean %.hex all setup setup-pio sim-test sim-test-update

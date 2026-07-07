@@ -9,3 +9,29 @@ in the development cycle.
 
 More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
+
+
+simavr test (simavr-run.sh)
+---------------------------
+
+simavr-run.sh runs the UnitTest sketch (examples/UnitTest/UnitTest.ino) on a
+simulated ATmega328P using simavr. It builds no code itself; run it after
+`pio run -e uno`, or use the Makefile targets which do both:
+
+    make sim-test          # build for Uno, run under simavr, compare to baseline
+    make sim-test-update    # build for Uno, then regenerate the baseline
+
+The sketch prints "TESTS COMPLETE" at the end of setup(); the script polls for
+that marker and stops the simulator (simavr never exits on its own because
+loop() runs forever). It strips ANSI color codes and simavr's own loader/
+shutdown lines, then compares the OK/FAIL verdict lines against the golden
+baseline in examples/UnitTest/uno-simavr.txt. Digits are stripped from both
+sides before comparison so microsecond timings and rpm values that drift with
+toolchain versions don't cause false failures, while any OK<->FAIL verdict flip
+still does.
+
+Some tests legitimately FAIL at high rpm on a simulated 16 MHz part (a hardware
+speed limit, not a bug); those FAILs are part of the baseline. Regenerate the
+baseline with `make sim-test-update` only after verifying intentional changes.
+
+Override the simulator settings via env vars: SIMAVR, MCU, FREQ, TIMEOUT.
