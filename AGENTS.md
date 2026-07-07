@@ -25,7 +25,10 @@ StepperDriver/
 │   ├── MultiDriver.h/cpp        # Multi-motor coordination
 │   └── SyncDriver.h/cpp         # Synchronized multi-motor movement
 ├── examples/               # Arduino example sketches
+│   └── UnitTest/
+│       └── uno-simavr.txt  # Golden baseline for the simavr test
 ├── test/                   # PlatformIO Unit Test files
+│   └── simavr-run.sh       # Runs UnitTest under simavr, compares to baseline
 ├── qemu/                   # QEMU emulation support (experimental)
 ├── .github/workflows/      # CI workflows (Arduino + PlatformIO)
 ├── library.properties      # Arduino library metadata
@@ -105,6 +108,25 @@ platformio test
 # Run examples
 platformio ci --lib src --keep-build-dir --board esp32dev examples/BasicStepperDriver 
 ```
+
+### simavr Testing
+
+```bash
+# Build the UnitTest sketch for Uno and run it on a simulated ATmega328P
+make sim-test
+
+# Regenerate the golden baseline (after intentional, verified changes)
+make sim-test-update
+```
+
+`make sim-test` builds the UnitTest sketch (`examples/UnitTest/UnitTest.ino`)
+for the Uno and runs it under simavr, comparing the OK/FAIL verdicts against the
+golden baseline in `examples/UnitTest/uno-simavr.txt`. The comparison strips
+digits so microsecond timings and rpm values that drift with toolchain versions
+don't cause false failures, while any OK<->FAIL verdict flip still does.
+`make sim-test-update` regenerates the baseline. Note that some tests legitimately
+FAIL at high rpm on a simulated 16 MHz part (a hardware speed limit, not a bug);
+those FAILs are captured in and are part of the baseline.
 
 ### QEMU Testing (Experimental)
 

@@ -62,3 +62,24 @@ jobs:
           for sketch in examples/*; do
             platformio ci --lib src --keep-build-dir --board ${{ matrix.board }} ${sketch} || exit 1;
           done
+
+  SimTest:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+      - name: Install simavr
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends simavr
+      - name: Run UnitTest under simavr
+        run: |
+          make sim-test

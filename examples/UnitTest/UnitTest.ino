@@ -156,6 +156,8 @@ void setup() {
     RUN_TEST("BasicStepperDriver test, linear speed", test_basic, s1);
     RUN_TEST("MultiDriver test, linear speed", test_multi, s1, s2, s3);
     RUN_TEST("SyncDriver test, linear speed", test_sync, s1, s2, s3);
+
+    Serial.println("TESTS COMPLETE");
 }
 
 void loop() {
