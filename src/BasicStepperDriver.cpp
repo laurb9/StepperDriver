@@ -222,7 +222,9 @@ void BasicStepperDriver::startBrake(void){
         break;
 
     case ACCELERATING:
-        steps_remaining = step_count * profile.accel / profile.decel;
+        // compare in float to avoid 32-bit overflow of step_count * profile.accel
+        // with high microstep/rpm/accel combinations (same pattern as startMove())
+        steps_remaining = (float)step_count * profile.accel / profile.decel;
         break;
 
     default:
