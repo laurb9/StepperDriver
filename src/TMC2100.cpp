@@ -12,11 +12,11 @@
  */
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{}
+{ initTiming(); }
 
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{}
+{ initTiming(); }
 
 /*
  * Fully wired.
@@ -25,12 +25,12 @@ TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short enable_pin)
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short cf1_pin, short cf2_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin),
     cf1_pin(cf1_pin), cf2_pin(cf2_pin)
-{}
+{ initTiming(); }
 
 TMC2100::TMC2100(short steps, short dir_pin, short step_pin, short enable_pin, short cf1_pin, short cf2_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin),
 cf1_pin(cf1_pin), cf2_pin(cf2_pin)
-{}
+{ initTiming(); }
 
 void TMC2100::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);

@@ -344,7 +344,9 @@ long BasicStepperDriver::nextAction(void){
         // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
         last_action_end = micros();
         m = last_action_end - m;
-        next_action_interval = (pulse > m) ? pulse - m : 1;
+        // floor the STEP LOW interval at step_low_min (datasheet tWL) instead of 1us
+        unsigned low_min = (unsigned)step_low_min;
+        next_action_interval = (pulse > m + low_min) ? pulse - m : low_min;
     } else {
         // end of move
         last_action_end = 0;
@@ -382,7 +384,9 @@ void BasicStepperDriver::enable(void){
     if IS_CONNECTED(enable_pin){
         digitalWrite(enable_pin, enable_active_state);
     };
-    delayMicros(2);
+    // wait the driver's wakeup time (datasheet tWAKE) before stepping,
+    // but at least 2us as the base default wakeup_time is 0
+    delayMicros(stepperMax((short)2, wakeup_time));
 }
 
 void BasicStepperDriver::disable(void){

@@ -21,11 +21,11 @@ const uint8_t A4988::MS_TABLE[] = {0b000, 0b001, 0b010, 0b011, 0b111};
  */
 A4988::A4988(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{}
+{ initTiming(); }
 
 A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{}
+{ initTiming(); }
 
 /*
  * Fully wired.
@@ -34,12 +34,12 @@ A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin)
 A4988::A4988(short steps, short dir_pin, short step_pin, short ms1_pin, short ms2_pin, short ms3_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin),
     ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
-{}
+{ initTiming(); }
 
 A4988::A4988(short steps, short dir_pin, short step_pin, short enable_pin, short ms1_pin, short ms2_pin, short ms3_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin),
 ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
-{}
+{ initTiming(); }
 
 void A4988::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);
