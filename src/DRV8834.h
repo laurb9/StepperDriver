@@ -16,8 +16,15 @@ class DRV8834 : public BasicStepperDriver {
 protected:
     short m0_pin = PIN_UNCONNECTED;
     short m1_pin = PIN_UNCONNECTED;
-    // Timing (set in constructors): tWH(STEP) HIGH min 1.9us -> 2,
-    // tWL(STEP) LOW min 1.9us -> 2, tWAKE wakeup time 1000us.
+    // Set timing requirements from DRV8834 datasheet
+    void initTiming(){
+        // tWH(STEP) pulse duration, STEP high, min value (1.9us)
+        step_high_min = 2;
+        // tWL(STEP) pulse duration, STEP low, min value (1.9us)
+        step_low_min = 2;
+        // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
+        wakeup_time = 1000;
+    }
     // also 200ns between ENBL/DIR/Mx changes and STEP HIGH
 
     // Get max microsteps supported by the device

@@ -174,11 +174,13 @@ All CI must pass before merging PRs.
 
 ### Timing Constraints
 - `step_high_min` / `step_low_min`: Minimum pulse durations (μs) - driver-specific.
-  These are instance members set in each driver's constructors; the base default is
-  1μs. Users can override at runtime with `setMinStepPulse(high_us, low_us)` (needed
-  on very fast MCUs like the Arduino Opta whose GPIO outpaces the driver).
-- `wakeup_time`: Time after enabling before movement (μs), instance member set in the
-  driver constructors (base default 0, floored to 2μs in `enable()`).
+  These are instance members; each driver defines a protected inline `initTiming()`
+  method in its header with the datasheet values and calls it from every constructor.
+  The base default is 1μs. Users can override at runtime with
+  `setMinStepPulse(high_us, low_us)` (needed on very fast MCUs like the Arduino Opta
+  whose GPIO outpaces the driver).
+- `wakeup_time`: Time after enabling before movement (μs), instance member set by the
+  driver's `initTiming()` (base default 0, floored to 2μs in `enable()`).
 - High RPM + high microstepping = limited by MCU speed
 
 ### Movement Modes
@@ -229,8 +231,9 @@ Before modifying timing-critical code paths:
 3. Inherit from appropriate base class (typically `A4988` or `DRV8825`)
 4. Override `getMaxMicrostep()` if different from parent
 5. Override `setMicrostep()` if pin configuration differs
-6. Update timing values if needed by assigning `step_high_min`, `step_low_min`, and
-   `wakeup_time` (instance members) in the driver's constructors
+6. Update timing values if needed by defining a protected inline `initTiming()` method
+   in the driver's header that assigns `step_high_min`, `step_low_min`, and
+   `wakeup_time` (instance members), and calling it from every constructor
 7. Add to `keywords.txt` for Arduino IDE highlighting
 8. Create an example sketch in `examples/`
 

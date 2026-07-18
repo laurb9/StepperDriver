@@ -18,8 +18,15 @@ protected:
     short ms1_pin = PIN_UNCONNECTED;
     short ms2_pin = PIN_UNCONNECTED;
     short ms3_pin = PIN_UNCONNECTED;
-    // Timing (set in constructors): tA STEP HIGH min 1us, tB STEP LOW min 1us,
-    // wakeup time nSLEEP inactive to STEP 1000us.
+    // Set timing requirements from A4988 datasheet
+    void initTiming(){
+        // tA STEP HIGH pulse duration, min value (1us)
+        step_high_min = 1;
+        // tB STEP LOW pulse duration, min value (1us)
+        step_low_min = 1;
+        // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
+        wakeup_time = 1000;
+    }
     // also 200ns between ENBL/DIR/MSx changes and STEP HIGH
 
     // Get the microstep table
