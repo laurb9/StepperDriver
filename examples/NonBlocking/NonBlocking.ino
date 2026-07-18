@@ -70,8 +70,10 @@ void setup() {
 
     // set the motor to move continuously for a reasonable time to hit the stopper
     // let's say 100 complete revolutions (arbitrary number)
-    stepper.startMove(100 * MOTOR_STEPS * MICROSTEPS);     // in microsteps
-    // stepper.startRotate(100 * 360);                     // or in degrees
+    // 100L keeps the arithmetic in long: with int it overflows 16-bit AVR ints
+    // (100*200*16 = 320000) and the motor would move the wrong way
+    stepper.startMove(100L * MOTOR_STEPS * MICROSTEPS);    // in microsteps
+    // stepper.startRotate(100L * 360);                    // or in degrees
 }
 
 void loop() {
