@@ -25,6 +25,8 @@ StepperDriver/
 │   ├── TB6600.h/cpp             # TB6600-specific driver
 │   ├── MultiDriver.h/cpp        # Multi-motor coordination
 │   └── SyncDriver.h/cpp         # Synchronized multi-motor movement
+├── docs/
+│   └── API.md              # Public API reference manual
 ├── examples/               # Arduino example sketches
 │   └── UnitTest/
 │       └── uno-simavr.txt  # Golden baseline for the simavr test

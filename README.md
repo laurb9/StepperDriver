@@ -85,6 +85,11 @@ The formula is V = I*5*R where I=max current, R=current sense resistor installed
 
 For latest info, see the Pololu board information pages.
 
+Documentation
+=============
+
+The full public API is documented in the [API Reference](docs/API.md).
+
 Code
 ====
 
