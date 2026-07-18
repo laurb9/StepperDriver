@@ -22,8 +22,15 @@
 
 class TB6600 : public BasicStepperDriver {
 protected:
-    // Timing (set in constructors): min clock (PUL) HIGH/LOW 2.2us -> 3,
-    // wakeup time after ENA released 10us.
+    // Set timing requirements from TB6600 datasheet
+    void initTiming(){
+        // min clock (PUL) HIGH pulse duration (2.2us -> 3)
+        step_high_min = 3;
+        // min clock (PUL) LOW pulse duration (2.2us -> 3)
+        step_low_min = 3;
+        // wakeup time after ENA released (10us)
+        wakeup_time = 10;
+    }
 
     // Get max microsteps supported by the device (TB6600HG up to 1:16)
     short getMaxMicrostep() override;
