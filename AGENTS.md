@@ -4,7 +4,7 @@ This file provides guidelines for AI coding assistants working with the StepperD
 
 ## Project Overview
 
-**StepperDriver** is an Arduino library for controlling stepper motors via driver boards that use STEP/DIR pins (indexer mode). It supports multiple driver ICs including A4988, DRV8825, DRV8834, and DRV8880.
+**StepperDriver** is an Arduino library for controlling stepper motors via driver boards that use STEP/DIR pins (indexer mode). It supports multiple driver ICs including A4988, DRV8825, DRV8834, DRV8880, TMC2100, and TB6600.
 
 - **Language**: C++ (Arduino)
 - **License**: MIT
@@ -22,6 +22,7 @@ StepperDriver/
 │   ├── DRV8834.h/cpp            # DRV8834-specific driver
 │   ├── DRV8880.h/cpp            # DRV8880-specific driver
 │   ├── TMC2100.h/cpp            # TMC2100-specific driver
+│   ├── TB6600.h/cpp             # TB6600-specific driver
 │   ├── MultiDriver.h/cpp        # Multi-motor coordination
 │   └── SyncDriver.h/cpp         # Synchronized multi-motor movement
 ├── examples/               # Arduino example sketches
@@ -43,11 +44,13 @@ StepperDriver/
 BasicStepperDriver        # Base class - generic 2-pin (DIR/STEP) control
 ├── A4988                 # Adds microstepping control (MS1/MS2/MS3)
 │   └── DRV8825          # Extends A4988 with M0/M1/M2 and 1:32 support
-│       └── DRV8834      # Low-voltage variant, M0/M1 only
-│           └── DRV8880  # Adds current/torque control
+├── DRV8834               # Low-voltage variant, M0/M1 only
+├── DRV8880               # Adds current/torque control
 ├── TMC2100               # SilentStepStick-specific driver
-└── MultiDriver           # Coordinates multiple motors
-    └── SyncDriver       # Synchronized movement for multiple motors
+└── TB6600                # Toshiba TB6600 (microstepping via DIP switches)
+
+MultiDriver               # Coordinates multiple motors (standalone, wraps drivers)
+└── SyncDriver            # Synchronized movement for multiple motors
 ```
 
 ## Coding Conventions

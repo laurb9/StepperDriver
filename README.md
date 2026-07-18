@@ -19,6 +19,7 @@ Hardware currently supported:
    - <a href="https://www.pololu.com/product/2131">DRV8825</a> up to 1:32
    - <a href="https://www.pololu.com/product/2971">DRV8880</a> up to 1:16, with current/torque control
    - <a href="https://www.trinamic.com/products/integrated-circuits/details/tmc2100/">TMC2100</a> up to 1:16 native (1:256 interpolated)
+   - Toshiba TB6600 up to 1:16, microstepping set via DIP switches
    - any other 2-pin stepper via DIR and STEP pins, microstepping up to 1:128 externally set
 
 Microstepping
