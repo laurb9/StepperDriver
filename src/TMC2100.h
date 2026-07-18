@@ -13,8 +13,15 @@ class TMC2100 : public BasicStepperDriver {
 protected:
     short cf1_pin = PIN_UNCONNECTED;
     short cf2_pin = PIN_UNCONNECTED;
-    // Timing (set in constructors): tA STEP HIGH min 1us, tB STEP LOW min 1us,
-    // wakeup time nSLEEP inactive to STEP 1000us.
+    // Set timing requirements from TMC2100 datasheet
+    void initTiming(){
+        // tA STEP HIGH pulse duration, min value (1us)
+        step_high_min = 1;
+        // tB STEP LOW pulse duration, min value (1us)
+        step_low_min = 1;
+        // tWAKE wakeup time, nSLEEP inactive to STEP (1000us)
+        wakeup_time = 1000;
+    }
 
     // Get max microsteps supported by the device
     short getMaxMicrostep() override;

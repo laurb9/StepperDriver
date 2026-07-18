@@ -12,36 +12,32 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-// DRV8880 datasheet timing: STEP HIGH/LOW min 0.47us -> 1 (rounded up; 0 could
-// produce sub-datasheet pulses on fast ARM boards), wakeup 1500us
-#define DRV8880_SET_TIMING() do { step_high_min = 1; step_low_min = 1; wakeup_time = 1500; } while (0)
-
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{ DRV8880_SET_TIMING(); }
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{ DRV8880_SET_TIMING(); }
+{ initTiming(); }
 
 /*
  * Fully wired. All the necessary control pins for DRV8880 are connected.
  */
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short m0, short m1)
 :BasicStepperDriver(steps, dir_pin, step_pin), m0(m0), m1(m1)
-{ DRV8880_SET_TIMING(); }
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin, short m0, short m1)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0(m0), m1(m1)
-{ DRV8880_SET_TIMING(); }
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short m0, short m1, short trq0, short trq1)
 :BasicStepperDriver(steps, dir_pin, step_pin), m0(m0), m1(m1), trq0(trq0), trq1(trq1)
-{ DRV8880_SET_TIMING(); }
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin, short m0, short m1, short trq0, short trq1)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0(m0), m1(m1), trq0(trq0), trq1(trq1)
-{ DRV8880_SET_TIMING(); }
+{ initTiming(); }
 
 void DRV8880::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);

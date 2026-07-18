@@ -13,27 +13,24 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-// DRV8834 datasheet timing: STEP HIGH/LOW min 1.9us -> 2, wakeup 1000us
-#define DRV8834_SET_TIMING() do { step_high_min = 2; step_low_min = 2; wakeup_time = 1000; } while (0)
-
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{ DRV8834_SET_TIMING(); }
+{ initTiming(); }
 
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{ DRV8834_SET_TIMING(); }
+{ initTiming(); }
 
 /*
  * Fully wired. All the necessary control pins for DRV8834 are connected.
  */
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin, short m0_pin, short m1_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin), m0_pin(m0_pin), m1_pin(m1_pin)
-{ DRV8834_SET_TIMING(); }
+{ initTiming(); }
 
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin, short enable_pin, short m0_pin, short m1_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0_pin(m0_pin), m1_pin(m1_pin)
-{ DRV8834_SET_TIMING(); }
+{ initTiming(); }
 
 /*
  * Set microstepping mode (1:divisor)
