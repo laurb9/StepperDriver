@@ -15,22 +15,22 @@
  */
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{}
+{ initTiming(); }
 
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{}
+{ initTiming(); }
 
 /*
  * Fully wired. All the necessary control pins for DRV8834 are connected.
  */
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin, short m0_pin, short m1_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin), m0_pin(m0_pin), m1_pin(m1_pin)
-{}
+{ initTiming(); }
 
 DRV8834::DRV8834(short steps, short dir_pin, short step_pin, short enable_pin, short m0_pin, short m1_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0_pin(m0_pin), m1_pin(m1_pin)
-{}
+{ initTiming(); }
 
 /*
  * Set microstepping mode (1:divisor)

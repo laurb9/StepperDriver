@@ -4,7 +4,7 @@ This file provides guidelines for AI coding assistants working with the StepperD
 
 ## Project Overview
 
-**StepperDriver** is an Arduino library for controlling stepper motors via driver boards that use STEP/DIR pins (indexer mode). It supports multiple driver ICs including A4988, DRV8825, DRV8834, and DRV8880.
+**StepperDriver** is an Arduino library for controlling stepper motors via driver boards that use STEP/DIR pins (indexer mode). It supports multiple driver ICs including A4988, DRV8825, DRV8834, DRV8880, TMC2100, and TB6600.
 
 - **Language**: C++ (Arduino)
 - **License**: MIT
@@ -22,6 +22,7 @@ StepperDriver/
 │   ├── DRV8834.h/cpp            # DRV8834-specific driver
 │   ├── DRV8880.h/cpp            # DRV8880-specific driver
 │   ├── TMC2100.h/cpp            # TMC2100-specific driver
+│   ├── TB6600.h/cpp             # TB6600-specific driver
 │   ├── MultiDriver.h/cpp        # Multi-motor coordination
 │   └── SyncDriver.h/cpp         # Synchronized multi-motor movement
 ├── docs/
@@ -45,11 +46,13 @@ StepperDriver/
 BasicStepperDriver        # Base class - generic 2-pin (DIR/STEP) control
 ├── A4988                 # Adds microstepping control (MS1/MS2/MS3)
 │   └── DRV8825          # Extends A4988 with M0/M1/M2 and 1:32 support
-│       └── DRV8834      # Low-voltage variant, M0/M1 only
-│           └── DRV8880  # Adds current/torque control
+├── DRV8834               # Low-voltage variant, M0/M1 only
+├── DRV8880               # Adds current/torque control
 ├── TMC2100               # SilentStepStick-specific driver
-└── MultiDriver           # Coordinates multiple motors
-    └── SyncDriver       # Synchronized movement for multiple motors
+└── TB6600                # Toshiba TB6600 (microstepping via DIP switches)
+
+MultiDriver               # Coordinates multiple motors (standalone, wraps drivers)
+└── SyncDriver            # Synchronized movement for multiple motors
 ```
 
 ## Coding Conventions
@@ -172,8 +175,14 @@ All CI must pass before merging PRs.
 - Must respect driver parameters such as microstep configuration, signal timing, etc. as documented in the driver chip datasheet
 
 ### Timing Constraints
-- `step_high_min` / `step_low_min`: Minimum pulse durations (μs) - driver-specific
-- `wakeup_time`: Time after enabling before movement (μs)
+- `step_high_min` / `step_low_min`: Minimum pulse durations (μs) - driver-specific.
+  These are instance members; each driver defines a protected inline `initTiming()`
+  method in its header with the datasheet values and calls it from every constructor.
+  The base default is 1μs. Users can override at runtime with
+  `setMinStepPulse(high_us, low_us)` (needed on very fast MCUs like the Arduino Opta
+  whose GPIO outpaces the driver).
+- `wakeup_time`: Time after enabling before movement (μs), instance member set by the
+  driver's `initTiming()` (base default 0, floored to 2μs in `enable()`).
 - High RPM + high microstepping = limited by MCU speed
 
 ### Movement Modes
@@ -224,7 +233,9 @@ Before modifying timing-critical code paths:
 3. Inherit from appropriate base class (typically `A4988` or `DRV8825`)
 4. Override `getMaxMicrostep()` if different from parent
 5. Override `setMicrostep()` if pin configuration differs
-6. Update timing constants if needed (`step_high_min`, `wakeup_time`)
+6. Update timing values if needed by defining a protected inline `initTiming()` method
+   in the driver's header that assigns `step_high_min`, `step_low_min`, and
+   `wakeup_time` (instance members), and calling it from every constructor
 7. Add to `keywords.txt` for Arduino IDE highlighting
 8. Create an example sketch in `examples/`
 

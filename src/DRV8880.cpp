@@ -14,30 +14,30 @@
  */
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin)
-{}
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin)
-{}
+{ initTiming(); }
 
 /*
  * Fully wired. All the necessary control pins for DRV8880 are connected.
  */
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short m0, short m1)
 :BasicStepperDriver(steps, dir_pin, step_pin), m0(m0), m1(m1)
-{}
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin, short m0, short m1)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0(m0), m1(m1)
-{}
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short m0, short m1, short trq0, short trq1)
 :BasicStepperDriver(steps, dir_pin, step_pin), m0(m0), m1(m1), trq0(trq0), trq1(trq1)
-{}
+{ initTiming(); }
 
 DRV8880::DRV8880(short steps, short dir_pin, short step_pin, short enable_pin, short m0, short m1, short trq0, short trq1)
 :BasicStepperDriver(steps, dir_pin, step_pin, enable_pin), m0(m0), m1(m1), trq0(trq0), trq1(trq1)
-{}
+{ initTiming(); }
 
 void DRV8880::begin(float rpm, short microsteps){
     BasicStepperDriver::begin(rpm, microsteps);

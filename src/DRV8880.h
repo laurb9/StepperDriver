@@ -17,12 +17,19 @@ protected:
     short m1 = PIN_UNCONNECTED;
     short trq0 = PIN_UNCONNECTED;
     short trq1 = PIN_UNCONNECTED;
-    // tWH(STEP) pulse duration, STEP high, min value
-    static const int step_high_min = 0;   // 0.47us
-    // tWL(STEP) pulse duration, STEP low, min value
-    static const int step_low_min = 0;    // 0.47us
-    // tWAKE wakeup time, nSLEEP inactive to STEP
-    static const int wakeup_time = 1500;
+    // Set timing requirements from DRV8880 datasheet
+    void initTiming(){
+        // tWH(STEP) pulse duration, STEP high, min value (0.47us -> 1;
+        // rounded up because a 0 delay could produce sub-datasheet pulses
+        // on fast ARM boards)
+        step_high_min = 1;
+        // tWL(STEP) pulse duration, STEP low, min value (0.47us -> 1;
+        // rounded up because a 0 delay could produce sub-datasheet pulses
+        // on fast ARM boards)
+        step_low_min = 1;
+        // tWAKE wakeup time, nSLEEP inactive to STEP (1500us)
+        wakeup_time = 1500;
+    }
     // also 200ns between ENBL/DIR/Mx changes and STEP HIGH
 
     // Get max microsteps supported by the device
