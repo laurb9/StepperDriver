@@ -14,6 +14,7 @@ Class overview:
 | `DRV8834` | TI DRV8834 (low-voltage) | M0, M1 | 1:32 |
 | `DRV8880` | TI DRV8880 (with torque control) | M0, M1 (+TRQ0, TRQ1) | 1:16 |
 | `TMC2100` | Trinamic TMC2100 SilentStepStick | CFG1, CFG2 | 1:16 (interpolates to 1:256 internally) |
+| `TB6600` | Toshiba TB6600 module (PUL/DIR/ENA) | none (on-board DIP switches) | 1:16 |
 | `MultiDriver` | 2-3 motors, independent moves | — | — |
 | `SyncDriver` | 2-3 motors, synchronized moves | — | — |
 
@@ -55,10 +56,13 @@ DRV8825(steps, dir_pin, step_pin [, enable_pin] [, mode0_pin, mode1_pin, mode2_p
 DRV8834(steps, dir_pin, step_pin [, enable_pin] [, m0_pin, m1_pin]);
 DRV8880(steps, dir_pin, step_pin [, enable_pin] [, m0, m1] [, trq0, trq1]);
 TMC2100(steps, dir_pin, step_pin [, enable_pin] [, cfg1_pin, cfg2_pin]);
+TB6600(steps, dir_pin, step_pin [, enable_pin]);
 ```
 
 If the microstep pins are not connected, set the level on the board (jumpers/DIP
-switches) and pass the same value to `begin()` so the timing math is correct.
+switches) and pass the same value to `begin()` so the timing math is correct. The
+`TB6600` has no microstep pins at all — microstepping is DIP-switch only, so always
+pass the switch-configured level to `begin()`.
 
 ### `void begin(float rpm=60, short microsteps=1)`
 
@@ -102,6 +106,20 @@ short getAcceleration();  short getDeceleration();
 High RPM combined with high microstep levels is limited by MCU speed — at some point
 the step interval becomes shorter than the time needed to compute it. The UnitTest
 example reports achievable rates for a given board.
+
+### Step pulse timing: `setMinStepPulse()`
+
+```C++
+void setMinStepPulse(short high_us, short low_us);
+short getMinStepPulseHigh();  short getMinStepPulseLow();
+```
+
+Each driver class presets the minimum STEP pulse HIGH/LOW durations (µs) from its
+chip's datasheet; normally there is nothing to set. Override is useful on very fast
+MCUs (e.g. Arduino Opta) whose GPIO toggles faster than the driver input can
+register, or for opto-isolated inputs needing longer pulses. `high_us` is floored at
+0, `low_us` at 1 (a LOW interval of 0 would signal move-complete from
+`nextAction()`). Values are per-instance.
 
 ## Blocking moves
 
@@ -185,7 +203,8 @@ void setEnableActiveState(short state);  // HIGH (default, nSLEEP) or LOW (nENAB
 
 The enable pin convention depends on which driver pin you wired: ~SLEEP is active
 HIGH (the library default), ~ENABLE is active LOW — call
-`setEnableActiveState(LOW)` after `begin()` in that case.
+`setEnableActiveState(LOW)` after `begin()` in that case. Common `TB6600` boards use
+opto-isolated, active-LOW ENA — wire ENABLE and call `setEnableActiveState(LOW)`.
 
 ## DRV8880 extras
 
